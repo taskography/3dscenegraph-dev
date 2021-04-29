@@ -58,6 +58,20 @@ class Building(SceneGraphNode):
         self.camera = {}
         self.object = {}
 
+    def print_objects(self):
+        for object_id in self.object:
+            print(f'--- Object ID: {object_id} ---')
+            obj = self.object[object_id]
+            for key in obj.__dict__.keys():
+                print(f"Key: {key} | Value: {obj.get_attribute(key)}")
+
+    def print_rooms(self):
+        for room_id in self.room:
+            print(f'--- Room ID: {room_id} ---')
+            room = self.room[room_id]
+            for key in room.__dict__.keys():
+                print(f"Key: {key} | Value: {room.get_attribute(key)}")
+
 
 class Room(SceneGraphNode):
 
@@ -187,9 +201,9 @@ def load_scenegraph(datapath):
     for cam_id in data["camera"].keys():
         if cam_id == 0:
             continue
-    building.camera[cam_id] = Camera()
-    for key in data["camera"][cam_id].keys():
-        building.camera[cam_id].set_attribute(key, data["camera"][cam_id][key])
+        building.camera[cam_id] = Camera()
+        for key in data["camera"][cam_id].keys():
+            building.camera[cam_id].set_attribute(key, data["camera"][cam_id][key])
     
     return building
 
@@ -199,7 +213,8 @@ if __name__ == "__main__":
     model = "Allensville"
     verified = True
     visualize = False
-    data_path = "/home/krishna/data/3dscenegraph/data-tiny"
+    # data_path = "/home/krishna/data/3dscenegraph/data-tiny"
+    data_path = "/home/agiachris/data/3dscenegraph/data-tiny"
     palette_path = None
     gibson_data_path = "/home/krishna/data/gibson/gibson_tiny"
 
@@ -209,3 +224,7 @@ if __name__ == "__main__":
     scenegraph = {}
     scenegraph[model] = {}
     scenegraph[model]["graph"] = load_scenegraph(datapath)
+
+    scenegraph[model]["graph"].print_objects()
+    scenegraph[model]["graph"].print_rooms()
+
