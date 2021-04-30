@@ -58,19 +58,11 @@ class Building(SceneGraphNode):
         self.camera = {}
         self.object = {}
 
-    def print_objects(self):
-        for object_id in self.object:
-            print(f'--- Object ID: {object_id} ---')
-            obj = self.object[object_id]
-            for key in obj.__dict__.keys():
-                print(f"Key: {key} | Value: {obj.get_attribute(key)}")
-
-    def print_rooms(self):
-        for room_id in self.room:
-            print(f'--- Room ID: {room_id} ---')
-            room = self.room[room_id]
-            for key in room.__dict__.keys():
-                print(f"Key: {key} | Value: {room.get_attribute(key)}")
+    def print_attributes(self):
+        print(f'--- Building ID: {self.id} ---')
+        for key in self.__dict__.keys():
+            if key not in ['room', 'camera', 'object', 'voxel_centers']:
+                print(f"Key: {key} | Value: {self.get_attribute(key)}")
 
 
 class Room(SceneGraphNode):
@@ -96,6 +88,11 @@ class Room(SceneGraphNode):
         self.volume = None
         # Parent building that contains this room
         self.parent_building = None
+
+    def print_attributes(self):
+        print(f'--- Room ID: {self.id} ---')
+        for key in self.__dict__.keys():
+            print(f"Key: {key} | Value: {self.get_attribute(key)}")
 
 
 class SceneObject(SceneGraphNode):
@@ -129,6 +126,11 @@ class SceneObject(SceneGraphNode):
         self.voxel_occupancy = None
         # Parent room that contains this object
         self.parent_room = None
+
+    def print_attributes(self):
+        print(f'--- Object ID: {self.id} ---')
+        for key in self.__dict__.keys():
+            print(f"Key: {key} | Value: {self.get_attribute(key)}")
 
 
 class Camera(SceneGraphNode):
@@ -216,7 +218,7 @@ if __name__ == "__main__":
     # data_path = "/home/krishna/data/3dscenegraph/data-tiny"
     data_path = "/home/agiachris/data/3dscenegraph/data-tiny"
     palette_path = None
-    gibson_data_path = "/home/krishna/data/gibson/gibson_tiny"
+    # gibson_data_path = "/home/krishna/data/gibson/gibson_tiny"
 
     result_type = "verified_graph" if verified else "automated_graph"
     datapath = os.path.join(data_path, result_type, "3DSceneGraph_" + model + ".npz")
@@ -224,7 +226,3 @@ if __name__ == "__main__":
     scenegraph = {}
     scenegraph[model] = {}
     scenegraph[model]["graph"] = load_scenegraph(datapath)
-
-    scenegraph[model]["graph"].print_objects()
-    scenegraph[model]["graph"].print_rooms()
-
