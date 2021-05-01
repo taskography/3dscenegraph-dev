@@ -1,4 +1,5 @@
 import os
+import time
 import argparse
 import random
 import numpy as np
@@ -33,6 +34,9 @@ class SceneGraphSampler:
         self.obj_coords = dict()
         self.rec_coords = dict()
         self.get_2d_coordinates()
+
+        # sampled object-receptacle pair
+        self.sampled_pick_and_place = set()
 
     def get_object_ids(self):
         """Segregate IDs based on OBJECT class.
@@ -134,22 +138,32 @@ class SceneGraphSampler:
         receptacle_id = random.choice(list(self.room_to_rec_map[room_id]))
         return room_id, receptacle_id
 
-    def sample_pick_and_place(self, vary_rec=True, vary_room=False):
-        """Sample a pick and place task. If vary_rec = True, the sampled object must be placed
-        on a different receptacle in any room. If vary_room = True, the sampled object must be placed
-        in a different room entirely.
+    def sample_pick_and_place(self, vary_room=False, avoid_repeats=True):
+        """Sample a pick and place task. If vary_room = True, the sampled object must be placed on a
+        receptacle in a different room.
         """
+
         o_room_id, o_id = self.sample_random_object()
         r_room_id, r_id = self.sample_random_receptacle()
 
+        start_time = time.time()
         if vary_room:
-            while o_room_id == r_room_id:
+            while o_room_id == r_room_id or (avoid_repeats and (o_id, r_id) in self.sampled_pick_and_place):
+                o_room_id, o_id = self.sample_random_object()
                 r_room_id, r_id = self.sample_random_receptacle()
 
-        elif vary_rec:
-            while self.obj_to_rec_map[o_id] == r_id:
+                if time.time() - start_time > 2:
+                    return None
+
+        else:
+            while self.obj_to_rec_map[o_id] == r_id or (avoid_repeats and (o_id, r_id) in self.sampled_pick_and_place):
+                o_room_id, o_id = self.sample_random_object()
                 r_room_id, r_id = self.sample_random_receptacle()
 
+                if time.time() - start_time > 2:
+                    return None
+
+        self.sampled_pick_and_place.add((o_id, r_id))
         task = {
             'pick': self.sg.object[o_id],
             'place': self.sg.object[r_id]
@@ -167,16 +181,13 @@ if __name__ == '__main__':
     if args.data_split == 'tiny':
         data_type = 'verified_graph'
 
+    # pick a model
     model = "Allensville"
     data_path = os.path.join(args.data_root, args.data_split, data_type, "3DSceneGraph_" + model + ".npz")
-
     sg_sampler = SceneGraphSampler(load_scenegraph(data_path))
 
-    task = sg_sampler.sample_pick_and_place()
-    obj = task['pick']
-    rec = task['place']
-
-    obj_loc = sg_sampler.obj_coords[obj.id]
-    rec_loc = sg_sampler.rec_coords[rec.id]
-    print(obj_loc)
-    print(rec_loc)
+    # sample all possible pick and place tasks with varying rooms
+    task = sg_sampler.sample_pick_and_place(vary_room=True)
+    while task is not None:
+        print(len(sg_sampler.sampled_pick_and_place))
+        task = sg_sampler.sample_pick_and_place(vary_room=True)
