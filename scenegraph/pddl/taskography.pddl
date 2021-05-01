@@ -13,16 +13,14 @@
   )
 
  (:predicates
-    (locationInRoom ?l - location ?r - room)                  ; true if the location is in the room
     (inRoom ?a - agent ?r - room)                             ; true if the agent is in the room
-    ;(receptacleInRoom ?re - receptacle ?r - room)             ; true if the receptacle is in the room
-    ;(objectInRoom ?o - object ?r - room)                      ; true if the object is in the room
+    (locationInRoom ?l - location ?r - room)                  ; true if the location is in the room
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
     (objectAtLocation ?o - object ?l - location)              ; true if the object is at the location
-    (inReceptacle ?o - object ?r - receptacle)                ; object ?o is in receptacle ?r
-    (holds ?a - agent ?o - object)                            ; object ?o is held by agent ?a
-    (holdsAny ?a - agent)                                     ; agent ?a holds an object
+    (inReceptacle ?o - object ?r - receptacle)                ; true if object ?o is in receptacle ?r
+    (holds ?a - agent ?o - object)                            ; true if object ?o is held by agent ?a
+    (holdsAny ?a - agent)                                     ; true if agent ?a holds an object
  )
 
 ;; agent goes to a room
@@ -37,9 +35,9 @@
  (:action GotoLocation
     :parameters (?a - agent ?lStart - location ?lEnd - location ?r - room)
     :precondition (and (inRoom ?a ?r)
+                       (atLocation ?a ?lStart)
                        (locationInRoom ?lStart ?r)
-                       (locationInRoom ?lEnd ?r)
-                       (atLocation ?a ?lStart))
+                       (locationInRoom ?lEnd ?r))
     :effect (and (atLocation ?a ?LEnd)
                  (not (atLocation ?a ?lStart)))
  )
