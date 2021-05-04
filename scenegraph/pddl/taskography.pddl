@@ -71,10 +71,10 @@
 ;; agent places object in receptacle
  (action: PutObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
-    :preconditions (and (atLocation ?a ?l)
+    :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?a ?l)
                         (holds ?a ?o))
-    :effects (and (inReceptacle ?o ?r)
+    :effect (and (inReceptacle ?o ?r)
                   (not (holdsAny ?a))
                   (not (holds ?a ?o)))
  )

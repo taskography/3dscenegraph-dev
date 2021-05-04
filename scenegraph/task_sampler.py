@@ -6,7 +6,7 @@ import numpy as np
 
 
 from loader import load_scenegraph
-from constants import (ROOMS, OBJECTS)
+from constants import *
 
 
 class SceneGraphSampler:
@@ -43,9 +43,9 @@ class SceneGraphSampler:
         """
         for obj_id in self.sg.object:
             obj = self.sg.object[obj_id]
-            if obj.class_ in OBJECTS['receptacle_type']:
+            if obj.class_ in RECEPTACLES:
                 self.rec_ids.add(obj_id)
-            elif obj.class_ in OBJECTS['object_type']:
+            elif obj.class_ in OBJECTS:
                 self.obj_ids.add(obj_id)
             else:
                 self.other_ids.add(obj_id)
