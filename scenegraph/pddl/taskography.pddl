@@ -43,7 +43,7 @@
  )
 
 ;; agent picks up object from ground
- (action: PickupObjectNoReceptacle
+ (:action PickupObjectNoReceptacle
     :parameters (?a - agent ?o - object ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (objectAtLocation ?o ?l)
@@ -57,7 +57,7 @@
  )
 
 ;; agent picks up object from receptacle
- (action: PickupObjectInReceptacle
+ (:action PickupObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (receptacleAtLocation ?r ?l)
@@ -69,10 +69,10 @@
  )
 
 ;; agent places object in receptacle
- (action: PutObjectInReceptacle
+ (:action PutObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                        (receptacleAtLocation ?a ?l)
+                        (receptacleAtLocation ?r ?l)
                         (holds ?a ?o))
     :effect (and (inReceptacle ?o ?r)
                   (not (holdsAny ?a))
