@@ -378,6 +378,60 @@
  )
 
 
+;; ------------------------------------ PUT IN RECEPTACLE ------------------------------------
+
+;; agent puts object in receptacle 
+ (:action PutObjectInReceptacle
+     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+     :precondition (and
+         (atLocation ?a ?l)
+         (receptacleAtLocation ?r ?l)
+         (holds ?a ?o)
+         (or 
+            (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
+            (not (receptacleType ?r OpeningType)))
+     )
+     :effect (and 
+         (not (holdsAny ?a))
+         (not (holds ?a ?o))
+         (atLocation ?o ?l)
+         (inReceptacle ?o ?r)
+         (forall (?obj - object)
+            (when (inReceptacleObject ?obj ?o)
+                (objectAtLocation ?obj ?l)))
+     )
+ )
+
+
+;; agent puts object in receptacle object
+ (:action PutObjectInReceptacleObject
+     :parameters (?a - agent ?o - object ?ro - object ?l - location)
+     :precondition (and
+         (atLocation ?a ?l)
+         (objectAtLocation ?ro ?l)
+         (holds ?a ?o)
+         (or
+            (and (objectType ?ro OpeningType) (receptacleObjectOpened ?ro))
+            (not (objectType ?ro OpeningType)))
+         (forall (?r - receptacle)
+            (imply
+                (inReceptacle ?ro ?r)
+                (or 
+                    (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
+                    (not (receptacleType ?r OpeningType)))))
+     )
+     :effect (and
+         (not (holdsAny ?a))
+         (not (holds ?a ?o))
+         (atLocation ?o ?l)
+         (inReceptacleObject ?o ?ro)
+         (forall (?obj - object)
+            (when (inReceptacleObject ?obj ?o)
+                (objectAtLocation ?obj ?l)))
+     )
+ )
+
+
 ;; ------------------------------------ STATE CHANGING OPERATORS ------------------------------------
 
 
@@ -411,8 +465,8 @@
         (atLocation ?a ?l)
         (receptacleAtLocation ?r ?l)
         (holds ?a ?o)
-        objectType ?o CoolableType)
-        receptacleType ?r CoolingType)
+        (objectType ?o CoolableType)
+        (receptacleType ?r CoolingType)
         (or
             (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
             (not (receptacleType ?r OpeningType)))
