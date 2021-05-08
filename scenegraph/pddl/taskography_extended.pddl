@@ -123,9 +123,9 @@
         (forall (?r - receptacle)
             (imply
                 (inReceptacle ?o ?r)
-                (or 
+                (or
                     (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
-                    (not (receptacleType ?r OpeningType)))))        
+                    (not (receptacleType ?r OpeningType)))))
     )
     :effect (and
         (receptacleObjectOpened ?o)
@@ -145,9 +145,9 @@
         (forall (?r - receptacle)
             (imply
                 (inReceptacle ?o ?r)
-                (or 
+                (or
                     (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
-                    (not (receptacleType ?r OpeningType)))))       
+                    (not (receptacleType ?r OpeningType)))))
     )
     :effect (and
         (not (receptacleObjectOpened ?o))
@@ -192,9 +192,9 @@
  (:action PickupObjectOnGround
     :parameters (?a - agent ?o - object ?l - location)
     :precondition (and
-        (not (holdsAny ?a))
         (atLocation ?a ?l)
         (objectAtLocation ?o ?l)
+        (not (holdsAny ?a))
         (forall (?r - receptacle)
             (not (inReceptacle ?o ?r)))
         (forall (?ro - object)
@@ -215,9 +215,9 @@
  (:action PickupObjectOnGroundAndPlaceInReceptacleObject
     :parameters (?a - agent ?o - object ?ro - object ?l - location)
     :precondition (and
-        (holds ?a ?ro)
         (atLocation ?a ?l)
         (objectAtLocation ?o ?l)
+        (holds ?a ?ro)
         (objectType ?ro ReceptacleObjectType)
         (not (receptacleObjectFull ?ro))
         (or
@@ -231,7 +231,7 @@
     :effect (and
         (not (objectAtLocation ?o ?l))
         (inReceptacleObject ?o ?ro)
-        (receptacleObjectFull ?ro)        
+        (receptacleObjectFull ?ro)
         (forall (?obj - object)
             (when (inReceptacleObject ?obj ?o)
                 (not (objectAtLocation ?obj ?l))))
@@ -246,11 +246,11 @@
  (:action PickupObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and
-        (not (holdsAny ?a))
         (atLocation ?a ?l)
         (receptacleAtLocation ?r ?l)
         (objectAtLocation ?o ?l)
         (inReceptacle ?o ?r)
+        (not (holdsAny ?a))
         (or
             (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
             (not (receptacleType ?r OpeningType)))
@@ -273,11 +273,11 @@
  (:action PickupObjectInReceptacleAndPlaceInReceptacleObject
     :parameters (?a - agent ?o - object ?ro - object ?r - receptacle ?l - location)
     :precondition (and
-        (holds ?a ?ro)
         (atLocation ?a ?l)
         (receptacleAtLocation ?r ?l)
         (objectAtLocation ?o ?l)
         (inReceptacle ?o ?r)
+        (holds ?a ?ro)
         (objectType ?ro ReceptacleObjectType)
         (not (receptacleObjectFull ?ro))
         (or
@@ -308,11 +308,12 @@
 (:action PickupObjectInReceptacleObject
     :parameters (?a - agent ?o - object ?ro - object ?l - location)
     :precondition (and 
-        (not (holdsAny ?a))
         (atLocation ?a ?l)
         (objectAtLocation ?o ?l)
         (objectAtLocation ?ro ?l)
         (inReceptacleObject ?o ?ro)
+        (not (holdsAny ?a))
+        (receptacleObjectFull ?ro)
         (objectType ?ro ReceptacleObjectType)
         (or 
             (and (objectType ?ro OpeningType) (receptacleObjectOpened ?ro))
@@ -320,15 +321,15 @@
         (forall (?r - receptacle)
             (imply
                 (inReceptacle ?ro ?r)
-                (or 
+                (or
                     (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
                     (not (receptacleType ?r OpeningType)))))
     )
-    
     :effect (and
         (holdsAny ?a)
         (holds ?a ?o)
         (not (inReceptacleObject ?o ?ro))
+        (not (receptacleObjectFull ?ro))
         (not (objectAtLocation ?o ?l))
         (forall (?obj - object)
             (when (inReceptacleObject ?obj ?o)
@@ -345,24 +346,21 @@
         (objectAtLocation ?o ?l)
         (objectAtLocation ?ro1 ?l)
         (inReceptacleObject ?o ?ro1)
-
         (holds ?a ?ro2)
         (objectType ?ro2 ReceptacleObjectType)
         (not (receptacleObjectFull ?ro2))
         (or
             (and (objectType ?ro2 OpeningType) (receptacleObjectOpened ?ro2))
             (not (objectType ?ro2 OpeningType)))
-        
         (objectType ?ro1 ReceptacleObjectType)
         (receptacleObjectFull ?ro1)
         (or
             (and (objectType ?ro1 OpeningType) (receptacleObjectOpened ?ro1))
             (not (objectType ?ro1 OpeningType)))
-
         (forall (?r - receptacle)
             (imply
                 (inReceptacle ?ro1 ?r)
-                (or 
+                (or
                     (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
                     (not (receptacleType ?r OpeningType)))))
     )
@@ -371,6 +369,7 @@
         (not (receptacleObjectFull ?ro1))
         (inReceptacleObject ?o ?ro2)
         (receptacleObjectFull ?ro2)
+        (not (objectAtLocation ?o ?l))
         (forall (?obj - object)
             (when (inReceptacleObject ?obj ?o)
                 (not (objectAtLocation ?obj ?l))))
@@ -379,6 +378,27 @@
 
 
 ;; ------------------------------------ PUT IN RECEPTACLE ------------------------------------
+
+
+;; agent puts object on ground 
+ (:action PutObjectOnGround
+     :parameters (?a - agent ?o - object ?l - location)
+     :precondition (and 
+         (atLocation ?a ?l)
+         (holds ?a ?o)
+         (forall (?r - receptacle)
+            (not (receptacleAtLocation ?r)))
+     )
+     :effect (and 
+         (not (holdsAny ?a))
+         (not (holds ?a ?o))
+         (objectAtLocation ?o ?l)
+         (forall (?obj - object)
+            (when (inReceptacleObject ?obj ?o)
+                (objectAtLocation ?obj ?l)))
+     )
+ )
+
 
 ;; agent puts object in receptacle 
  (:action PutObjectInReceptacle
@@ -410,6 +430,7 @@
          (atLocation ?a ?l)
          (objectAtLocation ?ro ?l)
          (holds ?a ?o)
+         (not (receptacleObjectFull ?ro))
          (or
             (and (objectType ?ro OpeningType) (receptacleObjectOpened ?ro))
             (not (objectType ?ro OpeningType)))
@@ -423,8 +444,9 @@
      :effect (and
          (not (holdsAny ?a))
          (not (holds ?a ?o))
-         (atLocation ?o ?l)
+         (objectAtLocation ?o ?l)
          (inReceptacleObject ?o ?ro)
+         (receptacleObjectFull ?ro)
          (forall (?obj - object)
             (when (inReceptacleObject ?obj ?o)
                 (objectAtLocation ?obj ?l)))
@@ -451,9 +473,9 @@
     :effect (and
         (objectHeated ?o)
         (not (objectCooled ?o))
-        (when (receptacleType ?r OpeningType)
-            (not (receptacleOpened ?r))
-        )
+        (forall (?obj - object)
+            (when (and (inReceptacleObject ?obj ?o) (objectType ?obj HeatableType))
+                (objectHeated ?obj)))
     )
  )
 
@@ -474,9 +496,9 @@
     :effect (and
         (objectCooled ?o)
         (not (objectHeated ?o))
-        (when (receptacleType ?r OpeningType)
-            (not (receptacleOpened ?r))
-        )
+        (forall (?obj - object)
+            (when (and (inReceptacleObject ?obj ?o) (objectType ?obj CoolableType))
+                (objectCooled ?obj)))
     )
  )
 
@@ -489,6 +511,7 @@
         (receptacleAtLocation ?r ?l)
         (holds ?a ?o)
         (objectType ?o CleanableType)
+        (not (objectType ?o ReceptacleObjectType))
         (receptacleType ?r CleaningType)
         (or
             (and (receptacleType ?r OpeningType) (receptacleOpened ?r))
@@ -496,9 +519,6 @@
     )
     :effect (and
         (objectCleaned ?o)
-        (when (receptacleType ?r OpeningType)
-            (not (receptacleOpened ?r))
-        )
     )
  )
 
