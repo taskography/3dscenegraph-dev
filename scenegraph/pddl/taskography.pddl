@@ -14,6 +14,7 @@
 
  (:predicates
     (inRoom ?a - agent ?r - room)                             ; true if the agent is in the room
+    (roomLocation ?l - location ?r - room)                    ; true if the location is the center point of the room
     (locationInRoom ?l - location ?r - room)                  ; true if the location is in the room
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
@@ -28,7 +29,13 @@
     :parameters (?a - agent ?rStart - room ?rEnd - room)
     :precondition (and (inRoom ?a ?rStart))
     :effect (and (inRoom ?a ?rEnd)
-                 (not (inRoom ?a ?rStart)))
+                 (not (inRoom ?a ?rStart))
+                 (forall (?lStart - location)
+                     (when (and (atLocation ?a ?lStart) (locationInRoom ?lStart ?rStart))
+                        (not (atLocation ?a ?lStart))))
+                 (forall (?lEnd - location)
+                     (when (roomLocation ?lEnd ?rEnd)
+                        (atLocation ?a ?lEnd))))
  )
 
 ;; agent goes to a location
@@ -61,11 +68,13 @@
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (receptacleAtLocation ?r ?l)
+                       (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
                  (holds ?a ?o)
-                 (not (inReceptacle ?o ?r)))
+                 (not (inReceptacle ?o ?r))
+                 (not (objectAtLocation ?o ?l)))
  )
 
 ;; agent places object in receptacle
@@ -75,8 +84,9 @@
                         (receptacleAtLocation ?r ?l)
                         (holds ?a ?o))
     :effect (and (inReceptacle ?o ?r)
-                  (not (holdsAny ?a))
-                  (not (holds ?a ?o)))
+                 (objectAtLocation ?o ?l)
+                 (not (holdsAny ?a))
+                 (not (holds ?a ?o)))
  )
 
 )

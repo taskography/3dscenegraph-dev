@@ -17,6 +17,7 @@
  (:predicates
     ;; rooms / locations
     (inRoom ?a - agent ?r - room)                             ; true if the agent is in the room
+    (roomLocation ?l - location ?r - room)                    ; true if the location is the center point of the room
     (locationInRoom ?l - location ?r - room)                  ; true if the location is in the room
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
@@ -58,6 +59,12 @@
     :effect (and
         (inRoom ?a ?rEnd)
         (not (inRoom ?a ?rStart))
+        (forall (?lStart - location)
+            (when (and (atLocation ?a ?lStart) (locationInRoom ?lStart ?rStart))
+                (not (atLocation ?a ?lStart))))
+        (forall (?lEnd - location)
+            (when (roomLocation ?lEnd ?rEnd)
+                (atLocation ?a ?lEnd)))
     )
  )
 

@@ -1,0 +1,6 @@
+matplotlib
+pillow
+gym
+imageio
+networkx
+scikit-image
