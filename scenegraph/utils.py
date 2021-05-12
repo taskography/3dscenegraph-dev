@@ -1,3 +1,7 @@
+import os
+from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
+
+
 def room_to_str_name(room_inst):
     return f"room{int(room_inst.id)}_{room_inst.scene_category.replace(' ', '_')}"
 
@@ -17,3 +21,13 @@ def location_to_str_name(room_data, is_room=False):
     if not is_room:
         return f"location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
     return f"center_location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
+
+
+def convert_pddl_domain(domain_filepath, updated_filename):
+    domain = PDDLDomainParser(domain_filepath, expect_action_preds=False, operators_as_actions=False)
+    domain.write(updated_filename)
+
+
+if __name__ == '__main__':
+    convert_pddl_domain('./pddl/taskography.pddl', './pddl/taskography_gym.pddl')
+    convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')

@@ -3,9 +3,11 @@ import time
 import argparse
 import random
 import numpy as np
-import pprint
+import itertools
 
 
+from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
+from pddlgym.structs import LiteralConjunction
 from loader import load_scenegraph
 from constants import *
 from utils import *
@@ -13,9 +15,11 @@ from utils import *
 
 class SceneGraphSampler:
 
-    def __init__(self, sg):
-        """Rearrangement Task Sampler from 3D Scene Graph"""
-        self.sg = sg
+    def __init__(self, domain, scene_graph):
+        """Rearrangement Task Sampler from 3D Scene Graph
+        """
+        self.domain = domain
+        self.sg = scene_graph
 
         # ids of objects, receptacles, and other (as per OBJECTS)
         self.obj_ids = set()
@@ -38,17 +42,19 @@ class SceneGraphSampler:
         self.room_loc = dict()
         self.get_locations()
 
-        # PDDL entities and predicates
-        self.pddl_entities = dict()
+        # PDDL entities and name-to-entity mapping
+        self.pddl_entity_set = set()
+        self.pddl_entity_map = dict()
         self.generate_pddl_entities()
-        self.pddl_predicates = dict()
+        # PDDL predicates
+        self.pddl_predicate_set = set()
         self.generate_pddl_predicates()
 
         # sampled object-receptacle pair, pick and place task
-        self.sampled_pick_and_place = set()
+        self.sampled_tasks = set()
 
     def reset_history(self):
-        self.sampled_pick_and_place = set()
+        self.sampled_tasks = set()
 
     def get_object_ids(self):
         """Segregate IDs based on OBJECT class.
@@ -166,148 +172,237 @@ class SceneGraphSampler:
         room_id = random.choice(list(self.sg.room.keys()))
         return room_id
 
-    def sample_pick_and_place(self, vary_room=False, avoid_repeats=True):
-        """Sample a pick and place task. If vary_room = True, the agent, the sampled object to be picked,
-        and the sampled receptacle for placing must all be in different rooms.
+    def sample_pick_and_place(self, vary_room=False, avoid_repeats=True, task_length=1):
+        """Sample a pick and place task. Task length refers to the number of pick and place sub-tasks
+        in the rearrangement problem. If no verifiable task is sampled in 5 seconds, None is returned.
         """
-        a_room_id = self.sample_agent_room()
-        o_room_id, o_id = self.sample_random_object()
-        r_room_id, r_id = self.sample_random_receptacle()
-
+        task = None
+        valid = False
         start_time = time.time()
+        while not valid:
+            task = dict()
+            task['agent_room_id'] = self.sample_agent_room()
+            object_task_data = [self.sample_random_object() for i in range(task_length)]
+            task['object_ids'] = [x[1] for x in object_task_data]
+            task['object_room_ids'] = [x[0] for x in object_task_data]
+            receptacle_task_data = [self.sample_random_receptacle() for i in range(task_length)]
+            task['receptacle_ids'] = [x[1] for x in receptacle_task_data]
+            task['receptacle_room_ids'] = [x[0] for x in receptacle_task_data]
+            valid = self.verify_pick_and_place(task, vary_room=vary_room, avoid_repeats=avoid_repeats)
+            if time.time() - start_time > 5 and not valid:
+                return None
+        return task
+
+    def verify_pick_and_place(self, task, vary_room=False, avoid_repeats=True):
+        """For a sampled a pick and place task, If vary_room = True, the agent, the sampled objects to be picked,
+        and the sampled receptacles for placing must all be in different rooms.
+        """
+        n = len(task['object_ids'])
+        valid = True
+        valid = valid and len(set(task['object_ids'])) == len(task['object_ids'])
         if vary_room:
-            while o_room_id == r_room_id or a_room_id == o_room_id or a_room_id == r_room_id \
-                    or (avoid_repeats and (a_room_id, o_id, r_id) in self.sampled_pick_and_place):
-                a_room_id = self.sample_agent_room()
-                o_room_id, o_id = self.sample_random_object()
-                r_room_id, r_id = self.sample_random_receptacle()
+            valid = valid and task['agent_room_id'] not in task['object_room_ids']
+            valid = valid and all([task['object_room_ids'][i] != task['receptacle_room_ids'][i] for i in range(n)])
 
-                if time.time() - start_time > 2:
-                    return None
-
-        else:
-            while self.obj_to_rec_map[o_id] == r_id \
-                    or (avoid_repeats and (a_room_id, o_id, r_id) in self.sampled_pick_and_place):
-                o_room_id, o_id = self.sample_random_object()
-                r_room_id, r_id = self.sample_random_receptacle()
-
-                if time.time() - start_time > 2:
-                    return None
-
-        self.sampled_pick_and_place.add((a_room_id, o_id, r_id))
-        return {'agent': a_room_id, 'pick': o_id, 'place': r_id}
+        # sorted task parameters
+        task_params = sorted(zip(task['object_ids'], task['object_room_ids'],
+                                 task['receptacle_ids'], task['receptacle_room_ids']), key=lambda x: x[0])
+        task_str = "{} {}".format(task['agent_room_id'], task_params)
+        if avoid_repeats:
+            valid = valid and task_str not in self.sampled_tasks
+        self.sampled_tasks.add(task_str)
+        return valid
 
     def generate_pddl_entities(self):
         """Generate a dictionary of PDDL entities as per the pddl/taskography domain. The dictionary maps entity types
         to a list of tuples, where the first element is the object ID in the 3D scene graph, and the second element
         is its string name.
         """
+        # Object / Entity Types
+        agent_type = self.domain.types['agent']
+        room_type = self.domain.types['room']
+        receptacle_type = self.domain.types['receptacle']
+        object_type = self.domain.types['object']
+        location_type = self.domain.types['location']
 
         # Agent
-        self.pddl_entities['agent'] = 'robot'
+        agent = agent_type("agent")
+        self.pddl_entity_set.add(agent)
+        self.pddl_entity_map["agent"] = agent
 
-        # Rooms, Receptacles and Objects
-        self.pddl_entities['room'] = set()
-        self.pddl_entities['receptacle'] = set()
-        self.pddl_entities['object'] = set()
+        # Rooms
         for room_id in self.sg.room:
-            self.pddl_entities['room'].add(room_to_str_name(self.sg.room[room_id]))
+            room_name = room_to_str_name(self.sg.room[room_id])
+            room = room_type(room_name)
+            self.pddl_entity_set.add(room)
+            assert (room_name not in self.pddl_entity_map)
+            self.pddl_entity_map[room_name] = room
+
+        # Receptacles
         for r_id in self.rec_ids:
-            self.pddl_entities['receptacle'].add(receptacle_to_str_name(self.sg.object[r_id]))
+            receptacle_name = receptacle_to_str_name(self.sg.object[r_id])
+            receptacle = receptacle_type(receptacle_name)
+            self.pddl_entity_set.add(receptacle)
+            assert (receptacle_name not in self.pddl_entity_map)
+            self.pddl_entity_map[receptacle_name] = receptacle
+
+        # Objects
         for o_id in self.obj_ids:
-            self.pddl_entities['object'].add(object_to_str_name(self.sg.object[o_id]))
+            object_name = object_to_str_name(self.sg.object[o_id])
+            object = object_type(object_name)
+            self.pddl_entity_set.add(object)
+            assert (object_name not in self.pddl_entity_map)
+            self.pddl_entity_map[object_name] = object
 
         # Locations
-        self.pddl_entities['location'] = set()
         for o_id in self.obj_loc:
-            self.pddl_entities['location'].add(location_to_str_name(self.obj_loc[o_id]))
+            location_name = location_to_str_name(self.obj_loc[o_id])
+            if location_name in self.pddl_entity_map:
+                location = self.pddl_entity_map[location_name]
+            else:
+                location = location_type(location_name)
+                self.pddl_entity_map[location_name] = location
+            self.pddl_entity_set.add(location)
         for r_id in self.rec_loc:
-            self.pddl_entities['location'].add(location_to_str_name(self.rec_loc[r_id]))
+            location_name = location_to_str_name(self.rec_loc[r_id])
+            if location_name in self.pddl_entity_map:
+                location = self.pddl_entity_map[location_name]
+            else:
+                location = location_type(location_name)
+                self.pddl_entity_map[location_name] = location
+            self.pddl_entity_set.add(location)
         for room_id in self.room_loc:
-            self.pddl_entities['location'].add(location_to_str_name(self.room_loc[room_id], is_room=True))
+            location_name = location_to_str_name(self.room_loc[room_id], is_room=True)
+            if location_name in self.pddl_entity_map:
+                location = self.pddl_entity_map[location_name]
+            else:
+                location = location_type(location_name)
+                self.pddl_entity_map[location_name] = location
+            self.pddl_entity_set.add(location)
 
     def generate_pddl_predicates(self):
         """Generate set of task agnostic predicates.
         """
+        # PDDL Entity / Object Map
+        emap = self.pddl_entity_map
+
+        # Predicate Types
+        room_location = self.domain.predicates['roomlocation']
+        location_in_room = self.domain.predicates['locationinroom']
+        receptacle_at_location = self.domain.predicates['receptacleatlocation']
+        object_at_location = self.domain.predicates['objectatlocation']
+        in_receptacle = self.domain.predicates['inreceptacle']
+
         # roomLocation and locationInRoom
-        self.pddl_predicates['roomLocation'] = set()
-        self.pddl_predicates['locationInRoom'] = set()
         for room_id in self.sg.room:
             str_room_name = room_to_str_name(self.sg.room[room_id])
             str_room_loc_name = location_to_str_name(self.room_loc[room_id], is_room=True)
-            self.pddl_predicates['roomLocation'].add((str_room_loc_name, str_room_name))
-            self.pddl_predicates['locationInRoom'].add((str_room_loc_name, str_room_name))
+            self.pddl_predicate_set.add(room_location(emap[str_room_loc_name], emap[str_room_name]))
+            self.pddl_predicate_set.add(location_in_room(emap[str_room_loc_name], emap[str_room_name]))
 
         # receptacleAtLocation and locationInRoom
-        self.pddl_predicates['receptacleAtLocation'] = set()
         for r_id in self.rec_ids:
             rec_inst = self.sg.object[r_id]
             str_rec_name = receptacle_to_str_name(rec_inst)
             str_rec_room_name = room_to_str_name(self.sg.room[rec_inst.parent_room])
             str_rec_loc_name = location_to_str_name(self.rec_loc[r_id])
-            self.pddl_predicates['receptacleAtLocation'].add((str_rec_name, str_rec_loc_name))
-            self.pddl_predicates['locationInRoom'].add((str_rec_loc_name, str_rec_room_name))
+            self.pddl_predicate_set.add(receptacle_at_location(emap[str_rec_name], emap[str_rec_loc_name]))
+            self.pddl_predicate_set.add(location_in_room(emap[str_rec_loc_name], emap[str_rec_room_name]))
 
         # objectAtLocation and locationInRoom
-        self.pddl_predicates['objectAtLocation'] = set()
         for o_id in self.obj_ids:
             obj_inst = self.sg.object[o_id]
             str_obj_name = object_to_str_name(obj_inst)
             str_obj_room_name = room_to_str_name(self.sg.room[obj_inst.parent_room])
             str_obj_loc_name = location_to_str_name(self.obj_loc[o_id])
-            self.pddl_predicates['objectAtLocation'].add((str_obj_name, str_obj_loc_name))
-            self.pddl_predicates['locationInRoom'].add((str_obj_loc_name, str_obj_room_name))
+            self.pddl_predicate_set.add(object_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
+            self.pddl_predicate_set.add(location_in_room(emap[str_obj_loc_name], emap[str_obj_room_name]))
 
         # inReceptacle
-        self.pddl_predicates['inReceptacle'] = set()
         for r_id in self.rec_to_obj_map:
             str_rec_name = receptacle_to_str_name(self.sg.object[r_id])
             for o_id in self.rec_to_obj_map[r_id]:
                 str_obj_name = object_to_str_name(self.sg.object[o_id])
-                self.pddl_predicates['inReceptacle'].add((str_obj_name, str_rec_name))
+                self.pddl_predicate_set.add(in_receptacle(emap[str_obj_name], emap[str_rec_name]))
 
-    def generate_pddl_problem(self):
-        """Append predicates for a sampled problem, and generate goal.
+    def generate_pddl_problem(self, problem_filepath, task_length=1):
+        """Append predicates for a sampled problem, and generate a goal.
         """
-        pap_task = self.sample_pick_and_place(vary_room=True)
+        task = self.sample_pick_and_place(vary_room=True, task_length=task_length)
 
-        if pap_task is not None:
-            pddl_predicates = self.pddl_predicates.copy()
+        if task is not None:
+            emap = self.pddl_entity_map
+            pddl_predicates = self.pddl_predicate_set.copy()
+
+            # Predicate Types
+            in_room = self.domain.predicates['inroom']
+            at_location = self.domain.predicates['atlocation']
+            in_receptacle = self.domain.predicates['inreceptacle']
 
             # init | agent: inRoom, atLocation
-            a_room_id = pap_task['agent']
+            a_room_id = task['agent_room_id']
             str_agent_room = room_to_str_name(self.sg.room[a_room_id])
             str_agent_room_loc = location_to_str_name(self.room_loc[a_room_id], is_room=True)
-            pddl_predicates['inRoom'] = (self.pddl_entities['agent'], str_agent_room)
-            pddl_predicates['atLocation'] = (self.pddl_entities['agent'], str_agent_room_loc)
+            pddl_predicates.add(in_room(emap['agent'], emap[str_agent_room]))
+            pddl_predicates.add(at_location(emap['agent'], emap[str_agent_room_loc]))
 
             # goal | pick object, place receptacle: inReceptacle
-            pddl_goal = dict()
-            str_obj_name = object_to_str_name(self.sg.object[pap_task['pick']])
-            str_rec_name = receptacle_to_str_name(self.sg.object[pap_task['place']])
-            pddl_goal['inReceptacle'] = (str_obj_name, str_rec_name)
+            goals = []
+            for i in range(len(task['object_ids'])):
+                str_obj_name = object_to_str_name(self.sg.object[task['object_ids'][i]])
+                str_rec_name = receptacle_to_str_name(self.sg.object[task['receptacle_ids'][i]])
+                goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))
+            pddl_goal = LiteralConjunction(goals)
 
-            return {'init': pddl_predicates, 'goal': pddl_goal}
+            PDDLProblemParser.create_pddl_file(
+                problem_filepath,
+                objects=self.pddl_entity_set,
+                initial_state=pddl_predicates,
+                problem_name="taskography_pick_and_place",
+                domain_name=self.domain.domain_name,
+                goal=pddl_goal,
+                fast_downward_order=True
+            )
+            return True
 
-        return None
+        return False
+
+
+def generate_pddl_problems(args):
+    """Generate randomly sampled pick and place PDDL problems as per the specified args parameters.
+    """
+    if not os.path.exists(args.output_dir):
+        os.mkdir(args.output_dir)
+
+    data_type = 'automated_graph'
+    if args.data_split == 'tiny':
+        data_type = 'verified_graph'
+
+    data_path = os.path.join(args.data_root, args.data_split, data_type)
+    models = [(model.split('.')[0], os.path.join(data_path, model)) for model in os.listdir(data_path)]
+
+    # pddl gym domain parser
+    domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
+
+    count = itertools.count()
+    for model_name, model_path in models:
+        # sample and write tasks
+        scene_graph = load_scenegraph(model_path)
+        sampler = SceneGraphSampler(domain, scene_graph)
+        for i in range(args.samples_per_scene):
+            problem_file = os.path.join(args.output_dir, f'problem{next(count)}_{args.data_split}_{model_name}.pddl')
+            print(problem_file)
+            is_task = sampler.generate_pddl_problem(problem_file, task_length=args.task_length)
+            assert is_task
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-root', type=str, default='/home/agiachris/data/3dscenegraph')
     parser.add_argument('--data-split', type=str, default='tiny', choices=['tiny', 'medium'])
+    parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
+    parser.add_argument('--output-dir', type=str, default='./pddl/taskography_gym/')
+    parser.add_argument('--samples-per-scene', type=int, default=100)
+    parser.add_argument('--task-length', type=int, default=5)
     args = parser.parse_args()
-
-    data_type = 'automated_graph'
-    if args.data_split == 'tiny':
-        data_type = 'verified_graph'
-
-    # pick a model
-    model = "Allensville"
-    data_path = os.path.join(args.data_root, args.data_split, data_type, "3DSceneGraph_" + model + ".npz")
-    sg_sampler = SceneGraphSampler(load_scenegraph(data_path))
-
-    pddl_problem = sg_sampler.generate_pddl_problem()
-    pp_printer = pprint.PrettyPrinter()
-    pp_printer.pprint(pddl_problem['init'])
-    pp_printer.pprint(pddl_problem['goal'])
+    generate_pddl_problems(args)

@@ -26,18 +26,17 @@
 
 ;; agent goes to a room
  (:action GotoRoom
-    :parameters (?a - agent ?rStart - room ?rEnd - room)
-    :precondition (and (inRoom ?a ?rStart))
+    :parameters (?a - agent ?lStart - location ?rStart - room ?lEnd - location ?rEnd - room)
+    :precondition (and (inRoom ?a ?rStart)
+                       (atLocation ?a ?lStart)
+                       (locationInRoom ?lStart ?rStart)
+                       (roomLocation ?lEnd ?rEnd))
     :effect (and (inRoom ?a ?rEnd)
+                 (atLocation ?a ?lEnd)
                  (not (inRoom ?a ?rStart))
-                 (forall (?lStart - location)
-                     (when (and (atLocation ?a ?lStart) (locationInRoom ?lStart ?rStart))
-                        (not (atLocation ?a ?lStart))))
-                 (forall (?lEnd - location)
-                     (when (roomLocation ?lEnd ?rEnd)
-                        (atLocation ?a ?lEnd))))
+                 (not (atLocation ?a ?lStart)))
  )
-
+ 
 ;; agent goes to a location
  (:action GotoLocation
     :parameters (?a - agent ?lStart - location ?lEnd - location ?r - room)
