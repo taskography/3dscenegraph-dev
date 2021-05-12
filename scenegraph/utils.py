@@ -1,4 +1,5 @@
 import os
+import json
 from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
 
@@ -21,6 +22,18 @@ def location_to_str_name(room_data, is_room=False):
     if not is_room:
         return f"location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
     return f"center_location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
+
+
+def save_json(filepath, data):
+    with open(filepath, 'w') as fp:
+        json.dump(data, fp)
+
+
+def load_json(filepath):
+    data = None
+    with open(filepath, 'r') as fp:
+        data = json.load(fp)
+    return data
 
 
 def convert_pddl_domain(domain_filepath, updated_filename):

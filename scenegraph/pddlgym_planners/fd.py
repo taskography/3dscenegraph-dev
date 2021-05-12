@@ -65,8 +65,9 @@ class FD(PDDLPlanner):
             self._statistics["num_node_expansions"] = 0
         if len(num_node_expansions) == 1:
             assert int(num_node_expansions[0]) == float(num_node_expansions[0])
-            self._statistics["num_node_expansions"] += int(
-                num_node_expansions[0])
+            # self._statistics["num_node_expansions"] += int(
+            #     num_node_expansions[0])
+            self._statistics["num_node_expansions"] = int(num_node_expansions[0])
         if len(search_time) == 1:
             try:
                 search_time_float = float(search_time[0])

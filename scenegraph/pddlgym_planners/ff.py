@@ -40,8 +40,9 @@ class FF(PDDLPlanner):
             self._statistics["num_node_expansions"] = 0
         if len(num_node_expansions) == 1:
             assert int(num_node_expansions[0]) == float(num_node_expansions[0])
-            self._statistics["num_node_expansions"] += int(
-                num_node_expansions[0])
+            # self._statistics["num_node_expansions"] += int(
+            #     num_node_expansions[0])
+            self._statistics["num_node_expansions"] = int(num_node_expansions[0])
         if "found legal plan" in output:
             plan_length = re.findall(r"(\d+):", output.lower())
             self._statistics["plan_length"] = len(plan_length)

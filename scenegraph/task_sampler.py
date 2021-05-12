@@ -1,9 +1,9 @@
 import os
 import time
+import shutil
 import argparse
 import random
 import numpy as np
-import itertools
 
 
 from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
@@ -20,6 +20,7 @@ class SceneGraphSampler:
         """
         self.domain = domain
         self.sg = scene_graph
+        self.valid = True
 
         # ids of objects, receptacles, and other (as per OBJECTS)
         self.obj_ids = set()
@@ -28,6 +29,8 @@ class SceneGraphSampler:
         self.get_object_ids()
         self.num_objs = len(self.obj_ids)
         self.num_recs = len(self.rec_ids)
+        if self.num_objs == 0 or self.num_recs == 0:
+            self.valid = False
 
         # get supported and unsupported (by receptacle) objects
         self.rec_to_obj_map = dict()
@@ -61,12 +64,13 @@ class SceneGraphSampler:
         """
         for obj_id in self.sg.object:
             obj = self.sg.object[obj_id]
-            if obj.class_ in RECEPTACLES:
-                self.rec_ids.add(obj_id)
-            elif obj.class_ in OBJECTS:
-                self.obj_ids.add(obj_id)
-            else:
-                self.other_ids.add(obj_id)
+            if obj.parent_room is not None:
+                if obj.class_ in RECEPTACLES:
+                    self.rec_ids.add(obj_id)
+                elif obj.class_ in OBJECTS:
+                    self.obj_ids.add(obj_id)
+                else:
+                    self.other_ids.add(obj_id)
 
     def get_object_mapping(self, dist_threshold=2):
         """Determine receptacle and object pairings based on a hand-selected proximity
@@ -141,6 +145,7 @@ class SceneGraphSampler:
 
         for r_id in self.rec_ids:
             room_id = self.sg.object[r_id].parent_room
+            # self.sg.object[r_id].print_attributes()
             floor_num = self.sg.room[room_id].floor_number
             rec_coord = np.floor(self.sg.object[r_id].location / voxel_res).astype(int)[:2]
             self.rec_loc[r_id] = (rec_coord, room_id, floor_num)
@@ -201,7 +206,7 @@ class SceneGraphSampler:
         valid = True
         valid = valid and len(set(task['object_ids'])) == len(task['object_ids'])
         if vary_room:
-            valid = valid and task['agent_room_id'] not in task['object_room_ids']
+            # valid = valid and task['agent_room_id'] not in task['object_room_ids']
             valid = valid and all([task['object_room_ids'][i] != task['receptacle_room_ids'][i] for i in range(n)])
 
         # sorted task parameters
@@ -371,8 +376,10 @@ class SceneGraphSampler:
 def generate_pddl_problems(args):
     """Generate randomly sampled pick and place PDDL problems as per the specified args parameters.
     """
-    if not os.path.exists(args.output_dir):
-        os.mkdir(args.output_dir)
+    output_dir = os.path.join(args.output_dir, args.data_split)
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir)
 
     data_type = 'automated_graph'
     if args.data_split == 'tiny':
@@ -384,16 +391,31 @@ def generate_pddl_problems(args):
     # pddl gym domain parser
     domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
 
-    count = itertools.count()
+    skipped_scenes = []
+    generated_scenes = []
+    count = 0
     for model_name, model_path in models:
         # sample and write tasks
         scene_graph = load_scenegraph(model_path)
         sampler = SceneGraphSampler(domain, scene_graph)
+
+        # all objects / receptacles must have a designated parent room
+        if not sampler.valid or sampler.num_objs < args.task_length:
+            print(f'Skipping invalid model: {model_name}')
+            skipped_scenes.append(model_name)
+            continue
+
+        print(f'Generating task {count} on: {model_name}')
+        generated_scenes.append(model_name)
         for i in range(args.samples_per_scene):
-            problem_file = os.path.join(args.output_dir, f'problem{next(count)}_{args.data_split}_{model_name}.pddl')
-            print(problem_file)
+            problem_file = os.path.join(output_dir, f'problem{count}_{args.data_split}_{model_name}.pddl')
             is_task = sampler.generate_pddl_problem(problem_file, task_length=args.task_length)
-            assert is_task
+            if not is_task:
+                break
+            count += 1
+
+    print("Invalid Scenes:", skipped_scenes)
+    print("Generated Scenes:", generated_scenes)
 
 
 if __name__ == '__main__':
@@ -403,6 +425,8 @@ if __name__ == '__main__':
     parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
     parser.add_argument('--output-dir', type=str, default='./pddl/taskography_gym/')
     parser.add_argument('--samples-per-scene', type=int, default=100)
-    parser.add_argument('--task-length', type=int, default=5)
+    parser.add_argument('--task-length', type=int, default=10)
+    parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
+    random.seed(args.seed)
     generate_pddl_problems(args)
