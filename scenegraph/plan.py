@@ -1,5 +1,6 @@
 import os
 import argparse
+import random
 import numpy as np
 import pprint
 
@@ -59,12 +60,19 @@ def generate_dataset_statistics(args, planner):
     save_json(os.path.join(args.exp_dir, args.exp_name + '.json'), planner_stats)
 
 
-def planning_demo(planner, domain_file, problem_file):
+def planning_demo(args, planner, problem_file=None):
     """Run pddlgym_planner.PDDLPlanner on domain file and problem file.
     """
+    if problem_file is None:
+        dirname = '{}/{}'.format(os.path.splitext(args.domain)[0], args.data_split)
+        problem_files = [os.path.join(dirname, model) for model in os.listdir(dirname)]
+        problem_file = random.choice(problem_files)
+    print('Attempting: {}'.format(problem_file))
     try:
-        plan = planner.plan_from_pddl(domain_file, problem_file)
-        print("Statistics:", planner.get_statistics())
+        plan = planner.plan_from_pddl(args.domain, problem_file)
+        print("Statistics")
+        pprinter = pprint.PrettyPrinter()
+        pprinter.pprint(planner.get_statistics())
     except PlanningTimeout:
         print('Timeout')
     except PlanningFailure:
@@ -87,12 +95,6 @@ if __name__ == '__main__':
         os.mkdir(args.exp_dir)
 
     if args.demo:
-        sample_tiny_problem = './pddl/taskography_gym/tiny/problem1029_tiny_3DSceneGraph_Merom.pddl'
-        sample_medium_problem = './pddl/taskography_gym/medium/problem992_medium_3DSceneGraph_Westfield.pddl'
-        planning_demo(PLANNERS['FD'], args.domain, sample_tiny_problem)
-        planning_demo(PLANNERS['FF'], args.domain, sample_tiny_problem)
-        planning_demo(PLANNERS['FD'], args.domain, sample_medium_problem)
-        planning_demo(PLANNERS['FF'], args.domain, sample_medium_problem)
-
+        planning_demo(args, PLANNERS[args.planner])
     else:
         generate_dataset_statistics(args, PLANNERS[args.planner])

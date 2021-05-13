@@ -1,5 +1,6 @@
 import os
 import json
+import pprint
 from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
 
@@ -36,11 +37,22 @@ def load_json(filepath):
     return data
 
 
+def print_json(filepath):
+    data = load_json(filepath)
+    print(f'--- Experiment: {filepath} ---')
+    pprinter = pprint.PrettyPrinter()
+    pprinter.pprint(data)
+
+
 def convert_pddl_domain(domain_filepath, updated_filename):
     domain = PDDLDomainParser(domain_filepath, expect_action_preds=False, operators_as_actions=False)
     domain.write(updated_filename)
 
 
 if __name__ == '__main__':
-    convert_pddl_domain('./pddl/taskography.pddl', './pddl/taskography_gym.pddl')
-    convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')
+    # convert_pddl_domain('./pddl/taskography.pddl', './pddl/taskography_gym.pddl')
+    # convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')
+    print_json('exp/FD_tiny.json')
+    print_json('exp/FD_medium.json')
+    print_json('exp/FF_tiny.json')
+    print_json('exp/FF_medium.json')
