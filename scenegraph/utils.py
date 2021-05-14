@@ -51,8 +51,8 @@ def convert_pddl_domain(domain_filepath, updated_filename):
 
 if __name__ == '__main__':
     # convert_pddl_domain('./pddl/taskography.pddl', './pddl/taskography_gym.pddl')
-    # convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')
-    print_json('exp/FD_tiny.json')
-    print_json('exp/FD_medium.json')
-    print_json('exp/FF_tiny.json')
-    print_json('exp/FF_medium.json')
+    convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')
+    # print_json('exp/FD_tiny.json')
+    # print_json('exp/FD_medium.json')
+    # print_json('exp/FF_tiny.json')
+    # print_json('exp/FF_medium.json')

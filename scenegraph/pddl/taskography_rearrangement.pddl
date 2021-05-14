@@ -21,7 +21,7 @@
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
     (objectAtLocation ?o - object ?l - location)              ; true if the object is at the location
 
-    ;; object-receptacle interaction
+    ;; object-object and object-receptacle interaction
     (inReceptacle ?o - object ?r - receptacle)                ; true if object ?o is in receptacle ?r
     (inReceptacleObject ?o - object ?ro - object)             ; true if object ?o is in receptacle object ?ro
 

@@ -7,13 +7,15 @@ import pprint
 import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
+from pddlgym_planners.ffx import FFX
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import save_json
 
 
 PLANNERS = {
     'FD': FD(alias_flag="--alias lama-first"),
-    'FF': FF()
+    'FF': FF(),
+    'FF-X': FFX()
 }
 
 
@@ -82,7 +84,7 @@ def planning_demo(args, planner, problem_file=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-name', type=str, required=True)
-    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF'])
+    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'])
     parser.add_argument('--exp-dir', type=str, default='./exp')
     parser.add_argument('--data-root', type=str, default='./pddl/taskography_gym/')
     parser.add_argument('--data-split', type=str, default='tiny', choices=['tiny', 'medium'])

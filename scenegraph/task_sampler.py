@@ -1,6 +1,5 @@
 import os
 import time
-import shutil
 import argparse
 import random
 import numpy as np
@@ -378,7 +377,8 @@ def generate_pddl_problems(args):
     """
     output_dir = os.path.join(args.output_dir, args.data_split)
     if os.path.exists(output_dir):
-        shutil.rmtree(output_dir)
+        print(f'Error: {output_dir} already exists and requires manual deletion')
+        exit(1)
     os.makedirs(output_dir)
 
     data_type = 'automated_graph'

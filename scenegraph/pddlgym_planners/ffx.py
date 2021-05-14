@@ -8,18 +8,19 @@ import sys
 from pddlgym_planners.pddl_planner import PDDLPlanner
 from pddlgym_planners.planner import PlanningFailure
 
-FF_URL = "https://fai.cs.uni-saarland.de/hoffmann/ff/FF-v2.3.tgz"
+FF_URL = "https://fai.cs.uni-saarland.de/hoffmann/ff/FF-X.tgz"
 FF_MAC_URL = "https://github.com/ronuchit/FF.git"
 
 
-class FF(PDDLPlanner):
+class FFX(PDDLPlanner):
     """Fast-forward planner.
     """
     def __init__(self):
         super().__init__()
         dirname = os.path.dirname(os.path.realpath(__file__))
-        self._exec = os.path.join(dirname, "FF-v2.3/ff")
-        print("Instantiating FF")
+        self._exec = os.path.join(dirname, "FF-X/ff")
+        print("Instantiating FF-X")
+        print(self._exec) # stuff
         if not os.path.exists(self._exec):
             self._install_ff()
 
@@ -47,13 +48,13 @@ class FF(PDDLPlanner):
             plan_length = re.findall(r"(\d+):", output.lower())
             self._statistics["plan_length"] = len(plan_length)
         if len(total_time) == 1:
-            try: 
+            try:
                 total_time_float = float(total_time[0])
                 self._statistics["total_time"] = total_time_float
             except:
                 raise PlanningFailure("Error on output's total time format: {}".format(total_time[0]))
         if len(search_time) == 1:
-            try: 
+            try:
                 search_time_float = float(search_time[0])
                 self._statistics["search_time"] = search_time_float
             except:
@@ -74,6 +75,7 @@ class FF(PDDLPlanner):
 
     def _install_ff(self):
         loc = os.path.dirname(self._exec)
+        print('loc', loc)
         if sys.platform == "darwin":
             # Install FF patched for Mac.
             os.system("git clone {} {}".format(FF_MAC_URL, loc))
