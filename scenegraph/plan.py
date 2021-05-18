@@ -24,9 +24,9 @@ STATS = ['num_node_expansions', 'plan_length', 'search_time', 'total_time']
 
 
 def generate_dataset_statistics(args, planner):
-    """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_split dataset.
+    """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
-    problems_dir = os.path.join(args.data_root, args.data_split)
+    problems_dir = args.data_root
     problem_files = [os.path.join(problems_dir, pddl_file) for pddl_file in os.listdir(problems_dir)]
     m = len(problem_files)
 
@@ -66,8 +66,7 @@ def planning_demo(args, planner, problem_file=None):
     """Run pddlgym_planner.PDDLPlanner on domain file and problem file.
     """
     if problem_file is None:
-        dirname = '{}/{}'.format(os.path.splitext(args.domain)[0], args.data_split)
-        problem_files = [os.path.join(dirname, model) for model in os.listdir(dirname)]
+        problem_files = [os.path.join(args.data_root, model) for model in os.listdir(args.data_root)]
         problem_file = random.choice(problem_files)
     print('Attempting: {}'.format(problem_file))
     try:
@@ -86,15 +85,14 @@ if __name__ == '__main__':
     parser.add_argument('--exp-name', type=str, required=True)
     parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'])
     parser.add_argument('--exp-dir', type=str, default='./exp')
-    parser.add_argument('--data-root', type=str, default='./pddl/taskography_gym/')
-    parser.add_argument('--data-split', type=str, default='tiny', choices=['tiny', 'medium'])
+    parser.add_argument('--data-root', type=str, required=True, help='Path to PDDL problem files')
     parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
     parser.add_argument('--timeout', type=float, default=10.)
     parser.add_argument('--demo', action='store_true')
     args = parser.parse_args()
 
     if not os.path.exists(args.exp_dir):
-        os.mkdir(args.exp_dir)
+        os.makedirs(args.exp_dir)
 
     if args.demo:
         planning_demo(args, PLANNERS[args.planner])

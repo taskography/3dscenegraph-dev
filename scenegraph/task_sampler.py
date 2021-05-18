@@ -375,7 +375,7 @@ class SceneGraphSampler:
 def generate_pddl_problems(args):
     """Generate randomly sampled pick and place PDDL problems as per the specified args parameters.
     """
-    output_dir = os.path.join(args.output_dir, args.data_split)
+    output_dir = os.path.join(args.output_dir, args.data_split + str(args.task_length))
     if os.path.exists(output_dir):
         print(f'Error: {output_dir} already exists and requires manual deletion')
         exit(1)
