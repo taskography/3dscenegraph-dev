@@ -46,14 +46,21 @@ def stats_subplot(stat_name, output_file):
     ax[1].set_title('Gibson Medium')
     ax[1].set_xlabel('Number of Subtasks')
     
+    has_data = False
     for i, split in enumerate(stats.keys()):
         for planner in sorted(stats[split].keys()):
             task_lengths = [s[0] for s in stats[split][planner]]
             data = [s[1][stat_name] for s in stats[split][planner]]
+            if len(data) > 0:
+                has_data = True
             ax[i].plot(task_lengths, data, label=planner)
         ax[i].legend()
     
-    plt.savefig(output_file)
+    if has_data:
+        plt.savefig(output_file)
+    else:
+        raise ValueError("No data to plot")
+
     plt.close(fig)
 
 output_dir = './figures'
