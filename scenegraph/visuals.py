@@ -53,7 +53,7 @@ def stats_subplot(stat_name, output_file):
             data = [s[1][stat_name] for s in stats[split][planner]]
             if len(data) > 0:
                 has_data = True
-            ax[i].plot(task_lengths, data, label=planner)
+            ax[i].plot(task_lengths, data, label=planner, marker='o')
         ax[i].legend()
     
     if has_data:
