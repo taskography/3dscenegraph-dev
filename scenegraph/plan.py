@@ -53,8 +53,8 @@ def generate_dataset_statistics(args, planner):
     for stat in STATS:
         planner_stats[stat] = float(planner_stats[stat].mean().item())
     planner_stats['success_rate'] = float(len(run_stats) / m)
-    planner_stats['timeout_rate'] = float(failures / m)
-    planner_stats['failure_rate'] = float(timeouts / m)
+    planner_stats['timeout_rate'] = float(timeouts / m)
+    planner_stats['failure_rate'] = float(failures / m)
 
     # save statistics
     pprinter = pprint.PrettyPrinter()
