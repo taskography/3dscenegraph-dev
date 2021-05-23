@@ -28,6 +28,8 @@ def generate_dataset_statistics(args, planner):
     """
     problems_dir = args.data_root
     problem_files = [os.path.join(problems_dir, pddl_file) for pddl_file in os.listdir(problems_dir)]
+    if args.limit is not None:
+        problem_files = problem_files[:args.limit]
     m = len(problem_files)
 
     run_stats = []
@@ -89,6 +91,7 @@ if __name__ == '__main__':
     parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
     parser.add_argument('--timeout', type=float, default=10.)
     parser.add_argument('--demo', action='store_true')
+    parser.add_argument('--limit', type=int, default=None)
     args = parser.parse_args()
 
     if not os.path.exists(args.exp_dir):
