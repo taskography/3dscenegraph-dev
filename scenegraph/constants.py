@@ -85,34 +85,6 @@ RECEPTACLE_OBJECTS = {
 # non-receptacle objects cannot store other objects
 NON_RECEPTACLE_OBJECTS = OBJECTS - RECEPTACLE_OBJECTS
 
-# TODO: declare valid sampled object-receptacle_object pairings for tasks
-# VALID_RECEPTACLE_OBJECTS_TO_OBJECTS = {
-#     'backpack': {
-#
-#     },
-#     'baseball glove': {
-#
-#     },
-#     'bottle': {
-#
-#     },
-#     'bowl': {
-#
-#     },
-#     'handbag': {
-#
-#     },
-#     'suitcase': {
-#
-#     },
-#     'vase': {
-#
-#     },
-#     'wine glass': {
-#
-#     }
-# }
-
 
 # ------------------------- RECEPTACLES -------------------------
 
@@ -160,76 +132,6 @@ CLEANING_RECEPTACLES = {
 #     'sink',
 #     'toaster',
 #     'toilet'
-# }
-
-# TODO: declare valid sampled object-receptacle pairings for tasks
-# VALID_RECEPTACLES_TO_OBJECTS = {
-#     'bed': {
-#         'apple',
-#         'backpack',
-#         'banana',
-#         'baseball bat',
-#         'baseball glove',
-#         'book',
-#         'bottle',
-#         'bowl',
-#         'cake',
-#         'cell phone',
-#         'clock',
-#         'cup',
-#         'frisbee',
-#         'handbag',
-#         'keyboard',
-#         'kite',
-#         'knife',
-#         'laptop',
-#         'mouse',
-#         'orange',
-#         'potted plant',
-#         'remote',
-#         'spoon',
-#         'sports ball',
-#         'suitcase',
-#         'teddy bear',
-#         'tie',
-#         'toothbrush',
-#         'umbrella',
-#         'vase',
-#         'wine glass'
-#     },
-#     'bench': {
-#
-#     },
-#     'boat': {
-#
-#     },
-#     'chair': {
-#
-#     },
-#     'couch': {
-#
-#     },
-#     'dining table': {
-#
-#     },
-#     'microwave': {
-#
-#     },
-#     'oven': {
-#
-#     },
-#     'refrigerator': {
-#
-#     },
-#     'sink': {
-#
-#     },
-#     'toaster': {
-#
-#     },
-#     'toilet': {
-#
-#     }
 # }
 
 

@@ -12,6 +12,47 @@ from constants import *
 from utils import *
 
 
+class SceneGraphSamplerBase:
+
+    def __init__(self, domain, scene_graph):
+        """Rearrangement Task Sampler from 3D Scene Graph
+        """
+        self.domain = domain
+        self.sg = scene_graph
+
+        # ids of objects, receptacles, and other (as per OBJECTS)
+        self.obj_ids = set()
+        self.rec_ids = set()
+        self.other_ids = set()
+        self.get_object_ids()
+        self.num_objs = len(self.obj_ids)
+        self.num_recs = len(self.rec_ids)
+
+        # get supported and unsupported (by receptacle) objects
+        self.rec_to_obj_map = dict()
+        self.obj_to_rec_map = dict()
+        self.room_to_obj_map = dict()           # for sampling objects (pick)
+        self.room_to_rec_map = dict()           # for sampling receptacles (place)
+        self.get_object_mapping()
+
+        # 2d grid coordinates, room ids, and floor numbers for objects, receptacles and rooms
+        self.obj_loc = dict()
+        self.rec_loc = dict()
+        self.room_loc = dict()
+        self.get_locations()
+
+        # PDDL entities and name-to-entity mapping
+        self.pddl_entity_set = set()
+        self.pddl_entity_map = dict()
+        self.generate_pddl_entities()
+        # PDDL predicates
+        self.pddl_predicate_set = set()
+        self.generate_pddl_predicates()
+
+
+    
+
+
 class SceneGraphSampler:
 
     def __init__(self, domain, scene_graph):
