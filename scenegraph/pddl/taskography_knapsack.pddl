@@ -12,6 +12,7 @@
 	(objectatlocation ?v0 - object ?v1 - location)
 	(inreceptacle ?v0 - object ?v1 - receptacle)
 	(holds ?v0 - bagslot ?v1 - object)
+	(holdsany ?s - bagslot)
   )
   ; (:actions )
 
@@ -47,9 +48,10 @@
 		:parameters (?a - agent ?o - object ?l - location ?s - bagslot)
 		:precondition (and (atlocation ?a ?l)
 			(objectatlocation ?o ?l)
-			(forall (?o2 - object) (not (holds ?s ?o2)))
+			(not (holdsany ?s))
 			(forall (?r - receptacle) (not (inreceptacle ?o ?r))))
 		:effect (and
+			(holdsany ?s)
 			(holds ?s ?o)
 			(not (objectatlocation ?o ?l)))
 	)
@@ -61,10 +63,11 @@
 			(receptacleatlocation ?r ?l)
 			(objectatlocation ?o ?l)
 			(inreceptacle ?o ?r)
-			(forall (?o2 - object) (not (holds ?s ?o2)))
+			(not (holdsany ?s))
 		)
 		:effect (and
 			(holds ?s ?o)
+			(holdsany ?s)
 			(not (inreceptacle ?o ?r))
 			(not (objectatlocation ?o ?l)))
 	)
@@ -79,7 +82,9 @@
 		:effect (and
 			(inreceptacle ?o ?r)
 			(objectatlocation ?o ?l)
-			(not (holds ?s ?o)))
+			(not (holds ?s ?o))
+			(not (holdsany ?s))
+		)
 	)
 
   
