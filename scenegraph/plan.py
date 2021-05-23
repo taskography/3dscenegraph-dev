@@ -37,7 +37,7 @@ def generate_dataset_statistics(args, planner):
         try:
             print(f'Problem {i} / {m}: {pddl_problem}')
             plan = planner.plan_from_pddl(args.domain, pddl_problem, timeout=args.timeout)
-            run_stats.append(planner.get_statistics())
+            run_stats.append(planner.get_statistics().copy()) # copy is important because planner reuses the same list
         except PlanningTimeout:
             timeouts += 1
         except PlanningFailure:
