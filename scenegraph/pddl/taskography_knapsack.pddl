@@ -2,7 +2,7 @@
 (define (domain taskography)
   (:requirements :typing)
   (:types agent location room receptacle bagslot object)
-  (:constants slot1 slot2 slot3 - bagslot)
+  (:constants slot1 slot2 slot3 slot4 - bagslot)
   
   (:predicates (inroom ?v0 - agent ?v1 - room)
 	(roomlocation ?v0 - location ?v1 - room)
@@ -15,6 +15,7 @@
 	(holdsany ?v0 - agent)
 	(slotholdsany ?s - bagslot)
 	(inslot ?s ?o)
+	(smallobject ?o)
   )
   ; (:actions )
 
@@ -73,11 +74,12 @@
 			(not (objectatlocation ?o ?l)))
 	)
 
-	(:action stowinbag
+	(:action stowinbagoneslot
 		:parameters (?a - agent ?o - object ?s - bagslot)
 		:precondition (and
 			(holds ?a ?o)
 			(not (slotholdsany ?s))
+			(smallobject ?o)
 		)
 		:effect (and
 			(inslot ?s ?o)
@@ -85,9 +87,10 @@
 			(not (holdsany ?a))
 			(not (holds ?a ?o)))
 	)
-	(:action retrievefrombag
+	(:action retrievefrombagoneslot
 		:parameters (?a - agent ?o - object ?s - bagslot)
 		:precondition (and
+			(smallobject ?o)
 			(inslot ?s ?o)
 			(slotholdsany ?s)
 			(not (holdsany ?a)))
@@ -96,6 +99,42 @@
 			(holds ?a ?o)
 			(not (inslot ?s ?o))	
 			(not (slotholdsany ?s))
+		)
+	)
+
+		(:action stowinbagtwoslot
+		:parameters (?a - agent ?o - object ?s1 - bagslot ?s2 - bagslot)
+		:precondition (and
+			(holds ?a ?o)
+			(not (= ?s1 ?s2))
+			(not (smallobject ?o))
+			(not (slotholdsany ?s1))
+			(not (slotholdsany ?s2))
+		)
+		:effect (and
+			(inslot ?s1 ?o)
+			(inslot ?s2 ?o)
+			(slotholdsany ?s1)
+			(slotholdsany ?s2)
+			(not (holdsany ?a))
+			(not (holds ?a ?o)))
+	)
+	(:action retrievefrombagtwoslot
+		:parameters (?a - agent ?o - object ?s1 - bagslot ?s2 - bagslot)
+		:precondition (and
+			(inslot ?s1 ?o)
+			(inslot ?s2 ?o)
+			(not (= ?s1 ?s2))
+			(slotholdsany ?s1)
+			(slotholdsany ?s2)
+			(not (holdsany ?a)))
+		:effect (and
+			(holdsany ?a)
+			(holds ?a ?o)
+			(not (inslot ?s1 ?o))	
+			(not (slotholdsany ?s1))
+			(not (inslot ?s2 ?o))	
+			(not (slotholdsany ?s2))
 		)
 	)
 	
