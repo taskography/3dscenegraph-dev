@@ -58,32 +58,67 @@ OBJECTS = {
     'toothbrush',
     'umbrella',
     'vase',
-    'wine glass'
-}
-
-OBJECTS_OTHER = {
+    'wine glass',
     'bicycle',
     'motorcycle',
     'surfboard',
     'tv'
 }
 
-ALL_OBJECTS = OBJECTS | OBJECTS_OTHER
-
-# receptacle objects can store one non-receptacle object
-RECEPTACLE_OBJECTS = {
-    'backpack',
-    'baseball glove',
+# objects that can be placed in HEATING receptacle type
+HEATABLE_OBJECTS = {
+    'apple',
+    'banana',
     'bottle',
     'bowl',
-    'handbag',
-    'suitcase',
+    'cake',
+    'cup',
+    'orange'
+}
+
+# objects that can be placed in COOLING receptacle type
+COOLABLE_OBJECTS = {
+    'apple',
+    'banana',
+    'bottle',
+    'bowl',
+    'cake',
+    'cup',
+    'orange',
+    'wine glass'
+}
+
+# objects that can be placed in CLEANING receptacle type
+CLEANABLE_OBJECTS = {
+    'apple',
+    'banana',
+    'bottle',
+    'bowl',
+    'cup',
+    'frisbee',
+    'knife',
+    'orange',
+    'spoon',
+    'sports ball',
+    'toothbrush',
     'vase',
     'wine glass'
 }
 
-# non-receptacle objects cannot store other objects
-NON_RECEPTACLE_OBJECTS = OBJECTS - RECEPTACLE_OBJECTS
+# # receptacle objects can store one or more non-receptacle object
+# RECEPTACLE_OBJECTS = {
+#     'backpack',
+#     'baseball glove',
+#     'bottle',
+#     'bowl',
+#     'handbag',
+#     'suitcase',
+#     'vase',
+#     'wine glass'
+# }
+
+# # non-receptacle objects cannot store other objects
+# NON_RECEPTACLE_OBJECTS = OBJECTS - RECEPTACLE_OBJECTS
 
 
 # ------------------------- RECEPTACLES -------------------------

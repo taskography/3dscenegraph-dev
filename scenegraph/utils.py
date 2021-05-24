@@ -8,6 +8,15 @@ def room_to_str_name(room_inst):
     return f"room{int(room_inst.id)}_{room_inst.scene_category.replace(' ', '_')}"
 
 
+def place_to_str_name(place_id, inst, is_object=False, is_room=False):
+    assert (not (is_object and is_room))
+    if is_room:
+        return f"place{int(place_id)}_door_room{int(inst.id)}_{inst.scene_category.replace(' ', '_')}"
+    elif is_object:
+        return f"place{int(place_id)}_object{int(inst.id)}_{inst.class_.replace(' ', '_')}"
+    return f"place{int(place_id)}_receptacle{int(inst.id)}_{inst.class_.replace(' ', '_')}"
+
+
 def receptacle_to_str_name(rec_inst):
     return f"receptacle{int(rec_inst.id)}_{rec_inst.class_.replace(' ', '_')}"
 
@@ -16,13 +25,11 @@ def object_to_str_name(obj_inst):
     return f"object{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}"
 
 
-def location_to_str_name(room_data, is_room=False):
+def location_to_str_name(room_data, place_id):
     (cx, cy), room_id, floor_num = room_data
     cx = f"neg{-cx}" if cx < 0 else f"pos{cx}"
     cy = f"neg{-cy}" if cy < 0 else f"pos{cy}"
-    if not is_room:
-        return f"location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
-    return f"center_location_x{cx}_y{cy}_room{int(room_id)}_floor{floor_num}"
+    return f"location_x{cx}_y{cy}_place{place_id}_room{int(room_id)}_floor{floor_num}"
 
 
 def save_json(filepath, data):
@@ -47,12 +54,3 @@ def print_json(filepath):
 def convert_pddl_domain(domain_filepath, updated_filename):
     domain = PDDLDomainParser(domain_filepath, expect_action_preds=False, operators_as_actions=False)
     domain.write(updated_filename)
-
-
-if __name__ == '__main__':
-    # convert_pddl_domain('./pddl/taskography.pddl', './pddl/taskography_gym.pddl')
-    convert_pddl_domain('./pddl/taskography_extended.pddl', './pddl/taskography_extended_gym.pddl')
-    # print_json('exp/FD_tiny.json')
-    # print_json('exp/FD_medium.json')
-    # print_json('exp/FF_tiny.json')
-    # print_json('exp/FF_medium.json')

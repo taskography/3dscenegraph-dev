@@ -91,15 +91,15 @@
                  (not (objectAtLocation ?o ?l)))
  )
 
-;; agent picks up object from receptacle
+
+;; agent picks up object from a non-opening receptacle
  (:action PickupObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (receptacleAtLocation ?r ?l)
                        (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
-                       (or (and (receptacleOpeningType ?r) (receptacleOpened ?r))
-                           (not (receptacleOpeningType ?r)))
+                       (not (receptacleOpeningType ?r))
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
                  (holds ?a ?o)
@@ -107,16 +107,47 @@
                  (not (objectAtLocation ?o ?l)))
  )
 
- 
+
+;; agent picks up object from an opening receptacle
+ (:action PickupObjectInOpeningReceptacle
+    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+    :precondition (and (atLocation ?a ?l)
+                       (receptacleAtLocation ?r ?l)
+                       (objectAtLocation ?o ?l)
+                       (inReceptacle ?o ?r)
+                       (receptacleOpeningType ?r)
+                       (receptacleOpened ?r)
+                       (not (holdsAny ?a)))
+    :effect (and (holdsAny ?a)
+                 (holds ?a ?o)
+                 (not (inReceptacle ?o ?r))
+                 (not (objectAtLocation ?o ?l)))
+ )
+
+
 ;; ------------------------------------ AGENT PLACE  ------------------------------------
 
-;; agent places object in receptacle
+;; agent places object in non-opening receptacle
  (:action PutObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?r ?l)
-                        (or (and (receptacleOpeningType ?r) (receptacleOpened ?r))
-                            (not (receptacleOpeningType ?r)))
+                        (not (receptacleOpeningType ?r))
+                        (holds ?a ?o))
+    :effect (and (inReceptacle ?o ?r)
+                 (objectAtLocation ?o ?l)
+                 (not (holdsAny ?a))
+                 (not (holds ?a ?o)))
+ )
+
+
+ ;; agent places object in opening receptacle
+ (:action PutObjectInOpeningReceptacle
+    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+    :precondition (and (atLocation ?a ?l)
+                        (receptacleAtLocation ?r ?l)
+                        (receptacleOpeningType ?r)
+                        (receptacleOpened ?r)
                         (holds ?a ?o))
     :effect (and (inReceptacle ?o ?r)
                  (objectAtLocation ?o ?l)
