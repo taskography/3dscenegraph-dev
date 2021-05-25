@@ -12,25 +12,25 @@ from utils import convert_pddl_domain
 def generate_pddl_problems(args):
     """Generate randomly sampled pick and place PDDL problems as per the specified args parameters.
     """
+    # PDDLGym domain parser
+    domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
+    domain_name = domain.domain_name
+
+    # create output directories
     domain_path, ext = os.path.splitext(args.domain)
-    domain_name = os.path.split(domain_path)[-1]
     convert_pddl_domain(args.domain, domain_path + '_gym.pddl')
     output_dir = os.path.join(args.output_dir, domain_name, args.data_split + str(args.task_length))
-
     if os.path.exists(output_dir):
         print(f'Error: {output_dir} already exists and requires manual deletion')
         exit(1)
     os.makedirs(output_dir)
 
+    # scenegraph models
     data_type = 'automated_graph'
     if args.data_split == 'tiny':
         data_type = 'verified_graph'
-
     data_path = os.path.join(args.data_root, args.data_split, data_type)
     models = [(model.split('.')[0], os.path.join(data_path, model)) for model in os.listdir(data_path)]
-
-    # pddl gym domain parser
-    domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
 
     skipped_scenes = []
     generated_scenes = []
@@ -49,7 +49,7 @@ def generate_pddl_problems(args):
         print(f'Generating task {count} on: {model_name}')
         generated_scenes.append(model_name)
         for i in range(args.samples_per_scene):
-            problem_file = os.path.join(output_dir, f'problem{count}_{args.data_split}_{model_name}.pddl')
+            problem_file = os.path.join(output_dir, f'problem{count}_{args.data_split}_{model_name}_{domain_name}.pddl')
             is_task = sampler.generate_pddl_problem(problem_file, task_length=args.task_length)
             if not is_task:
                 break

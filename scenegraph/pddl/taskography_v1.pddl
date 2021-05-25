@@ -1,6 +1,6 @@
 ;; Specification of non-hierarchical Taskography (object levels only)
 
-(define (domain taskography)
+(define (domain taskography_v1)
  (:requirements
   :adl
  )
@@ -12,7 +12,7 @@
   )
 
  (:predicates
-    ;; locations
+    ;; locations states
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
     (objectAtLocation ?o - object ?l - location)              ; true if the object is at the location
@@ -96,7 +96,6 @@
  (:action PickupObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (receptacleAtLocation ?r ?l)
                        (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
                        (not (receptacleOpeningType ?r))
@@ -112,7 +111,6 @@
  (:action PickupObjectInOpeningReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (receptacleAtLocation ?r ?l)
                        (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
                        (receptacleOpeningType ?r)

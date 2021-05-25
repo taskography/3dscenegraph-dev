@@ -1,21 +1,29 @@
-;; Specification of non-hierarchical Taskography (object levels only)
+;; Specification of hierarchical Taskography (object levels only)
 
-(define (domain taskography)
+(define (domain taskography_v2)
  (:requirements
   :adl
  )
  (:types
   agent
+  room
+  place
   location
   receptacle
   object
   )
 
  (:predicates
-    ;; locations
+    ;; locations states
+    (inRoom ?a - agent ?r - room)                             ; true if the agent is in the room
+    (inPlace ?a - agent ?p - place)                             ; true if the agent is in the place
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
     (objectAtLocation ?o - object ?l - location)              ; true if the object is at the location
+    (placeInRoom ?p - place ?r - room)                 ; true if the place is in the room
+    (locationInPlace ?l - location ?p - place)                 ; true if the location is in the place
+    (roomPlace ?p - place ?r - room)                    ; true if the place is the door (center) of the room
+    (placeLocation ?l - location ?p - place)                    ; true if the location is the center point of the place
     
     ;; object-receptacle interaction
     (inReceptacle ?o - object ?r - receptacle)                ; true if object ?o is in receptacle ?r
@@ -34,10 +42,53 @@
 
 ;; ------------------------------------ MOVE AGENT ------------------------------------
 
+;; agent goes to room
+ (:action GoToRoom
+     :parameters (?a - agent ?rStart - room ?rEnd - room ?pStart - place ?pEnd - place ?lStart - location ?lEnd - location)
+     :precondition (and (inRoom ?a ?rStart)
+                        (inPlace ?a ?pStart)
+                        (atLocation ?a ?lStart)
+                        ; agent starts and ends at doors
+                        (roomPlace ?pStart ?rStart)
+                        (placeLocation ?lStart ?pStart)
+                        (roomPlace ?pEnd ?rEnd)
+                        (placeLocation ?lEnd ?pEnd)
+     )
+     :effect (and (inRoom ?a ?rEnd)
+                  (inPlace ?a ?pEnd)
+                  (atLocation ?a ?lEnd)
+                  (not (inRoom ?a ?rStart))
+                  (not (inPlace ?a ?pStart))
+                  (not (atLocation ?a ?lStart))
+     )
+ )
+ 
+
+;; agent goes to place
+ (:action GoToPlace
+     :parameters (?a - agent ?pStart - place ?pEnd - place ?lStart - location ?lEnd - location ?r - room)
+     :precondition (and (inRoom ?a ?r)
+                        (inPlace ?a ?pStart)
+                        (atLocation ?a ?lStart)
+                        ; agent starts and ends at place centers
+                        (placeLocation ?lStart ?pStart)
+                        (placeInRoom ?pEnd ?r)
+                        (placeLocation ?lEnd ?pEnd)
+     )
+     :effect (and (inPlace ?a ?pEnd)
+                  (atLocation ?a ?lEnd)
+                  (not (inPlace ?a ?pStart))
+                  (not (atLocation ?a ?lStart))
+     )
+ )
+
+
 ;; agent goes to a location
  (:action GotoLocation
-    :parameters (?a - agent ?lStart - location ?lEnd - location)
-    :precondition (and (atLocation ?a ?lStart))
+    :parameters (?a - agent ?lStart - location ?lEnd - location ?p - place)
+    :precondition (and (inPlace ?a ?p)
+                       (atLocation ?a ?lStart)
+                       (locationInPlace ?lEnd ?p))
     :effect (and (atLocation ?a ?LEnd)
                  (not (atLocation ?a ?lStart)))
  )
@@ -96,7 +147,6 @@
  (:action PickupObjectInReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (receptacleAtLocation ?r ?l)
                        (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
                        (not (receptacleOpeningType ?r))
@@ -112,7 +162,6 @@
  (:action PickupObjectInOpeningReceptacle
     :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (receptacleAtLocation ?r ?l)
                        (objectAtLocation ?o ?l)
                        (inReceptacle ?o ?r)
                        (receptacleOpeningType ?r)

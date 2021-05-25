@@ -65,6 +65,54 @@ OBJECTS = {
     'tv'
 }
 
+SMALL_OBJECTS = {
+    'apple',
+    'banana',
+    'baseball glove',
+    'book',
+    'bottle',
+    'bowl',
+    'cell phone',
+    'cup',
+    'knife',
+    'mouse',
+    'orange',
+    'remote',
+    'spoon',
+    'tie',
+    'toothbrush',
+    'wine glass'
+}
+
+MEDIUM_OBJECTS = {
+    'cake',
+    'clock',
+    'frisbee',
+    'laptop',
+    'teddy bear',
+    'vase'
+}
+
+LARGE_OBJECTS = {
+    'backpack',
+    'baseball bat',
+    'handbag',
+    'keyboard',
+    'kite',
+    'potted plant',
+    'sports ball',
+    'suitcase',
+    'umbrella',
+    'bicycle',
+    'motorcycle',
+    'surfboard',
+    'tv'
+}
+
+
+assert(len(SMALL_OBJECTS.union(MEDIUM_OBJECTS.union(LARGE_OBJECTS))) == len(OBJECTS))
+
+
 # objects that can be placed in HEATING receptacle type
 HEATABLE_OBJECTS = {
     'apple',

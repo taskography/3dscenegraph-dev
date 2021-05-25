@@ -1,5 +1,5 @@
 
-(define (domain taskography)
+(define (domain taskography_v1)
   (:requirements :typing)
   (:types agent location receptacle object)
   
@@ -63,7 +63,6 @@
 	(:action pickupobjectinreceptacle
 		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
-			(receptacleatlocation ?r ?l)
 			(objectatlocation ?o ?l)
 			(inreceptacle ?o ?r)
 			(not (receptacleopeningtype ?r))
@@ -79,7 +78,6 @@
 	(:action pickupobjectinopeningreceptacle
 		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
-			(receptacleatlocation ?r ?l)
 			(objectatlocation ?o ?l)
 			(inreceptacle ?o ?r)
 			(receptacleopeningtype ?r)

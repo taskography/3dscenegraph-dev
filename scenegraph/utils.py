@@ -21,15 +21,15 @@ def receptacle_to_str_name(rec_inst):
     return f"receptacle{int(rec_inst.id)}_{rec_inst.class_.replace(' ', '_')}"
 
 
-def object_to_str_name(obj_inst):
-    return f"object{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}"
+def object_to_str_name(obj_inst, size):
+    return f"object{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}_{size}"
 
 
 def location_to_str_name(room_data, place_id):
     (cx, cy), room_id, floor_num = room_data
     cx = f"neg{-cx}" if cx < 0 else f"pos{cx}"
     cy = f"neg{-cy}" if cy < 0 else f"pos{cy}"
-    return f"location_x{cx}_y{cy}_place{place_id}_room{int(room_id)}_floor{floor_num}"
+    return f"location_X{cx}_Y{cy}_place{place_id}_room{int(room_id)}_floor{floor_num}"
 
 
 def save_json(filepath, data):

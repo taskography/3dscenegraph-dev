@@ -38,6 +38,7 @@ class TaskSamplerBase:
         # objects
         self.num_objects = 0
         self.objects = dict()
+        self.object_sizes = dict()
         self.object_names = dict()
         self.supported_objects = set()
         self.unsupported_objects = set()
@@ -96,13 +97,19 @@ class TaskSamplerBase:
                 
                 elif scene_entity.class_ in OBJECTS:
                     self.objects['all'].add(e_id)
-                    self.object_names[e_id] = object_to_str_name(scene_entity)
                     if scene_entity.class_ in HEATABLE_OBJECTS:
                         self.objects['heatable_type'].add(e_id)
                     if scene_entity.class_ in COOLABLE_OBJECTS:
                         self.objects['coolable_type'].add(e_id)
                     if scene_entity.class_ in CLEANABLE_OBJECTS:
                         self.objects['cleanable_type'].add(scene_entity)
+                    if scene_entity.class_ in SMALL_OBJECTS:
+                        self.object_sizes[e_id] = 'smallobject'
+                    elif scene_entity.class_ in MEDIUM_OBJECTS:
+                        self.object_sizes[e_id] = 'mediumobject'
+                    elif scene_entity.class_ in LARGE_OBJECTS:
+                        self.object_sizes[e_id] = 'largeobject'
+                    self.object_names[e_id] = object_to_str_name(scene_entity, self.object_sizes[e_id])
 
         self.num_objects = len(self.objects['all'])
         self.num_receptacles = len(self.receptacles['all'])
@@ -153,7 +160,7 @@ class TaskSamplerBase:
         for o_id in self.unsupported_objects:
             obj_inst = self.sg.object[o_id]
             self.place_names[self.num_places] = place_to_str_name(self.num_places, obj_inst, is_object=True)
-            self.place_to_entity_map[self.num_places] = {'root': o_id, 'objects': None}
+            self.place_to_entity_map[self.num_places] = {'root': o_id, 'objects': set()}
             self.entity_to_place_map['objects'][o_id] = self.num_places
             self.room_to_place_map[obj_inst.parent_room]['places'].add(self.num_places)
             self.num_places += 1

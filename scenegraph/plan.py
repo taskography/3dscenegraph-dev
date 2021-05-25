@@ -82,11 +82,11 @@ def planning_demo(args, planner, problem_file=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--exp-dir', type=str, default='./exp')
     parser.add_argument('--exp-name', type=str, required=True)
     parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'])
-    parser.add_argument('--exp-dir', type=str, default='./exp')
     parser.add_argument('--data-root', type=str, required=True, help='Path to PDDL problem files')
-    parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
+    parser.add_argument('--domain', type=str, required=True)
     parser.add_argument('--timeout', type=float, default=10.)
     parser.add_argument('--demo', action='store_true')
     args = parser.parse_args()
