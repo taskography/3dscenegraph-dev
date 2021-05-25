@@ -1,4 +1,4 @@
-;; Specification of non-hierarchical Taskography (object levels only)
+;; Specification of Non-Hierarchical Taskography
 
 (define (domain taskography_v1)
  (:requirements
@@ -8,21 +8,21 @@
   agent
   location
   receptacle
-  object
+  item
   )
 
  (:predicates
     ;; locations states
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
-    (objectAtLocation ?o - object ?l - location)              ; true if the object is at the location
+    (itemAtLocation ?i - item ?l - location)              ; true if the item is at the location
     
-    ;; object-receptacle interaction
-    (inReceptacle ?o - object ?r - receptacle)                ; true if object ?o is in receptacle ?r
+    ;; item-receptacle interaction
+    (inReceptacle ?i - item ?r - receptacle)                ; true if item ?i is in receptacle ?r
     
-    ;; agent-object interaction
-    (holds ?a - agent ?o - object)                            ; true if object ?o is held by agent ?a
-    (holdsAny ?a - agent)                                     ; true if agent ?a holds an object
+    ;; agent-item interaction
+    (holds ?a - agent ?i - item)                            ; true if item ?i is held by agent ?a
+    (holdsAny ?a - agent)                                     ; true if agent ?a holds an item
 
     ;; receptacle types
     (receptacleOpeningType ?r - receptacle)                         ; true if receptacle ?r is an opening type
@@ -77,80 +77,80 @@
 
 ;; ------------------------------------ AGENT PICKUP  ------------------------------------
  
-;; agent picks up object from ground
- (:action PickupObjectNoReceptacle
-    :parameters (?a - agent ?o - object ?l - location)
+;; agent picks up item from ground
+ (:action PickupItemNoReceptacle
+    :parameters (?a - agent ?i - item ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (objectAtLocation ?o ?l)
+                       (itemAtLocation ?i ?l)
                        (not (holdsAny ?a))
                        (forall (?r - receptacle)
-                           (not (inReceptacle ?o ?r))
+                           (not (inReceptacle ?i ?r))
                        ))
     :effect (and (holdsAny ?a)
-                 (holds ?a ?o)
-                 (not (objectAtLocation ?o ?l)))
+                 (holds ?a ?i)
+                 (not (itemAtLocation ?i ?l)))
  )
 
 
-;; agent picks up object from a non-opening receptacle
- (:action PickupObjectInReceptacle
-    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+;; agent picks up item from a non-opening receptacle
+ (:action PickupItemInReceptacle
+    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (objectAtLocation ?o ?l)
-                       (inReceptacle ?o ?r)
+                       (itemAtLocation ?i ?l)
+                       (inReceptacle ?i ?r)
                        (not (receptacleOpeningType ?r))
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
-                 (holds ?a ?o)
-                 (not (inReceptacle ?o ?r))
-                 (not (objectAtLocation ?o ?l)))
+                 (holds ?a ?i)
+                 (not (inReceptacle ?i ?r))
+                 (not (itemAtLocation ?i ?l)))
  )
 
 
-;; agent picks up object from an opening receptacle
- (:action PickupObjectInOpeningReceptacle
-    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+;; agent picks up item from an opening receptacle
+ (:action PickupItemInOpeningReceptacle
+    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
-                       (objectAtLocation ?o ?l)
-                       (inReceptacle ?o ?r)
+                       (itemAtLocation ?i ?l)
+                       (inReceptacle ?i ?r)
                        (receptacleOpeningType ?r)
                        (receptacleOpened ?r)
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
-                 (holds ?a ?o)
-                 (not (inReceptacle ?o ?r))
-                 (not (objectAtLocation ?o ?l)))
+                 (holds ?a ?i)
+                 (not (inReceptacle ?i ?r))
+                 (not (itemAtLocation ?i ?l)))
  )
 
 
 ;; ------------------------------------ AGENT PLACE  ------------------------------------
 
-;; agent places object in non-opening receptacle
- (:action PutObjectInReceptacle
-    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+;; agent places item in non-opening receptacle
+ (:action PutItemInReceptacle
+    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?r ?l)
                         (not (receptacleOpeningType ?r))
-                        (holds ?a ?o))
-    :effect (and (inReceptacle ?o ?r)
-                 (objectAtLocation ?o ?l)
+                        (holds ?a ?i))
+    :effect (and (inReceptacle ?i ?r)
+                 (itemAtLocation ?i ?l)
                  (not (holdsAny ?a))
-                 (not (holds ?a ?o)))
+                 (not (holds ?a ?i)))
  )
 
 
- ;; agent places object in opening receptacle
- (:action PutObjectInOpeningReceptacle
-    :parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+ ;; agent places item in opening receptacle
+ (:action PutItemInOpeningReceptacle
+    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
     :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?r ?l)
                         (receptacleOpeningType ?r)
                         (receptacleOpened ?r)
-                        (holds ?a ?o))
-    :effect (and (inReceptacle ?o ?r)
-                 (objectAtLocation ?o ?l)
+                        (holds ?a ?i))
+    :effect (and (inReceptacle ?i ?r)
+                 (itemAtLocation ?i ?l)
                  (not (holdsAny ?a))
-                 (not (holds ?a ?o)))
+                 (not (holds ?a ?i)))
  )
 
 )

@@ -38,8 +38,11 @@ def generate_pddl_problems(args):
     for model_name, model_path in models:
         # sample and write tasks
         scenegraph = load_scenegraph(model_path)
-        sampler = get_domain_sampler(domain_name)(domain, scenegraph)
-
+        if domain_name == 'taskography_v3':
+            sampler = get_domain_sampler(domain_name)(domain, scenegraph, args.bagslots)
+        else:
+            sampler = get_domain_sampler(domain_name)(domain, scenegraph)
+            
         # all objects / receptacles must have a designated parent room
         if not sampler.valid_scene or sampler.num_objects < args.task_length:
             print(f'Skipping invalid model: {model_name}')
@@ -67,6 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('--output-dir', type=str, default='./pddl')
     parser.add_argument('--samples-per-scene', type=int, default=100)
     parser.add_argument('--task-length', type=int, default=10)
+    parser.add_argument('--bagslots', type=int, default=5)
     parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
     random.seed(args.seed)

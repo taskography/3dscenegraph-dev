@@ -13,7 +13,7 @@ def place_to_str_name(place_id, inst, is_object=False, is_room=False):
     if is_room:
         return f"place{int(place_id)}_door_room{int(inst.id)}_{inst.scene_category.replace(' ', '_')}"
     elif is_object:
-        return f"place{int(place_id)}_object{int(inst.id)}_{inst.class_.replace(' ', '_')}"
+        return f"place{int(place_id)}_item{int(inst.id)}_{inst.class_.replace(' ', '_')}"
     return f"place{int(place_id)}_receptacle{int(inst.id)}_{inst.class_.replace(' ', '_')}"
 
 
@@ -22,7 +22,7 @@ def receptacle_to_str_name(rec_inst):
 
 
 def object_to_str_name(obj_inst, size):
-    return f"object{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}_{size}"
+    return f"item{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}_{size}"
 
 
 def location_to_str_name(room_data, place_id):

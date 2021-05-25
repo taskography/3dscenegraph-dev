@@ -104,11 +104,11 @@ class TaskSamplerBase:
                     if scene_entity.class_ in CLEANABLE_OBJECTS:
                         self.objects['cleanable_type'].add(scene_entity)
                     if scene_entity.class_ in SMALL_OBJECTS:
-                        self.object_sizes[e_id] = 'smallobject'
+                        self.object_sizes[e_id] = 'smallitem'
                     elif scene_entity.class_ in MEDIUM_OBJECTS:
-                        self.object_sizes[e_id] = 'mediumobject'
+                        self.object_sizes[e_id] = 'mediumitem'
                     elif scene_entity.class_ in LARGE_OBJECTS:
-                        self.object_sizes[e_id] = 'largeobject'
+                        self.object_sizes[e_id] = 'largeitem'
                     self.object_names[e_id] = object_to_str_name(scene_entity, self.object_sizes[e_id])
 
         self.num_objects = len(self.objects['all'])

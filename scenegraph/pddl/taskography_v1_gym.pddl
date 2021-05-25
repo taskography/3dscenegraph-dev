@@ -1,13 +1,13 @@
 
 (define (domain taskography_v1)
   (:requirements :typing)
-  (:types agent location receptacle object)
+  (:types agent location receptacle item)
   
   (:predicates (atlocation ?v0 - agent ?v1 - location)
 	(receptacleatlocation ?v0 - receptacle ?v1 - location)
-	(objectatlocation ?v0 - object ?v1 - location)
-	(inreceptacle ?v0 - object ?v1 - receptacle)
-	(holds ?v0 - agent ?v1 - object)
+	(itematlocation ?v0 - item ?v1 - location)
+	(inreceptacle ?v0 - item ?v1 - receptacle)
+	(holds ?v0 - agent ?v1 - item)
 	(holdsany ?v0 - agent)
 	(receptacleopeningtype ?v0 - receptacle)
 	(receptacleopened ?v0 - receptacle)
@@ -47,76 +47,76 @@
 	)
 	
 
-	(:action pickupobjectnoreceptacle
-		:parameters (?a - agent ?o - object ?l - location)
+	(:action pickupitemnoreceptacle
+		:parameters (?a - agent ?i - item ?l - location)
 		:precondition (and (atlocation ?a ?l)
-			(objectatlocation ?o ?l)
+			(itematlocation ?i ?l)
 			(not (holdsany ?a))
-			(forall (?r - receptacle) (not (inreceptacle ?o ?r))))
+			(forall (?r - receptacle) (not (inreceptacle ?i ?r))))
 		:effect (and
 			(holdsany ?a)
-			(holds ?a ?o)
-			(not (objectatlocation ?o ?l)))
+			(holds ?a ?i)
+			(not (itematlocation ?i ?l)))
 	)
 	
 
-	(:action pickupobjectinreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+	(:action pickupiteminreceptacle
+		:parameters (?a - agent ?i - item ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
-			(objectatlocation ?o ?l)
-			(inreceptacle ?o ?r)
+			(itematlocation ?i ?l)
+			(inreceptacle ?i ?r)
 			(not (receptacleopeningtype ?r))
 			(not (holdsany ?a)))
 		:effect (and
 			(holdsany ?a)
-			(holds ?a ?o)
-			(not (inreceptacle ?o ?r))
-			(not (objectatlocation ?o ?l)))
+			(holds ?a ?i)
+			(not (inreceptacle ?i ?r))
+			(not (itematlocation ?i ?l)))
 	)
 	
 
-	(:action pickupobjectinopeningreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+	(:action pickupiteminopeningreceptacle
+		:parameters (?a - agent ?i - item ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
-			(objectatlocation ?o ?l)
-			(inreceptacle ?o ?r)
+			(itematlocation ?i ?l)
+			(inreceptacle ?i ?r)
 			(receptacleopeningtype ?r)
 			(receptacleopened ?r)
 			(not (holdsany ?a)))
 		:effect (and
 			(holdsany ?a)
-			(holds ?a ?o)
-			(not (inreceptacle ?o ?r))
-			(not (objectatlocation ?o ?l)))
+			(holds ?a ?i)
+			(not (inreceptacle ?i ?r))
+			(not (itematlocation ?i ?l)))
 	)
 	
 
-	(:action putobjectinreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+	(:action putiteminreceptacle
+		:parameters (?a - agent ?i - item ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
 			(receptacleatlocation ?r ?l)
 			(not (receptacleopeningtype ?r))
-			(holds ?a ?o))
+			(holds ?a ?i))
 		:effect (and
-			(inreceptacle ?o ?r)
-			(objectatlocation ?o ?l)
+			(inreceptacle ?i ?r)
+			(itematlocation ?i ?l)
 			(not (holdsany ?a))
-			(not (holds ?a ?o)))
+			(not (holds ?a ?i)))
 	)
 	
 
-	(:action putobjectinopeningreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+	(:action putiteminopeningreceptacle
+		:parameters (?a - agent ?i - item ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
 			(receptacleatlocation ?r ?l)
 			(receptacleopeningtype ?r)
 			(receptacleopened ?r)
-			(holds ?a ?o))
+			(holds ?a ?i))
 		:effect (and
-			(inreceptacle ?o ?r)
-			(objectatlocation ?o ?l)
+			(inreceptacle ?i ?r)
+			(itematlocation ?i ?l)
 			(not (holdsany ?a))
-			(not (holds ?a ?o)))
+			(not (holds ?a ?i)))
 	)
 
   

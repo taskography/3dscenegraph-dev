@@ -43,10 +43,10 @@ class TaskSamplerV1(TaskSamplerBase):
         """Generate a dictionary of PDDL entities as per the pddl/taskography_v1 domain. The dictionary maps 
         entity names to their corresponding PDDLGym object.
         """
-        # Object / Entity Types
+        # Item / Entity Types
         agent_type = self.domain.types['agent']
         receptacle_type = self.domain.types['receptacle']
-        object_type = self.domain.types['object']
+        item_type = self.domain.types['item']
         location_type = self.domain.types['location']
 
         # Agent
@@ -60,9 +60,9 @@ class TaskSamplerV1(TaskSamplerBase):
             self.pddl_entity_set.add(receptacle)
             self.pddl_entity_map[receptacle_name] = receptacle
 
-        # Objects
+        # Items
         for o_id, object_name in self.object_names.items():
-            object = object_type(object_name)
+            object = item_type(object_name)
             self.pddl_entity_set.add(object)
             self.pddl_entity_map[object_name] = object
 
@@ -82,7 +82,7 @@ class TaskSamplerV1(TaskSamplerBase):
 
         # Predicate Types
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
-        object_at_location = self.domain.predicates['objectatlocation']
+        item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
@@ -92,11 +92,11 @@ class TaskSamplerV1(TaskSamplerBase):
             str_rec_loc_name = self.location_names[r_id]
             self.pddl_predicate_set.add(receptacle_at_location(emap[str_rec_name], emap[str_rec_loc_name]))
 
-        # objectAtLocation
+        # itemAtLocation
         for o_id in self.objects['all']:
             str_obj_name = self.object_names[o_id]
             str_obj_loc_name = self.location_names[o_id]            
-            self.pddl_predicate_set.add(object_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
+            self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
 
         # inReceptacle and receptacleOpeningType
         for r_id in self.receptacle_to_object_map:
@@ -218,12 +218,12 @@ class TaskSamplerV2(TaskSamplerBase):
         """Generate a dictionary of PDDL entities as per the pddl/taskography_v1 domain. The dictionary maps 
         entity names to their corresponding PDDLGym object.
         """
-        # Object / Entity Types
+        # Item / Entity Types
         agent_type = self.domain.types['agent']
         room_type = self.domain.types['room']
         place_type = self.domain.types['place']
         receptacle_type = self.domain.types['receptacle']
-        object_type = self.domain.types['object']
+        item_type = self.domain.types['item']
         location_type = self.domain.types['location']
 
         # Agent
@@ -249,9 +249,9 @@ class TaskSamplerV2(TaskSamplerBase):
             self.pddl_entity_set.add(receptacle)
             self.pddl_entity_map[receptacle_name] = receptacle
 
-        # Objects
+        # Items
         for o_id, object_name in self.object_names.items():
-            object = object_type(object_name)
+            object = item_type(object_name)
             self.pddl_entity_set.add(object)
             self.pddl_entity_map[object_name] = object
 
@@ -273,7 +273,7 @@ class TaskSamplerV2(TaskSamplerBase):
         location_in_place = self.domain.predicates['locationinplace']
         place_location = self.domain.predicates['placelocation']
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
-        object_at_location = self.domain.predicates['objectatlocation']
+        item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
@@ -305,11 +305,11 @@ class TaskSamplerV2(TaskSamplerBase):
             str_rec_loc_name = self.location_names[r_id]
             self.pddl_predicate_set.add(receptacle_at_location(emap[str_rec_name], emap[str_rec_loc_name]))
 
-        # objectAtLocation
+        # itemAtLocation
         for o_id in self.objects['all']:
             str_obj_name = self.object_names[o_id]
             str_obj_loc_name = self.location_names[o_id]            
-            self.pddl_predicate_set.add(object_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
+            self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
 
         # inReceptacle and receptacleOpeningType
         for r_id in self.receptacle_to_object_map:
@@ -417,11 +417,12 @@ class TaskSamplerV2(TaskSamplerBase):
 
 class TaskSamplerV3(TaskSamplerBase):
 
-    def __init__(self, domain, scenegraph):
+    def __init__(self, domain, scenegraph, bagslots):
         super(TaskSamplerV3, self).__init__(scenegraph)
 
         # PDDLGym domain
         self.domain = domain
+        self.bagslots = bagslots
 
         # PDDL entities and name-to-entity mapping
         self.pddl_entity_set = set()
@@ -442,13 +443,13 @@ class TaskSamplerV3(TaskSamplerBase):
         """Generate a dictionary of PDDL entities as per the pddl/taskography_v1 domain. The dictionary maps 
         entity names to their corresponding PDDLGym object.
         """
-        # Object / Entity Types
+        # Item / Entity Types
         agent_type = self.domain.types['agent']
         bagslot_type = self.domain.types['bagslot']
         room_type = self.domain.types['room']
         place_type = self.domain.types['place']
         receptacle_type = self.domain.types['receptacle']
-        object_type = self.domain.types['object']
+        item_type = self.domain.types['item']
         location_type = self.domain.types['location']
 
         # Agent
@@ -456,10 +457,12 @@ class TaskSamplerV3(TaskSamplerBase):
         self.pddl_entity_set.add(agent)
         self.pddl_entity_map["agent"] = agent
 
-        # # Bagslot (written as :constants)
-        # bagslot = bagslot_type("bagslot")
-        # self.pddl_entity_set.add(bagslot)
-        # self.pddl_entity_map["bagslot"] = bagslot
+        # Bagslots
+        for bagslot_id in range(self.bagslots):
+            bagslot_name = f"bagslot{bagslot_id + 1}"
+            bagslot = bagslot_type(bagslot_name)
+            self.pddl_entity_set.add(bagslot)
+            self.pddl_entity_map[bagslot_name] = bagslot
 
         # Rooms
         for room_id, room_name in self.room_names.items():
@@ -479,9 +482,9 @@ class TaskSamplerV3(TaskSamplerBase):
             self.pddl_entity_set.add(receptacle)
             self.pddl_entity_map[receptacle_name] = receptacle
 
-        # Objects
+        # Items
         for o_id, object_name in self.object_names.items():
-            object = object_type(object_name)
+            object = item_type(object_name)
             self.pddl_entity_set.add(object)
             self.pddl_entity_map[object_name] = object
 
@@ -503,7 +506,7 @@ class TaskSamplerV3(TaskSamplerBase):
         location_in_place = self.domain.predicates['locationinplace']
         place_location = self.domain.predicates['placelocation']
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
-        object_at_location = self.domain.predicates['objectatlocation']
+        item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
         
@@ -535,11 +538,11 @@ class TaskSamplerV3(TaskSamplerBase):
             str_rec_loc_name = self.location_names[r_id]
             self.pddl_predicate_set.add(receptacle_at_location(emap[str_rec_name], emap[str_rec_loc_name]))
 
-        # objectAtLocation, smallObject, mediumObject, largeObject
+        # itemAtLocation, smallItem, mediumItem, largeItem
         for o_id in self.objects['all']:
             str_obj_name = self.object_names[o_id]
             str_obj_loc_name = self.location_names[o_id]            
-            self.pddl_predicate_set.add(object_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
+            self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
             self.pddl_predicate_set.add(self.domain.predicates[self.object_sizes[o_id]](str_obj_name))
 
         # inReceptacle and receptacleOpeningType
