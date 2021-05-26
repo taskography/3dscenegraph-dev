@@ -28,6 +28,8 @@ def generate_dataset_statistics(args, planner):
     """
     problems_dir = args.data_root
     problem_files = [os.path.join(problems_dir, pddl_file) for pddl_file in os.listdir(problems_dir)]
+    if args.limit is not None:
+        problem_files = problem_files[:args.limit]
     m = len(problem_files)
 
     run_stats = []
@@ -37,7 +39,7 @@ def generate_dataset_statistics(args, planner):
         try:
             print(f'Problem {i} / {m}: {pddl_problem}')
             plan = planner.plan_from_pddl(args.domain, pddl_problem, timeout=args.timeout)
-            run_stats.append(planner.get_statistics())
+            run_stats.append(planner.get_statistics().copy())
         except PlanningTimeout:
             timeouts += 1
         except PlanningFailure:
@@ -53,8 +55,8 @@ def generate_dataset_statistics(args, planner):
     for stat in STATS:
         planner_stats[stat] = float(planner_stats[stat].mean().item())
     planner_stats['success_rate'] = float(len(run_stats) / m)
-    planner_stats['timeout_rate'] = float(failures / m)
-    planner_stats['failure_rate'] = float(timeouts / m)
+    planner_stats['timeout_rate'] = float(timeouts / m)
+    planner_stats['failure_rate'] = float(failures / m)
 
     # save statistics
     pprinter = pprint.PrettyPrinter()
@@ -88,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('--data-root', type=str, required=True, help='Path to PDDL problem files')
     parser.add_argument('--domain', type=str, required=True)
     parser.add_argument('--timeout', type=float, default=10.)
+    parser.add_argument('--limit', type=int, default=None)
     parser.add_argument('--demo', action='store_true')
     args = parser.parse_args()
 
