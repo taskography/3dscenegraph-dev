@@ -1,7 +1,7 @@
 
 (define (problem taskography_pick_and_place) (:domain taskography)
   (:objects
-        agent - agent
+        agent0 - agent
 	center_location_xneg109_ypos5_room10_floorC - location
 	center_location_xneg113_ypos4_room22_floorB - location
 	center_location_xneg13_yneg2_room15_floorA - location
@@ -74,34 +74,34 @@
 	location_xneg82_yneg15_room18_floorB - location
 	location_xneg84_yneg23_room6_floorA - location
 	location_xneg84_ypos22_room8_floorB - location
-	object2_bottle - object
-	object33_potted_plant - object
-	object34_potted_plant - object
-	object35_potted_plant - object
-	object36_potted_plant - object
-	object37_potted_plant - object
-	object38_potted_plant - object
-	object39_potted_plant - object
-	object3_bottle - object
-	object40_potted_plant - object
-	object41_potted_plant - object
-	object42_potted_plant - object
-	object4_bottle - object
-	object59_book - object
-	object5_bottle - object
-	object60_book - object
-	object61_book - object
-	object62_book - object
-	object63_book - object
-	object64_vase - object
-	object65_vase - object
-	object66_vase - object
-	object67_vase - object
-	object68_vase - object
-	object6_cup - object
-	object7_cup - object
-	object8_bowl - object
-	object9_bowl - object
+	object2_bottle - thing
+	object33_potted_plant - thing
+	object34_potted_plant - thing
+	object35_potted_plant - thing
+	object36_potted_plant - thing
+	object37_potted_plant - thing
+	object38_potted_plant - thing
+	object39_potted_plant - thing
+	object3_bottle - thing
+	object40_potted_plant - thing
+	object41_potted_plant - thing
+	object42_potted_plant - thing
+	object4_bottle - thing
+	object59_book - thing
+	object5_bottle - thing
+	object60_book - thing
+	object61_book - thing
+	object62_book - thing
+	object63_book - thing
+	object64_vase - thing
+	object65_vase - thing
+	object66_vase - thing
+	object67_vase - thing
+	object68_vase - thing
+	object6_cup - thing
+	object7_cup - thing
+	object8_bowl - thing
+	object9_bowl - thing
 	receptacle10_chair - receptacle
 	receptacle11_chair - receptacle
 	receptacle12_chair - receptacle
@@ -169,7 +169,7 @@
 	room9_bedroom - room
   )
   (:init 
-	(atlocation agent center_location_xneg13_ypos22_room23_floorB)
+	(atlocation agent0 center_location_xneg13_ypos22_room23_floorB)
 	(inreceptacle object33_potted_plant receptacle48_dining_table)
 	(inreceptacle object34_potted_plant receptacle48_dining_table)
 	(inreceptacle object36_potted_plant receptacle27_chair)
@@ -191,7 +191,28 @@
 	(inreceptacle object7_cup receptacle31_couch)
 	(inreceptacle object8_bowl receptacle15_chair)
 	(inreceptacle object9_bowl receptacle28_chair)
-	(inroom agent room23_living_room)
+	(inanyreceptacle object33_potted_plant)
+	(inanyreceptacle object34_potted_plant)
+	(inanyreceptacle object36_potted_plant)
+	(inanyreceptacle object37_potted_plant)
+	(inanyreceptacle object38_potted_plant)
+	(inanyreceptacle object39_potted_plant)
+	(inanyreceptacle object3_bottle)
+	(inanyreceptacle object40_potted_plant)
+	(inanyreceptacle object41_potted_plant)
+	(inanyreceptacle object59_book)
+	(inanyreceptacle object5_bottle)
+	(inanyreceptacle object60_book)
+	(inanyreceptacle object61_book)
+	(inanyreceptacle object65_vase)
+	(inanyreceptacle object66_vase)
+	(inanyreceptacle object67_vase)
+	(inanyreceptacle object68_vase)
+	(inanyreceptacle object6_cup)
+	(inanyreceptacle object7_cup)
+	(inanyreceptacle object8_bowl)
+	(inanyreceptacle object9_bowl)
+	(inroom agent0 room23_living_room)
 	(locationinroom center_location_xneg109_ypos5_room10_floorC room10_childs_room)
 	(locationinroom center_location_xneg113_ypos4_room22_floorB room22_living_room)
 	(locationinroom center_location_xneg13_yneg2_room15_floorA room15_corridor)

@@ -1,7 +1,7 @@
 
 (define (domain taskography)
   (:requirements :typing)
-  (:types agent location room receptacle bagslot object)
+  (:types agent location room receptacle bagslot thing)
   (:constants slot1 slot2 slot3 slot4 - bagslot)
   
   (:predicates (inroom ?v0 - agent ?v1 - room)
@@ -9,13 +9,14 @@
 	(locationinroom ?v0 - location ?v1 - room)
 	(atlocation ?v0 - agent ?v1 - location)
 	(receptacleatlocation ?v0 - receptacle ?v1 - location)
-	(objectatlocation ?v0 - object ?v1 - location)
-	(inreceptacle ?v0 - object ?v1 - receptacle)
-	(holds ?v0 - agent ?v1 - object)
+	(objectatlocation ?v0 - thing ?v1 - location)
+	(inreceptacle ?v0 - thing ?v1 - receptacle)
+	(inanyreceptacle ?v0 - thing)
+	(holds ?v0 - agent ?v1 - thing)
 	(holdsany ?v0 - agent)
 	(slotholdsany ?s - bagslot)
-	(inslot ?s ?o)
-	(smallobject ?o)
+	(inslot ?s - bagslot ?o - thing)
+	(smallobject ?o - thing)
   )
   ; (:actions )
 
@@ -48,11 +49,12 @@
 	
 
 	(:action pickupobjectnoreceptacle
-		:parameters (?a - agent ?o - object ?l - location)
+		:parameters (?a - agent ?o - thing ?l - location)
 		:precondition (and (atlocation ?a ?l)
 			(objectatlocation ?o ?l)
 			(not (holdsany ?a))
-			(forall (?r - receptacle) (not (inreceptacle ?o ?r))))
+			(not (inanyreceptacle ?o))
+		)
 		:effect (and
 			(holdsany ?a)
 			(holds ?a ?o)
@@ -61,7 +63,7 @@
 	
 
 	(:action pickupobjectinreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+		:parameters (?a - agent ?o - thing ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
 			(receptacleatlocation ?r ?l)
 			(objectatlocation ?o ?l)
@@ -70,12 +72,13 @@
 		:effect (and
 			(holdsany ?a)
 			(holds ?a ?o)
+			(not (inanyreceptacle ?o))
 			(not (inreceptacle ?o ?r))
 			(not (objectatlocation ?o ?l)))
 	)
 
 	(:action stowinbagoneslot
-		:parameters (?a - agent ?o - object ?s - bagslot)
+		:parameters (?a - agent ?o - thing ?s - bagslot)
 		:precondition (and
 			(holds ?a ?o)
 			(not (slotholdsany ?s))
@@ -88,7 +91,7 @@
 			(not (holds ?a ?o)))
 	)
 	(:action retrievefrombagoneslot
-		:parameters (?a - agent ?o - object ?s - bagslot)
+		:parameters (?a - agent ?o - thing ?s - bagslot)
 		:precondition (and
 			(smallobject ?o)
 			(inslot ?s ?o)
@@ -103,7 +106,7 @@
 	)
 
 		(:action stowinbagtwoslot
-		:parameters (?a - agent ?o - object ?s1 - bagslot ?s2 - bagslot)
+		:parameters (?a - agent ?o - thing ?s1 - bagslot ?s2 - bagslot)
 		:precondition (and
 			(holds ?a ?o)
 			(not (= ?s1 ?s2))
@@ -120,7 +123,7 @@
 			(not (holds ?a ?o)))
 	)
 	(:action retrievefrombagtwoslot
-		:parameters (?a - agent ?o - object ?s1 - bagslot ?s2 - bagslot)
+		:parameters (?a - agent ?o - thing ?s1 - bagslot ?s2 - bagslot)
 		:precondition (and
 			(inslot ?s1 ?o)
 			(inslot ?s2 ?o)
@@ -140,12 +143,13 @@
 	
 
 	(:action putobjectinreceptacle
-		:parameters (?a - agent ?o - object ?r - receptacle ?l - location)
+		:parameters (?a - agent ?o - thing ?r - receptacle ?l - location)
 		:precondition (and (atlocation ?a ?l)
 			(receptacleatlocation ?r ?l)
 			(holds ?a ?o))
 		:effect (and
 			(inreceptacle ?o ?r)
+			(inanyreceptacle ?o)
 			(objectatlocation ?o ?l)
 			(not (holdsany ?a))
 			(not (holds ?a ?o)))
