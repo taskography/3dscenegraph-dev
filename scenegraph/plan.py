@@ -84,14 +84,14 @@ def planning_demo(args, planner, problem_file=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp-dir', type=str, default='./exp')
-    parser.add_argument('--exp-name', type=str, required=True)
-    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'])
-    parser.add_argument('--data-root', type=str, required=True, help='Path to PDDL problem files')
-    parser.add_argument('--domain', type=str, required=True)
-    parser.add_argument('--timeout', type=float, default=10.)
-    parser.add_argument('--limit', type=int, default=None)
-    parser.add_argument('--demo', action='store_true')
+    parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
+    parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
+    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'], help='Planner to benchmark')
+    parser.add_argument('--data-root', type=str, required=True, help='Path to directory with generated PDDL problem files')
+    parser.add_argument('--domain', type=str, required=True, help='Path to <domain>.pddl file')
+    parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
+    parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
+    parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
     args = parser.parse_args()
 
     if not os.path.exists(args.exp_dir):
