@@ -84,6 +84,7 @@ class TaskSamplerV1(TaskSamplerBase):
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
         item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
+        in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
         # receptacleAtLocation 
@@ -104,6 +105,7 @@ class TaskSamplerV1(TaskSamplerBase):
             for o_id in self.receptacle_to_object_map[r_id]:
                 str_obj_name = self.object_names[o_id]
                 self.pddl_predicate_set.add(in_receptacle(emap[str_obj_name], emap[str_rec_name]))
+                self.pddl_predicate_set.add(in_any_receptacle(emap[str_obj_name]))
             if r_id in self.receptacles['opening_type']:
                 self.pddl_predicate_set.add(receptacle_opening_type(emap[str_rec_name]))
 
@@ -275,6 +277,7 @@ class TaskSamplerV2(TaskSamplerBase):
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
         item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
+        in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
         # placeInRoom, roomPlace
@@ -317,6 +320,7 @@ class TaskSamplerV2(TaskSamplerBase):
             for o_id in self.receptacle_to_object_map[r_id]:
                 str_obj_name = self.object_names[o_id]
                 self.pddl_predicate_set.add(in_receptacle(emap[str_obj_name], emap[str_rec_name]))
+                self.pddl_predicate_set.add(in_any_receptacle(emap[str_obj_name]))
             if r_id in self.receptacles['opening_type']:
                 self.pddl_predicate_set.add(receptacle_opening_type(emap[str_rec_name]))
 
@@ -508,6 +512,7 @@ class TaskSamplerV3(TaskSamplerBase):
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
         item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
+        in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
         
         # placeInRoom, roomPlace
@@ -551,6 +556,7 @@ class TaskSamplerV3(TaskSamplerBase):
             for o_id in self.receptacle_to_object_map[r_id]:
                 str_obj_name = self.object_names[o_id]
                 self.pddl_predicate_set.add(in_receptacle(emap[str_obj_name], emap[str_rec_name]))
+                self.pddl_predicate_set.add(in_any_receptacle(emap[str_obj_name]))
             if r_id in self.receptacles['opening_type']:
                 self.pddl_predicate_set.add(receptacle_opening_type(emap[str_rec_name]))
 

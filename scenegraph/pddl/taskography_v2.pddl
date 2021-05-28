@@ -27,6 +27,7 @@
     
     ;; item-receptacle interaction
     (inReceptacle ?i - item ?r - receptacle)                ; true if item ?i is in receptacle ?r
+    (inAnyReceptacle ?i - item)                                      ; true if item ?i is in any receptacle
     
     ;; agent-item interaction
     (holds ?a - agent ?i - item)                            ; true if item ?i is held by agent ?a
@@ -134,9 +135,7 @@
     :precondition (and (atLocation ?a ?l)
                        (itemAtLocation ?i ?l)
                        (not (holdsAny ?a))
-                       (forall (?r - receptacle)
-                           (not (inReceptacle ?i ?r))
-                       ))
+                       (not (inAnyReceptacle ?i)))
     :effect (and (holdsAny ?a)
                  (holds ?a ?i)
                  (not (itemAtLocation ?i ?l)))
@@ -154,6 +153,7 @@
     :effect (and (holdsAny ?a)
                  (holds ?a ?i)
                  (not (inReceptacle ?i ?r))
+                 (not (inAnyReceptacle ?i))
                  (not (itemAtLocation ?i ?l)))
  )
 
@@ -170,6 +170,7 @@
     :effect (and (holdsAny ?a)
                  (holds ?a ?i)
                  (not (inReceptacle ?i ?r))
+                 (not (inAnyReceptacle ?i))
                  (not (itemAtLocation ?i ?l)))
  )
 
@@ -184,6 +185,7 @@
                         (not (receptacleOpeningType ?r))
                         (holds ?a ?i))
     :effect (and (inReceptacle ?i ?r)
+                 (inAnyReceptacle ?i)
                  (itemAtLocation ?i ?l)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))
@@ -199,6 +201,7 @@
                         (receptacleOpened ?r)
                         (holds ?a ?i))
     :effect (and (inReceptacle ?i ?r)
+                 (inAnyReceptacle ?i)
                  (itemAtLocation ?i ?l)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))

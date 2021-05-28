@@ -49,9 +49,9 @@ def generate_dataset_statistics(args, planner):
     planner_stats = {}
     for stat in STATS:
         if stat not in planner_stats:
-            planner_stats[stat] = np.zeros(len(run_stats))
+            planner_stats[stat] = np.zeros(len(run_stats)) 
         for i, run in enumerate(run_stats):
-            planner_stats[stat][i] = run_stats[i][stat]
+            planner_stats[stat][i] = run[stat]
     for stat in STATS:
         planner_stats[stat] = float(planner_stats[stat].mean().item())
     planner_stats['success_rate'] = float(len(run_stats) / m)
