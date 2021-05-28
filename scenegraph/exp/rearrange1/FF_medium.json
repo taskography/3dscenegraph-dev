@@ -1,1 +1,1 @@
-{"num_node_expansions": 8.0, "plan_length": 6.0, "search_time": 0.030000000000000013, "total_time": 0.030000000000000013, "success_rate": 1.0, "timeout_rate": 0.0, "failure_rate": 0.0}
+{"num_node_expansions": 8.003113143301878, "plan_length": 6.003113143301878, "search_time": 0.04040179005739858, "total_time": 0.04040179005739858, "success_rate": 1.0, "timeout_rate": 0.0, "failure_rate": 0.0}

@@ -1,5 +1,5 @@
 #!/bin/bash
-# eval "source alfworld"
+eval "alfworld_env"
 
 root_dir="pddl/taskography_gym"
 exp_dir="exp/rearrange"
