@@ -20,7 +20,6 @@ class FFX(PDDLPlanner):
         dirname = os.path.dirname(os.path.realpath(__file__))
         self._exec = os.path.join(dirname, "FF-X/ff")
         print("Instantiating FF-X")
-        print(self._exec) # stuff
         if not os.path.exists(self._exec):
             self._install_ff()
 
