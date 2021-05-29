@@ -13,6 +13,7 @@
 	(receptacleatlocation ?v0 - receptacle ?v1 - location)
 	(itematlocation ?v0 - item ?v1 - location)
 	(inreceptacle ?v0 - item ?v1 - receptacle)
+	(inanyreceptacle ?v0 - item)
 	(holds ?v0 - agent ?v1 - item)
 	(holdsany ?v0 - agent)
 	(receptacleopeningtype ?v0 - receptacle)
@@ -22,7 +23,7 @@
 	(smallitem ?v0 - item)
 	(mediumitem ?v0 - item)
 	(largeitem ?v0 - item)
-	; (= ?v0 ?v1)
+	(= ?v0 ?v1)
   )
   ; (:actions )
 
@@ -101,7 +102,7 @@
 		:precondition (and (atlocation ?a ?l)
 			(itematlocation ?i ?l)
 			(not (holdsany ?a))
-			(forall (?r - receptacle) (not (inreceptacle ?i ?r))))
+			(not (inanyreceptacle ?i)))
 		:effect (and
 			(holdsany ?a)
 			(holds ?a ?i)
@@ -120,6 +121,7 @@
 			(holdsany ?a)
 			(holds ?a ?i)
 			(not (inreceptacle ?i ?r))
+			(not (inanyreceptacle ?i))
 			(not (itematlocation ?i ?l)))
 	)
 	
@@ -136,6 +138,7 @@
 			(holdsany ?a)
 			(holds ?a ?i)
 			(not (inreceptacle ?i ?r))
+			(not (inanyreceptacle ?i))
 			(not (itematlocation ?i ?l)))
 	)
 	
@@ -148,6 +151,7 @@
 			(holds ?a ?i))
 		:effect (and
 			(inreceptacle ?i ?r)
+			(inanyreceptacle ?i)
 			(itematlocation ?i ?l)
 			(not (holdsany ?a))
 			(not (holds ?a ?i)))
@@ -163,6 +167,7 @@
 			(holds ?a ?i))
 		:effect (and
 			(inreceptacle ?i ?r)
+			(inanyreceptacle ?i)
 			(itematlocation ?i ?l)
 			(not (holdsany ?a))
 			(not (holds ?a ?i)))

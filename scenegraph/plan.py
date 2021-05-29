@@ -72,7 +72,9 @@ def planning_demo(args, planner, problem_file=None):
         problem_file = random.choice(problem_files)
     print('Attempting: {}'.format(problem_file))
     try:
-        plan = planner.plan_from_pddl(args.domain, problem_file)
+        plan = planner.plan_from_pddl(args.domain, problem_file, timeout=args.timeout)
+        for i, action in enumerate(plan):
+            print(f"Action {i}: {action}")
         print("Statistics")
         pprinter = pprint.PrettyPrinter()
         pprinter.pprint(planner.get_statistics())
@@ -88,7 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
     parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'], help='Planner to benchmark')
     parser.add_argument('--data-root', type=str, required=True, help='Path to directory with generated PDDL problem files')
-    parser.add_argument('--domain', type=str, required=True, help='Path to <domain>.pddl file')
+    parser.add_argument('--domain', type=str, required=True, help='Path to <domain>_gym.pddl file')
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
     parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
     parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')

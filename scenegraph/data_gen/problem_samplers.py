@@ -99,7 +99,7 @@ class TaskSamplerV1(TaskSamplerBase):
             str_obj_loc_name = self.location_names[o_id]            
             self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
 
-        # inReceptacle and receptacleOpeningType
+        # inReceptacle, inAnyReceptacle, and receptacleOpeningType
         for r_id in self.receptacle_to_object_map:
             str_rec_name = self.receptacle_names[r_id]
             for o_id in self.receptacle_to_object_map[r_id]:
@@ -280,11 +280,14 @@ class TaskSamplerV2(TaskSamplerBase):
         in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
-        # placeInRoom, roomPlace
+        # placeInRoom, roomPlace, placeLocation, locationInPlace
         for room_id in self.room_to_place_map:
             room_name = self.room_names[room_id]
             place_id = self.room_to_place_map[room_id]['root']
             place_name = self.place_names[place_id]
+            location_name = self.location_names['places'][place_id]
+            self.pddl_predicate_set.add(place_location(emap[location_name], emap[place_name]))
+            self.pddl_predicate_set.add(location_in_place(emap[location_name], emap[place_name]))
             self.pddl_predicate_set.add(room_place(emap[place_name], emap[room_name]))
             self.pddl_predicate_set.add(place_in_room(emap[place_name], emap[room_name]))
             for place_id in self.room_to_place_map[room_id]['places']:
@@ -294,8 +297,7 @@ class TaskSamplerV2(TaskSamplerBase):
         # locationInPlace, placeLocation
         for place_id in self.place_to_entity_map:
             place_name = self.place_names[place_id]
-            e_id = self.place_to_entity_map[place_id]['root']
-            location_name = self.location_names[e_id]
+            location_name = self.location_names['places'][place_id]
             self.pddl_predicate_set.add(place_location(emap[location_name], emap[place_name]))
             self.pddl_predicate_set.add(location_in_place(emap[location_name], emap[place_name]))
             for e_id in self.place_to_entity_map[place_id]['objects']:
@@ -314,7 +316,7 @@ class TaskSamplerV2(TaskSamplerBase):
             str_obj_loc_name = self.location_names[o_id]            
             self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
 
-        # inReceptacle and receptacleOpeningType
+        # inReceptacle, inAnyReceptacle, and receptacleOpeningType
         for r_id in self.receptacle_to_object_map:
             str_rec_name = self.receptacle_names[r_id]
             for o_id in self.receptacle_to_object_map[r_id]:
@@ -515,11 +517,14 @@ class TaskSamplerV3(TaskSamplerBase):
         in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
         
-        # placeInRoom, roomPlace
+        # placeInRoom, roomPlace, placeLocation, locationInPlace
         for room_id in self.room_to_place_map:
             room_name = self.room_names[room_id]
             place_id = self.room_to_place_map[room_id]['root']
             place_name = self.place_names[place_id]
+            location_name = self.location_names['places'][place_id]
+            self.pddl_predicate_set.add(place_location(emap[location_name], emap[place_name]))
+            self.pddl_predicate_set.add(location_in_place(emap[location_name], emap[place_name]))
             self.pddl_predicate_set.add(room_place(emap[place_name], emap[room_name]))
             self.pddl_predicate_set.add(place_in_room(emap[place_name], emap[room_name]))
             for place_id in self.room_to_place_map[room_id]['places']:
@@ -529,8 +534,7 @@ class TaskSamplerV3(TaskSamplerBase):
         # locationInPlace, placeLocation
         for place_id in self.place_to_entity_map:
             place_name = self.place_names[place_id]
-            e_id = self.place_to_entity_map[place_id]['root']
-            location_name = self.location_names[e_id]
+            location_name = self.location_names['places'][place_id]
             self.pddl_predicate_set.add(place_location(emap[location_name], emap[place_name]))
             self.pddl_predicate_set.add(location_in_place(emap[location_name], emap[place_name]))
             for e_id in self.place_to_entity_map[place_id]['objects']:
@@ -550,7 +554,7 @@ class TaskSamplerV3(TaskSamplerBase):
             self.pddl_predicate_set.add(item_at_location(emap[str_obj_name], emap[str_obj_loc_name]))
             self.pddl_predicate_set.add(self.domain.predicates[self.object_sizes[o_id]](str_obj_name))
 
-        # inReceptacle and receptacleOpeningType
+        # inReceptacle, inAnyReceptacle, and receptacleOpeningType
         for r_id in self.receptacle_to_object_map:
             str_rec_name = self.receptacle_names[r_id]
             for o_id in self.receptacle_to_object_map[r_id]:

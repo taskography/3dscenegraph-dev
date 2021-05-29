@@ -127,7 +127,6 @@ class TaskSamplerBase:
         """Determine object-receptacle support relations based on the dist_threshold proximity
         metric. Standalone objects (unsupported by a receptacle) map to -1. 
         """       
-
         object_distances = dict()
         for o_id in self.objects['all']:    
             obj_inst = self.sg.object[o_id]
@@ -182,6 +181,7 @@ class TaskSamplerBase:
         self.locations['objects'] = dict()
         self.locations['receptacles'] = dict()
         self.locations['places'] = dict()
+        self.location_names['places'] = dict()
         self.location_names['unique'] = set()
         voxel_res = self.sg.voxel_size
         
@@ -208,7 +208,6 @@ class TaskSamplerBase:
             self.locations['receptacles'][r_id] = room_data
 
         # place locations (room doors)
-        self.location_names['places'] = dict()
         for room_id in self.room_to_place_map:
             room_coord = np.floor(self.sg.room[room_id].location / voxel_res).astype(int)[:2]
             floor_num = self.sg.room[room_id].floor_number
