@@ -4,11 +4,13 @@ from tarski.grounding.ops import approximate_symbol_fluency
 from tarski.syntax.transform.action_grounding import ground_schema,  ground_schema_into_plain_operator_from_grounding
 from tarski.search.operations import is_applicable, progress
 from tarski.evaluators.simple import evaluate
+from tarski.model import wrap_tuple
 from copy import deepcopy
 from tarski.io import PDDLReader
 from tarski.fstrips.manipulation.simplify import Simplify
 import numpy as np
-
+from tarski.syntax import CompoundFormula, Connective, Atom
+TESTING = False
 
 class PddlProblem:
     __action_bindings = None
@@ -35,26 +37,35 @@ class PddlProblem:
         i = np.random.choice(len(actions))
 
         return actions[i]
-    
+
     def action_generator(self, state):
         all_ops = set()
         for action_name in self.operators_by_fluent:
-            candidates = None
+            candidates = self.__all_ops.get(action_name, set())
             for fluent in self.operators_by_fluent[action_name]:
                 fluent_candidates = set()
-                for condition in self.operators_by_fluent[action_name][fluent]:
-                    if evaluate(condition, state):
-                        fluent_candidates = fluent_candidates.union(self.operators_by_fluent[action_name][fluent][condition])
-                if candidates is not None:
-                    candidates = fluent_candidates.intersection(candidates)
-                    if len(candidates) == 0:
-                        break
+                sig = fluent.signature
+                if sig in state.predicate_extensions:
+                    for condition in self.operators_by_fluent[action_name][fluent]:
+                        if (condition[0] is Connective.Not and condition[1:] not in state.predicate_extensions[sig]) \
+                            or (condition[0] is not Connective.Not and condition in state.predicate_extensions[sig]):
+                            fluent_candidates = fluent_candidates.union(self.operators_by_fluent[action_name][fluent][condition])
                 else:
-                    candidates = fluent_candidates                
+                    # e.g. the fluent is `holds ?o` and there is no held object in the state
+                    # print('not in state', fluent, len(self.operators_by_fluent[action_name][fluent]))
+                    for condition in self.operators_by_fluent[action_name][fluent]:
+                        if condition[0] is Connective.Not:
+                            fluent_candidates = fluent_candidates.union(self.operators_by_fluent[action_name][fluent][condition])
+                candidates = fluent_candidates.intersection(candidates)
+                if len(candidates) == 0:
+                    break
+
             all_ops = all_ops.union(candidates)
+
         for op in all_ops:
-            if True: #is_applicable(state, op):
-                yield op
+            if TESTING:
+                assert is_applicable(state, op), f"Expected {op} to be applicable - Something is going wrong."
+            yield op
 
     def action_generator_dumb(self, state):
         sampler = self.ground_action_sampler_without_replacement()
@@ -68,28 +79,34 @@ class PddlProblem:
             grounder = LPGroundingStrategy(self.problem)
             self.__action_bindings = {a:list(bindings) for a,bindings in grounder.ground_actions().items()}
         return self.__action_bindings
-    
+
     @property
     def operators_by_fluent(self):
         if self.__operators_by_fluent is None:
+            self.__all_ops = {}
+            self.__operators_by_fluent = {}
+
             p = self.problem
             fluents, _ = approximate_symbol_fluency(p)
 
-            self.__operators_by_fluent = {}
-            for name, action in p.actions.items():
-                conds = action.precondition.subformulas
-                for cond in conds:
-                    if hasattr(cond, 'predicate') and cond.predicate in fluents:
-                        self.__operators_by_fluent.setdefault(name, {}).update({cond.predicate: {}})
-
             for name, bindings in self.action_bindings.items():
                 action = p.get_action(name)
-                by_fluent = self.__operators_by_fluent[name]
+                by_fluent = self.__operators_by_fluent.setdefault(name, {})
                 for binding in bindings:
-                    op =  ground_schema_into_plain_operator_from_grounding(action, binding)
+                    op = ground_schema_into_plain_operator_from_grounding(action, binding)
+                    self.__all_ops.setdefault(name, set()).add(op)
+
                     for precond in op.precondition.subformulas:
-                        if hasattr(precond, 'predicate') and precond.predicate in by_fluent:
-                            by_fluent[precond.predicate].setdefault(precond, []).append(op)
+
+                        if isinstance(precond, Atom) and precond.predicate in fluents:
+                            by_fluent.setdefault(precond.predicate, {}).setdefault(wrap_tuple(precond.subterms), []).append(op)
+                        elif isinstance(precond, CompoundFormula) and precond.connective is Connective.Not and len(precond.subformulas) == 1 and isinstance(precond.subformulas[0], Atom):
+                            negated_precond = precond.subformulas[0]
+                            by_fluent.setdefault(negated_precond.predicate, {}).setdefault( (Connective.Not, ) + wrap_tuple(negated_precond.subterms), []).append(op)
+                        elif isinstance(precond, Atom) and not precond.predicate in fluents:
+                            pass
+                        else:
+                            raise NotImplementedError(precond)
 
         return self.__operators_by_fluent
 
@@ -129,4 +146,5 @@ class PddlProblem:
 
             ground_op = ground_schema(self.problem.get_action(action_name), binding)
             yield ground_op
+
 
