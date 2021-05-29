@@ -18,7 +18,8 @@ def generate_pddl_problems(args):
 
     # create output directories
     domain_path, ext = os.path.splitext(args.domain)
-    convert_pddl_domain(args.domain, domain_path + '_gym.pddl')
+    if not os.path.exists(domain_path + '_gym.pddl'):
+        convert_pddl_domain(args.domain, domain_path + '_gym.pddl')
     output_dir = os.path.join(args.output_dir, domain_name, args.data_split + str(args.task_length))
     if os.path.exists(output_dir):
         print(f'Error: {output_dir} already exists and requires manual deletion')
