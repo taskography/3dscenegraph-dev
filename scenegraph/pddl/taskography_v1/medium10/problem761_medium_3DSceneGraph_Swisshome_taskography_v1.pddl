@@ -1,0 +1,449 @@
+
+(define (problem taskograph_rearrangement) (:domain taskography_v1)
+  (:objects
+        agent - agent
+	item100_book_smallitem - item
+	item101_book_smallitem - item
+	item102_book_smallitem - item
+	item103_book_smallitem - item
+	item104_book_smallitem - item
+	item105_book_smallitem - item
+	item106_book_smallitem - item
+	item107_book_smallitem - item
+	item108_book_smallitem - item
+	item109_book_smallitem - item
+	item10_bottle_smallitem - item
+	item110_book_smallitem - item
+	item111_book_smallitem - item
+	item112_book_smallitem - item
+	item113_book_smallitem - item
+	item114_book_smallitem - item
+	item115_clock_mediumitem - item
+	item116_clock_mediumitem - item
+	item117_clock_mediumitem - item
+	item118_clock_mediumitem - item
+	item119_clock_mediumitem - item
+	item11_bottle_smallitem - item
+	item120_clock_mediumitem - item
+	item121_clock_mediumitem - item
+	item122_vase_mediumitem - item
+	item123_teddy_bear_mediumitem - item
+	item124_teddy_bear_mediumitem - item
+	item125_teddy_bear_mediumitem - item
+	item126_teddy_bear_mediumitem - item
+	item12_bottle_smallitem - item
+	item13_bottle_smallitem - item
+	item14_bottle_smallitem - item
+	item15_cup_smallitem - item
+	item16_cup_smallitem - item
+	item17_cup_smallitem - item
+	item18_cup_smallitem - item
+	item19_cup_smallitem - item
+	item20_bowl_smallitem - item
+	item21_bowl_smallitem - item
+	item22_bowl_smallitem - item
+	item23_cake_mediumitem - item
+	item47_potted_plant_largeitem - item
+	item48_potted_plant_largeitem - item
+	item49_potted_plant_largeitem - item
+	item4_umbrella_largeitem - item
+	item50_potted_plant_largeitem - item
+	item52_potted_plant_largeitem - item
+	item53_potted_plant_largeitem - item
+	item54_potted_plant_largeitem - item
+	item55_potted_plant_largeitem - item
+	item56_potted_plant_largeitem - item
+	item57_potted_plant_largeitem - item
+	item58_potted_plant_largeitem - item
+	item5_suitcase_largeitem - item
+	item6_bottle_smallitem - item
+	item75_tv_largeitem - item
+	item76_tv_largeitem - item
+	item77_tv_largeitem - item
+	item78_tv_largeitem - item
+	item7_bottle_smallitem - item
+	item8_bottle_smallitem - item
+	item94_book_smallitem - item
+	item95_book_smallitem - item
+	item96_book_smallitem - item
+	item97_book_smallitem - item
+	item98_book_smallitem - item
+	item99_book_smallitem - item
+	item9_bottle_smallitem - item
+	location_Xneg12_Yneg35_place75_room14_floorB - location
+	location_Xneg12_Ypos11_place59_room18_floorB - location
+	location_Xneg12_Ypos31_place58_room18_floorB - location
+	location_Xneg13_Yneg14_place91_room3_floorC - location
+	location_Xneg13_Yneg45_place48_room16_floorA - location
+	location_Xneg14_Ypos13_place70_room7_floorC - location
+	location_Xneg18_Yneg27_place25_room5_floorC - location
+	location_Xneg19_Yneg27_place26_room5_floorC - location
+	location_Xneg1_Yneg45_place34_room16_floorA - location
+	location_Xneg20_Yneg28_place27_room5_floorC - location
+	location_Xneg20_Yneg41_place90_room2_floorB - location
+	location_Xneg22_Ypos22_place51_room13_floorA - location
+	location_Xneg23_Ypos41_place77_room1_floorA - location
+	location_Xneg23_Ypos41_place78_room1_floorA - location
+	location_Xneg24_Yneg26_place89_room2_floorB - location
+	location_Xneg24_Yneg34_place48_room16_floorA - location
+	location_Xneg24_Ypos23_place51_room13_floorA - location
+	location_Xneg24_Ypos32_place85_room1_floorA - location
+	location_Xneg25_Yneg27_place89_room2_floorB - location
+	location_Xneg25_Ypos32_place86_room1_floorA - location
+	location_Xneg26_Ypos30_place85_room1_floorA - location
+	location_Xneg27_Ypos2_place68_room20_floorB - location
+	location_Xneg2_Ypos22_place66_room18_floorB - location
+	location_Xneg2_Ypos31_place63_room7_floorC - location
+	location_Xneg31_Yneg46_place79_room2_floorB - location
+	location_Xneg31_Ypos42_place57_room12_floorB - location
+	location_Xneg33_Yneg38_place89_room2_floorB - location
+	location_Xneg35_Yneg12_place42_room5_floorC - location
+	location_Xneg35_Yneg14_place44_room5_floorC - location
+	location_Xneg36_Ypos45_place57_room12_floorB - location
+	location_Xneg37_Yneg42_place47_room11_floorB - location
+	location_Xneg37_Ypos45_place57_room12_floorB - location
+	location_Xneg38_Yneg13_place43_room5_floorC - location
+	location_Xneg39_Yneg27_place37_room11_floorB - location
+	location_Xneg39_Yneg30_place39_room11_floorB - location
+	location_Xneg39_Yneg34_place41_room11_floorB - location
+	location_Xneg39_Yneg37_place40_room11_floorB - location
+	location_Xneg3_Yneg15_place64_room16_floorA - location
+	location_Xneg3_Yneg45_place31_room16_floorA - location
+	location_Xneg3_Ypos29_place63_room7_floorC - location
+	location_Xneg40_Yneg27_place38_room11_floorB - location
+	location_Xneg40_Ypos31_place73_room12_floorB - location
+	location_Xneg40_Ypos35_place67_room4_floorA - location
+	location_Xneg41_Yneg6_place62_room6_floorC - location
+	location_Xneg42_Yneg12_place76_room5_floorC - location
+	location_Xneg42_Yneg13_place76_room5_floorC - location
+	location_Xneg42_Yneg2_place82_room15_floorB - location
+	location_Xneg42_Ypos30_place56_room12_floorB - location
+	location_Xneg43_Yneg28_place45_room22_floorA - location
+	location_Xneg43_Yneg3_place83_room15_floorB - location
+	location_Xneg43_Ypos35_place57_room12_floorB - location
+	location_Xneg44_Yneg17_place93_room8_floorA - location
+	location_Xneg45_Ypos31_place72_room12_floorB - location
+	location_Xneg46_Yneg39_place87_room22_floorA - location
+	location_Xneg48_Yneg37_place71_room5_floorC - location
+	location_Xneg48_Ypos27_place55_room12_floorB - location
+	location_Xneg49_Yneg7_place69_room6_floorC - location
+	location_Xneg4_Yneg8_place29_room18_floorB - location
+	location_Xneg4_Ypos19_place70_room7_floorC - location
+	location_Xneg52_Yneg14_place76_room5_floorC - location
+	location_Xneg52_Yneg20_place21_room21_floorA - location
+	location_Xneg53_Yneg3_place69_room6_floorC - location
+	location_Xneg54_Ypos0_place22_room21_floorA - location
+	location_Xneg56_Yneg12_place76_room5_floorC - location
+	location_Xneg56_Yneg21_place76_room5_floorC - location
+	location_Xneg58_Ypos22_place53_room4_floorA - location
+	location_Xneg58_Ypos33_place61_room6_floorC - location
+	location_Xneg59_Ypos41_place52_room4_floorA - location
+	location_Xneg5_Ypos31_place63_room7_floorC - location
+	location_Xneg60_Yneg1_place88_room15_floorB - location
+	location_Xneg60_Yneg8_place19_room21_floorA - location
+	location_Xneg60_Ypos23_place55_room12_floorB - location
+	location_Xneg61_Yneg10_place36_room21_floorA - location
+	location_Xneg61_Yneg1_place69_room6_floorC - location
+	location_Xneg61_Yneg34_place54_room11_floorB - location
+	location_Xneg61_Yneg5_place18_room21_floorA - location
+	location_Xneg61_Yneg7_place28_room21_floorA - location
+	location_Xneg61_Yneg9_place20_room21_floorA - location
+	location_Xneg61_Ypos12_place81_room15_floorB - location
+	location_Xneg61_Ypos15_place84_room15_floorB - location
+	location_Xneg61_Ypos26_place61_room6_floorC - location
+	location_Xneg62_Yneg16_place94_room15_floorB - location
+	location_Xneg62_Yneg37_place74_room11_floorB - location
+	location_Xneg62_Yneg44_place87_room22_floorA - location
+	location_Xneg66_Yneg23_place95_room11_floorB - location
+	location_Xneg67_Yneg48_place23_room11_floorB - location
+	location_Xneg67_Yneg48_place74_room11_floorB - location
+	location_Xneg7_Yneg39_place75_room14_floorB - location
+	location_Xneg7_Yneg41_place60_room14_floorB - location
+	location_Xneg9_Yneg1_place91_room3_floorC - location
+	location_Xpos10_Yneg28_place65_room14_floorB - location
+	location_Xpos10_Yneg32_place75_room14_floorB - location
+	location_Xpos11_Yneg31_place65_room14_floorB - location
+	location_Xpos11_Ypos23_place49_room13_floorA - location
+	location_Xpos11_Ypos2_place92_room13_floorA - location
+	location_Xpos12_Yneg35_place24_room14_floorB - location
+	location_Xpos12_Ypos12_place70_room7_floorC - location
+	location_Xpos13_Ypos25_place63_room7_floorC - location
+	location_Xpos13_Ypos26_place46_room7_floorC - location
+	location_Xpos13_Ypos32_place66_room18_floorB - location
+	location_Xpos2_Yneg15_place65_room14_floorB - location
+	location_Xpos2_Yneg26_place80_room3_floorC - location
+	location_Xpos5_Yneg44_place35_room16_floorA - location
+	location_Xpos6_Yneg7_place30_room18_floorB - location
+	location_Xpos7_Ypos21_place49_room13_floorA - location
+	location_Xpos7_Ypos30_place63_room7_floorC - location
+	location_Xpos8_Yneg45_place32_room16_floorA - location
+	location_Xpos8_Yneg47_place33_room16_floorA - location
+	location_Xpos8_Ypos21_place49_room13_floorA - location
+	location_Xpos8_Ypos21_place66_room18_floorB - location
+	location_Xpos8_Ypos39_place66_room18_floorB - location
+	location_Xpos9_Yneg32_place75_room14_floorB - location
+	location_Xpos9_Ypos17_place50_room13_floorA - location
+	location_Xpos9_Ypos6_place92_room13_floorA - location
+	receptacle24_chair - receptacle
+	receptacle25_chair - receptacle
+	receptacle26_chair - receptacle
+	receptacle27_chair - receptacle
+	receptacle28_chair - receptacle
+	receptacle29_chair - receptacle
+	receptacle30_chair - receptacle
+	receptacle31_chair - receptacle
+	receptacle32_chair - receptacle
+	receptacle33_chair - receptacle
+	receptacle37_chair - receptacle
+	receptacle38_chair - receptacle
+	receptacle39_chair - receptacle
+	receptacle40_chair - receptacle
+	receptacle41_chair - receptacle
+	receptacle42_chair - receptacle
+	receptacle43_couch - receptacle
+	receptacle44_couch - receptacle
+	receptacle46_couch - receptacle
+	receptacle59_bed - receptacle
+	receptacle60_bed - receptacle
+	receptacle61_bed - receptacle
+	receptacle62_bed - receptacle
+	receptacle63_bed - receptacle
+	receptacle64_dining_table - receptacle
+	receptacle65_dining_table - receptacle
+	receptacle66_dining_table - receptacle
+	receptacle69_dining_table - receptacle
+	receptacle70_dining_table - receptacle
+	receptacle71_toilet - receptacle
+	receptacle72_toilet - receptacle
+	receptacle73_toilet - receptacle
+	receptacle74_toilet - receptacle
+	receptacle79_microwave - receptacle
+	receptacle80_oven - receptacle
+	receptacle81_oven - receptacle
+	receptacle82_toaster - receptacle
+	receptacle83_sink - receptacle
+	receptacle84_sink - receptacle
+	receptacle85_sink - receptacle
+	receptacle86_sink - receptacle
+	receptacle87_sink - receptacle
+	receptacle88_sink - receptacle
+	receptacle89_sink - receptacle
+	receptacle90_refrigerator - receptacle
+	receptacle91_refrigerator - receptacle
+	receptacle92_refrigerator - receptacle
+	receptacle93_refrigerator - receptacle
+  )
+  (:init 
+	(atlocation agent location_Xneg58_Ypos33_place61_room6_floorC)
+	(inanyreceptacle item106_book_smallitem)
+	(inanyreceptacle item107_book_smallitem)
+	(inanyreceptacle item108_book_smallitem)
+	(inanyreceptacle item109_book_smallitem)
+	(inanyreceptacle item110_book_smallitem)
+	(inanyreceptacle item114_book_smallitem)
+	(inanyreceptacle item116_clock_mediumitem)
+	(inanyreceptacle item117_clock_mediumitem)
+	(inanyreceptacle item118_clock_mediumitem)
+	(inanyreceptacle item120_clock_mediumitem)
+	(inanyreceptacle item121_clock_mediumitem)
+	(inanyreceptacle item123_teddy_bear_mediumitem)
+	(inanyreceptacle item124_teddy_bear_mediumitem)
+	(inanyreceptacle item125_teddy_bear_mediumitem)
+	(inanyreceptacle item126_teddy_bear_mediumitem)
+	(inanyreceptacle item13_bottle_smallitem)
+	(inanyreceptacle item15_cup_smallitem)
+	(inanyreceptacle item19_cup_smallitem)
+	(inanyreceptacle item21_bowl_smallitem)
+	(inanyreceptacle item23_cake_mediumitem)
+	(inanyreceptacle item47_potted_plant_largeitem)
+	(inanyreceptacle item48_potted_plant_largeitem)
+	(inanyreceptacle item49_potted_plant_largeitem)
+	(inanyreceptacle item4_umbrella_largeitem)
+	(inanyreceptacle item50_potted_plant_largeitem)
+	(inanyreceptacle item52_potted_plant_largeitem)
+	(inanyreceptacle item53_potted_plant_largeitem)
+	(inanyreceptacle item55_potted_plant_largeitem)
+	(inanyreceptacle item56_potted_plant_largeitem)
+	(inanyreceptacle item57_potted_plant_largeitem)
+	(inanyreceptacle item58_potted_plant_largeitem)
+	(inanyreceptacle item5_suitcase_largeitem)
+	(inanyreceptacle item6_bottle_smallitem)
+	(inanyreceptacle item76_tv_largeitem)
+	(inanyreceptacle item77_tv_largeitem)
+	(inanyreceptacle item78_tv_largeitem)
+	(inanyreceptacle item96_book_smallitem)
+	(inanyreceptacle item98_book_smallitem)
+	(inreceptacle item106_book_smallitem receptacle69_dining_table)
+	(inreceptacle item107_book_smallitem receptacle44_couch)
+	(inreceptacle item108_book_smallitem receptacle69_dining_table)
+	(inreceptacle item109_book_smallitem receptacle46_couch)
+	(inreceptacle item110_book_smallitem receptacle44_couch)
+	(inreceptacle item114_book_smallitem receptacle70_dining_table)
+	(inreceptacle item116_clock_mediumitem receptacle85_sink)
+	(inreceptacle item117_clock_mediumitem receptacle42_chair)
+	(inreceptacle item118_clock_mediumitem receptacle42_chair)
+	(inreceptacle item120_clock_mediumitem receptacle42_chair)
+	(inreceptacle item121_clock_mediumitem receptacle42_chair)
+	(inreceptacle item123_teddy_bear_mediumitem receptacle27_chair)
+	(inreceptacle item124_teddy_bear_mediumitem receptacle61_bed)
+	(inreceptacle item125_teddy_bear_mediumitem receptacle62_bed)
+	(inreceptacle item126_teddy_bear_mediumitem receptacle42_chair)
+	(inreceptacle item13_bottle_smallitem receptacle66_dining_table)
+	(inreceptacle item15_cup_smallitem receptacle87_sink)
+	(inreceptacle item19_cup_smallitem receptacle89_sink)
+	(inreceptacle item21_bowl_smallitem receptacle87_sink)
+	(inreceptacle item23_cake_mediumitem receptacle28_chair)
+	(inreceptacle item47_potted_plant_largeitem receptacle31_chair)
+	(inreceptacle item48_potted_plant_largeitem receptacle33_chair)
+	(inreceptacle item49_potted_plant_largeitem receptacle33_chair)
+	(inreceptacle item4_umbrella_largeitem receptacle61_bed)
+	(inreceptacle item50_potted_plant_largeitem receptacle33_chair)
+	(inreceptacle item52_potted_plant_largeitem receptacle46_couch)
+	(inreceptacle item53_potted_plant_largeitem receptacle46_couch)
+	(inreceptacle item55_potted_plant_largeitem receptacle40_chair)
+	(inreceptacle item56_potted_plant_largeitem receptacle70_dining_table)
+	(inreceptacle item57_potted_plant_largeitem receptacle70_dining_table)
+	(inreceptacle item58_potted_plant_largeitem receptacle62_bed)
+	(inreceptacle item5_suitcase_largeitem receptacle70_dining_table)
+	(inreceptacle item6_bottle_smallitem receptacle83_sink)
+	(inreceptacle item76_tv_largeitem receptacle25_chair)
+	(inreceptacle item77_tv_largeitem receptacle25_chair)
+	(inreceptacle item78_tv_largeitem receptacle69_dining_table)
+	(inreceptacle item96_book_smallitem receptacle90_refrigerator)
+	(inreceptacle item98_book_smallitem receptacle24_chair)
+	(itematlocation item100_book_smallitem location_Xneg61_Yneg10_place36_room21_floorA)
+	(itematlocation item101_book_smallitem location_Xneg39_Yneg27_place37_room11_floorB)
+	(itematlocation item102_book_smallitem location_Xneg40_Yneg27_place38_room11_floorB)
+	(itematlocation item103_book_smallitem location_Xneg39_Yneg30_place39_room11_floorB)
+	(itematlocation item104_book_smallitem location_Xneg39_Yneg37_place40_room11_floorB)
+	(itematlocation item105_book_smallitem location_Xneg39_Yneg34_place41_room11_floorB)
+	(itematlocation item106_book_smallitem location_Xpos10_Yneg32_place75_room14_floorB)
+	(itematlocation item107_book_smallitem location_Xpos11_Yneg31_place65_room14_floorB)
+	(itematlocation item108_book_smallitem location_Xpos9_Yneg32_place75_room14_floorB)
+	(itematlocation item109_book_smallitem location_Xneg2_Ypos22_place66_room18_floorB)
+	(itematlocation item10_bottle_smallitem location_Xneg52_Yneg20_place21_room21_floorA)
+	(itematlocation item110_book_smallitem location_Xpos10_Yneg28_place65_room14_floorB)
+	(itematlocation item111_book_smallitem location_Xneg35_Yneg12_place42_room5_floorC)
+	(itematlocation item112_book_smallitem location_Xneg38_Yneg13_place43_room5_floorC)
+	(itematlocation item113_book_smallitem location_Xneg35_Yneg14_place44_room5_floorC)
+	(itematlocation item114_book_smallitem location_Xneg42_Yneg13_place76_room5_floorC)
+	(itematlocation item115_clock_mediumitem location_Xneg43_Yneg28_place45_room22_floorA)
+	(itematlocation item116_clock_mediumitem location_Xneg46_Yneg39_place87_room22_floorA)
+	(itematlocation item117_clock_mediumitem location_Xneg5_Ypos31_place63_room7_floorC)
+	(itematlocation item118_clock_mediumitem location_Xpos13_Ypos25_place63_room7_floorC)
+	(itematlocation item119_clock_mediumitem location_Xpos13_Ypos26_place46_room7_floorC)
+	(itematlocation item11_bottle_smallitem location_Xneg54_Ypos0_place22_room21_floorA)
+	(itematlocation item120_clock_mediumitem location_Xpos13_Ypos25_place63_room7_floorC)
+	(itematlocation item121_clock_mediumitem location_Xneg2_Ypos31_place63_room7_floorC)
+	(itematlocation item122_vase_mediumitem location_Xneg37_Yneg42_place47_room11_floorB)
+	(itematlocation item123_teddy_bear_mediumitem location_Xneg22_Ypos22_place51_room13_floorA)
+	(itematlocation item124_teddy_bear_mediumitem location_Xneg49_Yneg7_place69_room6_floorC)
+	(itematlocation item125_teddy_bear_mediumitem location_Xneg14_Ypos13_place70_room7_floorC)
+	(itematlocation item126_teddy_bear_mediumitem location_Xpos7_Ypos30_place63_room7_floorC)
+	(itematlocation item12_bottle_smallitem location_Xneg67_Yneg48_place23_room11_floorB)
+	(itematlocation item13_bottle_smallitem location_Xneg67_Yneg48_place74_room11_floorB)
+	(itematlocation item14_bottle_smallitem location_Xpos12_Yneg35_place24_room14_floorB)
+	(itematlocation item15_cup_smallitem location_Xneg25_Yneg27_place89_room2_floorB)
+	(itematlocation item16_cup_smallitem location_Xneg18_Yneg27_place25_room5_floorC)
+	(itematlocation item17_cup_smallitem location_Xneg19_Yneg27_place26_room5_floorC)
+	(itematlocation item18_cup_smallitem location_Xneg20_Yneg28_place27_room5_floorC)
+	(itematlocation item19_cup_smallitem location_Xneg9_Yneg1_place91_room3_floorC)
+	(itematlocation item20_bowl_smallitem location_Xneg61_Yneg7_place28_room21_floorA)
+	(itematlocation item21_bowl_smallitem location_Xneg24_Yneg26_place89_room2_floorB)
+	(itematlocation item22_bowl_smallitem location_Xneg4_Yneg8_place29_room18_floorB)
+	(itematlocation item23_cake_mediumitem location_Xneg59_Ypos41_place52_room4_floorA)
+	(itematlocation item47_potted_plant_largeitem location_Xneg60_Ypos23_place55_room12_floorB)
+	(itematlocation item48_potted_plant_largeitem location_Xneg31_Ypos42_place57_room12_floorB)
+	(itematlocation item49_potted_plant_largeitem location_Xneg36_Ypos45_place57_room12_floorB)
+	(itematlocation item4_umbrella_largeitem location_Xneg61_Yneg1_place69_room6_floorC)
+	(itematlocation item50_potted_plant_largeitem location_Xneg37_Ypos45_place57_room12_floorB)
+	(itematlocation item52_potted_plant_largeitem location_Xpos8_Ypos39_place66_room18_floorB)
+	(itematlocation item53_potted_plant_largeitem location_Xpos13_Ypos32_place66_room18_floorB)
+	(itematlocation item54_potted_plant_largeitem location_Xpos6_Yneg7_place30_room18_floorB)
+	(itematlocation item55_potted_plant_largeitem location_Xneg58_Ypos33_place61_room6_floorC)
+	(itematlocation item56_potted_plant_largeitem location_Xneg52_Yneg14_place76_room5_floorC)
+	(itematlocation item57_potted_plant_largeitem location_Xneg56_Yneg12_place76_room5_floorC)
+	(itematlocation item58_potted_plant_largeitem location_Xpos12_Ypos12_place70_room7_floorC)
+	(itematlocation item5_suitcase_largeitem location_Xneg42_Yneg12_place76_room5_floorC)
+	(itematlocation item6_bottle_smallitem location_Xneg26_Ypos30_place85_room1_floorA)
+	(itematlocation item75_tv_largeitem location_Xneg3_Yneg45_place31_room16_floorA)
+	(itematlocation item76_tv_largeitem location_Xpos8_Ypos21_place49_room13_floorA)
+	(itematlocation item77_tv_largeitem location_Xpos11_Ypos23_place49_room13_floorA)
+	(itematlocation item78_tv_largeitem location_Xneg12_Yneg35_place75_room14_floorB)
+	(itematlocation item7_bottle_smallitem location_Xneg61_Yneg5_place18_room21_floorA)
+	(itematlocation item8_bottle_smallitem location_Xneg60_Yneg8_place19_room21_floorA)
+	(itematlocation item94_book_smallitem location_Xpos8_Yneg45_place32_room16_floorA)
+	(itematlocation item95_book_smallitem location_Xpos8_Yneg47_place33_room16_floorA)
+	(itematlocation item96_book_smallitem location_Xpos11_Ypos2_place92_room13_floorA)
+	(itematlocation item97_book_smallitem location_Xneg1_Yneg45_place34_room16_floorA)
+	(itematlocation item98_book_smallitem location_Xneg13_Yneg45_place48_room16_floorA)
+	(itematlocation item99_book_smallitem location_Xpos5_Yneg44_place35_room16_floorA)
+	(itematlocation item9_bottle_smallitem location_Xneg61_Yneg9_place20_room21_floorA)
+	(receptacleatlocation receptacle24_chair location_Xneg24_Yneg34_place48_room16_floorA)
+	(receptacleatlocation receptacle25_chair location_Xpos7_Ypos21_place49_room13_floorA)
+	(receptacleatlocation receptacle26_chair location_Xpos9_Ypos17_place50_room13_floorA)
+	(receptacleatlocation receptacle27_chair location_Xneg24_Ypos23_place51_room13_floorA)
+	(receptacleatlocation receptacle28_chair location_Xneg59_Ypos41_place52_room4_floorA)
+	(receptacleatlocation receptacle29_chair location_Xneg58_Ypos22_place53_room4_floorA)
+	(receptacleatlocation receptacle30_chair location_Xneg61_Yneg34_place54_room11_floorB)
+	(receptacleatlocation receptacle31_chair location_Xneg48_Ypos27_place55_room12_floorB)
+	(receptacleatlocation receptacle32_chair location_Xneg42_Ypos30_place56_room12_floorB)
+	(receptacleatlocation receptacle33_chair location_Xneg43_Ypos35_place57_room12_floorB)
+	(receptacleatlocation receptacle37_chair location_Xneg12_Ypos31_place58_room18_floorB)
+	(receptacleatlocation receptacle38_chair location_Xneg12_Ypos11_place59_room18_floorB)
+	(receptacleatlocation receptacle39_chair location_Xneg7_Yneg41_place60_room14_floorB)
+	(receptacleatlocation receptacle40_chair location_Xneg61_Ypos26_place61_room6_floorC)
+	(receptacleatlocation receptacle41_chair location_Xneg41_Yneg6_place62_room6_floorC)
+	(receptacleatlocation receptacle42_chair location_Xneg3_Ypos29_place63_room7_floorC)
+	(receptacleatlocation receptacle43_couch location_Xneg3_Yneg15_place64_room16_floorA)
+	(receptacleatlocation receptacle44_couch location_Xpos2_Yneg15_place65_room14_floorB)
+	(receptacleatlocation receptacle46_couch location_Xpos8_Ypos21_place66_room18_floorB)
+	(receptacleatlocation receptacle59_bed location_Xneg40_Ypos35_place67_room4_floorA)
+	(receptacleatlocation receptacle60_bed location_Xneg27_Ypos2_place68_room20_floorB)
+	(receptacleatlocation receptacle61_bed location_Xneg53_Yneg3_place69_room6_floorC)
+	(receptacleatlocation receptacle62_bed location_Xneg4_Ypos19_place70_room7_floorC)
+	(receptacleatlocation receptacle63_bed location_Xneg48_Yneg37_place71_room5_floorC)
+	(receptacleatlocation receptacle64_dining_table location_Xneg45_Ypos31_place72_room12_floorB)
+	(receptacleatlocation receptacle65_dining_table location_Xneg40_Ypos31_place73_room12_floorB)
+	(receptacleatlocation receptacle66_dining_table location_Xneg62_Yneg37_place74_room11_floorB)
+	(receptacleatlocation receptacle69_dining_table location_Xneg7_Yneg39_place75_room14_floorB)
+	(receptacleatlocation receptacle70_dining_table location_Xneg56_Yneg21_place76_room5_floorC)
+	(receptacleatlocation receptacle71_toilet location_Xneg23_Ypos41_place77_room1_floorA)
+	(receptacleatlocation receptacle72_toilet location_Xneg23_Ypos41_place78_room1_floorA)
+	(receptacleatlocation receptacle73_toilet location_Xneg31_Yneg46_place79_room2_floorB)
+	(receptacleatlocation receptacle74_toilet location_Xpos2_Yneg26_place80_room3_floorC)
+	(receptacleatlocation receptacle79_microwave location_Xneg61_Ypos12_place81_room15_floorB)
+	(receptacleatlocation receptacle80_oven location_Xneg42_Yneg2_place82_room15_floorB)
+	(receptacleatlocation receptacle81_oven location_Xneg43_Yneg3_place83_room15_floorB)
+	(receptacleatlocation receptacle82_toaster location_Xneg61_Ypos15_place84_room15_floorB)
+	(receptacleatlocation receptacle83_sink location_Xneg24_Ypos32_place85_room1_floorA)
+	(receptacleatlocation receptacle84_sink location_Xneg25_Ypos32_place86_room1_floorA)
+	(receptacleatlocation receptacle85_sink location_Xneg62_Yneg44_place87_room22_floorA)
+	(receptacleatlocation receptacle86_sink location_Xneg60_Yneg1_place88_room15_floorB)
+	(receptacleatlocation receptacle87_sink location_Xneg33_Yneg38_place89_room2_floorB)
+	(receptacleatlocation receptacle88_sink location_Xneg20_Yneg41_place90_room2_floorB)
+	(receptacleatlocation receptacle89_sink location_Xneg13_Yneg14_place91_room3_floorC)
+	(receptacleatlocation receptacle90_refrigerator location_Xpos9_Ypos6_place92_room13_floorA)
+	(receptacleatlocation receptacle91_refrigerator location_Xneg44_Yneg17_place93_room8_floorA)
+	(receptacleatlocation receptacle92_refrigerator location_Xneg62_Yneg16_place94_room15_floorB)
+	(receptacleatlocation receptacle93_refrigerator location_Xneg66_Yneg23_place95_room11_floorB)
+	(receptacleopeningtype receptacle79_microwave)
+	(receptacleopeningtype receptacle80_oven)
+	(receptacleopeningtype receptacle81_oven)
+	(receptacleopeningtype receptacle90_refrigerator)
+	(receptacleopeningtype receptacle91_refrigerator)
+	(receptacleopeningtype receptacle92_refrigerator)
+	(receptacleopeningtype receptacle93_refrigerator)
+  )
+  (:goal (and
+	(inreceptacle item16_cup_smallitem receptacle46_couch)
+	(inreceptacle item94_book_smallitem receptacle44_couch)
+	(inreceptacle item110_book_smallitem receptacle25_chair)
+	(inreceptacle item105_book_smallitem receptacle87_sink)
+	(inreceptacle item47_potted_plant_largeitem receptacle63_bed)
+	(inreceptacle item10_bottle_smallitem receptacle91_refrigerator)
+	(inreceptacle item99_book_smallitem receptacle61_bed)
+	(inreceptacle item116_clock_mediumitem receptacle73_toilet)
+	(inreceptacle item13_bottle_smallitem receptacle81_oven)
+	(inreceptacle item103_book_smallitem receptacle89_sink)))
+)

@@ -39,7 +39,7 @@ def generate_dataset_statistics(args, planner):
         try:
             print(f'Problem {i} / {m}: {pddl_problem}')
             plan = planner.plan_from_pddl(args.domain, pddl_problem, timeout=args.timeout)
-            run_stats.append(planner.get_statistics().copy()) # copy is important because planner reuses the same list
+            run_stats.append(planner.get_statistics().copy())
         except PlanningTimeout:
             timeouts += 1
         except PlanningFailure:
@@ -49,9 +49,9 @@ def generate_dataset_statistics(args, planner):
     planner_stats = {}
     for stat in STATS:
         if stat not in planner_stats:
-            planner_stats[stat] = np.zeros(len(run_stats))
+            planner_stats[stat] = np.zeros(len(run_stats)) 
         for i, run in enumerate(run_stats):
-            planner_stats[stat][i] = run_stats[i][stat]
+            planner_stats[stat][i] = run[stat]
     for stat in STATS:
         planner_stats[stat] = float(planner_stats[stat].mean().item())
     planner_stats['success_rate'] = float(len(run_stats) / m)
@@ -72,7 +72,9 @@ def planning_demo(args, planner, problem_file=None):
         problem_file = random.choice(problem_files)
     print('Attempting: {}'.format(problem_file))
     try:
-        plan = planner.plan_from_pddl(args.domain, problem_file)
+        plan = planner.plan_from_pddl(args.domain, problem_file, timeout=args.timeout)
+        for i, action in enumerate(plan):
+            print(f"Action {i}: {action}")
         print("Statistics")
         pprinter = pprint.PrettyPrinter()
         pprinter.pprint(planner.get_statistics())
@@ -84,14 +86,14 @@ def planning_demo(args, planner, problem_file=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp-name', type=str, required=True)
-    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'])
-    parser.add_argument('--exp-dir', type=str, default='./exp')
-    parser.add_argument('--data-root', type=str, required=True, help='Path to PDDL problem files')
-    parser.add_argument('--domain', type=str, default='./pddl/taskography_gym.pddl')
-    parser.add_argument('--timeout', type=float, default=10.)
-    parser.add_argument('--demo', action='store_true')
-    parser.add_argument('--limit', type=int, default=None)
+    parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
+    parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
+    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'], help='Planner to benchmark')
+    parser.add_argument('--data-root', type=str, required=True, help='Path to directory with generated PDDL problem files')
+    parser.add_argument('--domain', type=str, required=True, help='Path to <domain>_gym.pddl file')
+    parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
+    parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
+    parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
     args = parser.parse_args()
 
     if not os.path.exists(args.exp_dir):

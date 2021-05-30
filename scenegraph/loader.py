@@ -215,10 +215,9 @@ if __name__ == "__main__":
     model = "Allensville"
     verified = True
     visualize = False
-    # data_path = "/home/krishna/data/3dscenegraph/data-tiny"
-    data_path = "/home/agiachris/data/3dscenegraph/data-tiny"
+    # data_path = "/home/krishna/data/3dscenegraph/tiny"
+    data_path = "/home/agiachris/data/3dscenegraph/tiny"
     palette_path = None
-    # gibson_data_path = "/home/krishna/data/gibson/gibson_tiny"
 
     result_type = "verified_graph" if verified else "automated_graph"
     datapath = os.path.join(data_path, result_type, "3DSceneGraph_" + model + ".npz")
