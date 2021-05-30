@@ -15,7 +15,7 @@ TESTING = False
 class PddlProblem:
     __action_bindings = None
     __operators_by_fluent = None
-    def __init__(self, domain_file, problem_file):
+    def __init__(self, domain_file, problem_file, reward_subgoals=True, action_costs=True):
         reader = PDDLReader(raise_on_error=True)
         reader.parse_domain(domain_file)
         self.problem = reader.parse_instance(problem_file)
@@ -24,7 +24,33 @@ class PddlProblem:
         self.lang = self.problem.language
         self.init = self.problem.init
         self.ground_action_sampler = self.ground_action_sampler_with_replacement()
+        self.reward_subgoals = reward_subgoals
+        self.action_costs = action_costs
         print(f"Analyzed {len(self.operators_by_fluent)} actions")
+
+    def step(self, state, action):
+        new_state = self.next_state(state, action)
+        is_done = self.is_goal(new_state)
+        reward = 0
+        if is_done:
+            reward += 100
+        elif self.reward_subgoals:
+            reward += 100 * self.prop_subgoals_completed(new_state)
+        if self.action_costs:
+            reward -= self.action_cost(action)
+        return new_state, reward, is_done
+
+    def action_cost(self, action):
+        return 1
+
+    def prop_subgoals_completed(self, state):
+        reward = 0
+        goal = self.problem.goal
+        if isinstance(goal, CompoundFormula) and goal.connective is Connective.And:
+            for f in goal.subformulas:
+                if evaluate(f, state):
+                    reward += 1 / len(goal.subformulas)
+        return reward
 
     def is_goal(self, state):
         return evaluate(self.problem.goal, state)

@@ -1,4 +1,4 @@
-import numpy as np    
+import numpy as np
 
 UnvisitedUCB = 1e100 # TODO: revisit
 class Node:
@@ -13,11 +13,8 @@ class Node:
         self.children = set()
         self.problem = parent.problem
 
-        self.state = self.problem.next_state(parent.state, action)
-        self.is_done = self.problem.is_goal(self.state)
+        self.state, self.immediate_reward, self.is_done = self.problem.step(parent.state, action)
         self.action_generator = self.problem.action_generator(self.state)
-        self.immediate_reward = 0
-        self.expanded = False
 
     def is_leaf(self):
         return len(self.children) == 0
@@ -30,26 +27,36 @@ class Node:
 
     def ucb_score(self, scale=10):
         if self.times_visited == 0:
-            return UnvisitedUCB 
+            return UnvisitedUCB
 
         U = np.sqrt(2*np.log(self.parent.times_visited) / self.times_visited)
         return self.get_mean_value() + scale*U
-    
+
+    def best_child(self, by='ucb', return_score=False):
+        children = list(self.children)
+        if by == 'ucb':
+            scores = [c.ucb_score() for c in children]
+        elif by == 'value':
+            scores = [c.get_mean_value() for c in children]
+        else:
+            raise ValueError
+
+        best_child_index = np.argmax(scores)
+        best_child_score = scores[best_child_index]
+        best_child = children[best_child_index]
+        if return_score:
+            return best_child, best_child_score
+        return best_child
 
     def select_leaf(self):
         if self.is_leaf():
             return self
-
-        children = list(self.children)
-        scores = [c.ucb_score() for c in children]
-        best_child_index = np.argmax(scores)
-        best_child_score = scores[best_child_index]
-        best_child = children[best_child_index]
-  
+        best_child = self.best_child('ucb')
         return best_child.select_leaf()
 
     def expand(self):
-        assert not self.is_done
+        if self.is_done:
+            return self
         for action in self.action_generator:
             child = Node(self, action)
             self.children.add(child)
@@ -57,17 +64,19 @@ class Node:
 
         return self.select_leaf()
 
-    def rollout(self, horizon=20):
+    def rollout(self, horizon):
         is_done = self.is_done
+        if is_done:
+            return 0
         state = self.state
+        total_reward = 0
         for i in range(horizon):
           if is_done:
             break
           action = self.problem.sample_random_action(state)
-          state = self.problem.next_state(state, action)
-          is_done = self.problem.is_goal(state)
-  
-        return 1 if is_done else 0 # TODO: revisit
+          state, reward, is_done = self.problem.step(state, action)
+          total_reward += reward
+        return total_reward
 
     def propagate(self, child_value):
         # compute node value
@@ -92,10 +101,9 @@ class Root(Node):
         self.state = state
         self.is_done = problem.is_goal(self.state)
         self.action_generator = problem.action_generator(self.state)
-        self.expanded = False
 
 
-def plan_mcts(root, n_iters=10):
+def plan_mcts(root, n_iters=10, horizon=20):
     """
     builds tree with monte-carlo tree search for n_iters iterations
     :param root: tree node to plan from
@@ -104,12 +112,12 @@ def plan_mcts(root, n_iters=10):
     for _ in range(n_iters):
 
         node = root.select_leaf()
+        child = node.expand()
+        if child.is_done:
+            print('Found goal')
+            return child
+        mcreward = child.rollout(horizon)
+        child.propagate(mcreward)
 
-        if node.is_done:
-            node.propagate(1)
 
-        else:  # node is not terminal
-            child = node.expand()
-            mcreward = child.rollout()
-            child.propagate(mcreward)
 
