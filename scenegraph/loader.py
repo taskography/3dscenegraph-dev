@@ -1,5 +1,5 @@
-import argparse
 import os
+import argparse
 import numpy as np
 
 
@@ -211,17 +211,14 @@ def load_scenegraph(datapath):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data-path', type=str, default="/home/agiachris/data/3dscenegraph/tiny")
+    parser.add_argument('--model', type=str, default='Allensville')
+    args = parser.parse_args()
 
-    model = "Allensville"
-    verified = True
-    visualize = False
-    # data_path = "/home/krishna/data/3dscenegraph/tiny"
-    data_path = "/home/agiachris/data/3dscenegraph/tiny"
-    palette_path = None
-
-    result_type = "verified_graph" if verified else "automated_graph"
-    datapath = os.path.join(data_path, result_type, "3DSceneGraph_" + model + ".npz")
+    model_type = "verified_graph" if os.path.basename(args.data_path) == 'tiny' else "automated_graph"
+    datapath = os.path.join(args.data_path, model_type, "3DSceneGraph_" + args.model + ".npz")
 
     scenegraph = {}
-    scenegraph[model] = {}
-    scenegraph[model]["graph"] = load_scenegraph(datapath)
+    scenegraph[args.model] = {}
+    scenegraph[args.model]["graph"] = load_scenegraph(datapath)
