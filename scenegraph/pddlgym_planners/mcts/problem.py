@@ -15,7 +15,7 @@ TESTING = False
 class PddlProblem:
     __action_bindings = None
     __operators_by_fluent = None
-    def __init__(self, domain_file, problem_file, reward_subgoals=True, action_costs=True):
+    def __init__(self, domain_file, problem_file, reward_subgoals=True, action_costs=True, oversample_relevant_actions=True):
         reader = PDDLReader(raise_on_error=True)
         reader.parse_domain(domain_file)
         self.problem = reader.parse_instance(problem_file)
@@ -23,9 +23,11 @@ class PddlProblem:
         self.problem = simp.simplify(True, True)
         self.lang = self.problem.language
         self.init = self.problem.init
+        self.set_goal(self.problem.goal)
         self.ground_action_sampler = self.ground_action_sampler_with_replacement()
         self.reward_subgoals = reward_subgoals
         self.action_costs = action_costs
+        self.oversample_relevant_actions = oversample_relevant_actions
         print(f"Analyzed {len(self.operators_by_fluent)} actions")
 
     def step(self, state, action):
@@ -35,7 +37,7 @@ class PddlProblem:
         if is_done:
             reward += 100
         elif self.reward_subgoals:
-            reward += 100 * self.prop_subgoals_completed(new_state)
+            reward += 100 * (self.prop_subgoals_completed(new_state) - self.prop_subgoals_completed(state))
         if self.action_costs:
             reward -= self.action_cost(action)
         return new_state, reward, is_done
@@ -58,9 +60,40 @@ class PddlProblem:
     def next_state(self, state, action):
         return progress(state, action)
 
+    def set_goal(self, goal, num_hops=1):
+        self.problem.goal = goal
+        if isinstance(goal, Atom):
+            self.goal_terms = set([x.signature for x in goal.subterms])
+        elif isinstance(goal, CompoundFormula):
+            self.goal_terms = set([x.signature for y in goal.subformulas for x in y.subterms])
+        else:
+            raise NotImplementedError
+
+        _, statics = approximate_symbol_fluency(self.problem)
+
+        # add all the terms that appear in a predicate with a goal term
+        for i in range(num_hops):
+            extended_terms = set()
+            for predicate in statics:
+                for args in self.problem.init.predicate_extensions[predicate.signature]:
+                    if any(a.expr.signature in self.goal_terms for a in args):
+                        for a in args:
+                            extended_terms.add(a.expr.signature)
+            self.goal_terms = self.goal_terms.union(extended_terms)
+
     def sample_random_action(self, state):
         actions = list(self.action_generator(state))
-        i = np.random.choice(len(actions))
+        if self.oversample_relevant_actions:
+            p = np.ones(len(actions))
+            goal_terms = self.goal_terms
+            for i in range(len(actions)):
+                action = actions[i]
+                overlap = goal_terms.intersection(set([o.signature for a in action.effects for o in a.atom.subterms]))
+                p[i] += len(overlap)
+            p = p / p.sum()
+            i = np.random.choice(len(actions), p=p)
+        else:
+            i = np.random.choice(len(actions))
 
         return actions[i]
 

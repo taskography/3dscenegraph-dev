@@ -54,12 +54,15 @@ class Node:
         best_child = self.best_child('ucb')
         return best_child.select_leaf()
 
-    def expand(self):
+    def expand(self, previously_visited_set):
         if self.is_done:
             return self
         for action in self.action_generator:
             child = Node(self, action)
-            self.children.add(child)
+            child_hash = hash(child.state)
+            if not child_hash in previously_visited_set:
+                previously_visited_set.add(child_hash)
+                self.children.add(child)
 
 
         return self.select_leaf()
@@ -93,6 +96,7 @@ class Node:
 
 class Root(Node):
     def __init__(self, problem, state):
+        self.previously_visited_set = set()
         self.action = None
         self.parent = None
         self.children = set()
@@ -107,17 +111,15 @@ def plan_mcts(root, n_iters=10, horizon=20):
     """
     builds tree with monte-carlo tree search for n_iters iterations
     :param root: tree node to plan from
-    :param n_iters: how many select-expand-simulate-propagete loops to make
+    :param n_iters: how many select-expand-simulate-propagate loops to make
     """
     for _ in range(n_iters):
-
         node = root.select_leaf()
-        child = node.expand()
+        child = node.expand(root.previously_visited_set)
+        mcreward = child.rollout(horizon)
+        child.propagate(mcreward)
         if child.is_done:
             print('Found goal')
             return child
-        mcreward = child.rollout(horizon)
-        child.propagate(mcreward)
-
 
 
