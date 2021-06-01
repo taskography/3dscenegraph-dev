@@ -37,6 +37,9 @@ def generate_pddl_problems(args):
     generated_scenes = []
     count = 0
     for model_name, model_path in models:
+        model_name = model_name.split('_')[-1]
+        print(f'Generating task {count} on: {model_name}')
+
         # sample and write tasks
         scenegraph = load_scenegraph(model_path)
         if domain_name == 'taskographyv3':
@@ -50,12 +53,11 @@ def generate_pddl_problems(args):
             skipped_scenes.append(model_name)
             continue
 
-        print(f'Generating task {count} on: {model_name}')
         generated_scenes.append(model_name)
         for i in range(args.samples_per_scene):
             problem_name = f'{model_name.title()}{domain_name.title()}Rearrangement{count}.pddl'
             problem_file = os.path.join(output_dir, problem_name)
-            is_task = sampler.generate_pddl_problem(problem_file, task_length=args.task_length)
+            is_task = sampler.generate_pddl_problem(problem_file, problem_name, task_length=args.task_length)
             if not is_task:
                 break
             count += 1

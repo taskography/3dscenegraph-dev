@@ -245,10 +245,8 @@ def kruskals_mst(building):
 
     if building.num_rooms is None:
         building.num_rooms = len(building.room)
-    if building.num_floors is None:
-        building.num_floors = len(floor_map_inv)
     assert(len(building.room) == building.num_rooms)
-    assert(len(floor_map_inv) == building.num_floors)    
+    num_floors_with_rooms = len(floor_map_inv)
     
     # compute room-room distances
     adj_rooms = np.zeros((building.num_rooms, building.num_rooms))
@@ -262,9 +260,9 @@ def kruskals_mst(building):
     room_graph = Graph(building.num_rooms)
 
     # find average-minimum distances of rooms between floors
-    if building.num_floors > 1:
-        adj_floors = np.zeros((building.num_floors, building.num_floors))
-        adj_floors_count = np.ones((building.num_floors, building.num_floors))
+    if num_floors_with_rooms > 1:
+        adj_floors = np.zeros((num_floors_with_rooms, num_floors_with_rooms))
+        adj_floors_count = np.ones((num_floors_with_rooms, num_floors_with_rooms))
         
         for room_id_a, floor_id_a in floor.items():
             for floor_id_b in floor_to_room_map:
@@ -282,9 +280,9 @@ def kruskals_mst(building):
                 adj_floors_count[floor_id_a, floor_id_b] += 1
 
         # compute minimum spanning floor tree
-        floor_graph = Graph(building.num_floors)
-        for floor_id_a in range(building.num_floors):
-            for floor_id_b in range(floor_id_a, building.num_floors):
+        floor_graph = Graph(num_floors_with_rooms)
+        for floor_id_a in range(num_floors_with_rooms):
+            for floor_id_b in range(floor_id_a, num_floors_with_rooms):
                 floor_graph.addEdge(floor_id_a, floor_id_b, adj_floors[floor_id_a, floor_id_b])
         floor_mst = floor_graph.KruskalMST()
 
@@ -323,7 +321,6 @@ def kruskals_mst(building):
         building.room[room_map[i]].connected_rooms.add(room_map[j])
         building.room[room_map[j]].connected_rooms.add(room_map[i])
     
-    # print(building.num_floors)
     assert(len(connected_rooms) == building.num_rooms)
     assert(len(building.MST) == building.num_rooms - 1)
 
@@ -391,9 +388,7 @@ class Graph:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-path', type=str, default="/home/agiachris/data/3dscenegraph/tiny")
-    parser.add_argument('--model', type=str, default='Allensville')
-    # parser.add_argument('--model', type=str, default='Darden')
-    # parser.add_argument('--model', type=str, default='Corozal')
+    parser.add_argument('--model', type=str, default='Marstons')
     args = parser.parse_args()
 
     model_type = "verified_graph" if os.path.basename(args.data_path) == 'tiny' else "automated_graph"
