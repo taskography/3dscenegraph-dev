@@ -82,7 +82,7 @@ def planning_demo(args, planner, problem_file=None):
         print('Timeout')
     except PlanningFailure as failure:
         print('Failure')
-        print(failure)
+
 
 
 if __name__ == '__main__':
