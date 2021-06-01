@@ -55,8 +55,8 @@ def generate_pddl_problems(args):
 
         generated_scenes.append(model_name)
         for i in range(args.samples_per_scene):
-            problem_name = f'{model_name.title()}{domain_name.title()}Rearrangement{count}.pddl'
-            problem_file = os.path.join(output_dir, problem_name)
+            problem_name = f'{model_name.title()}{domain_name.title()}Rearrangement{count}'
+            problem_file = os.path.join(output_dir, problem_name + '.pddl')
             is_task = sampler.generate_pddl_problem(problem_file, problem_name, task_length=args.task_length)
             if not is_task:
                 break
