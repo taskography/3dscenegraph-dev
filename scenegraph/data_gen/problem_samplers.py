@@ -9,9 +9,9 @@ from pddlgym.structs import LiteralConjunction
 
 def get_domain_sampler(domain_name):
     domain_to_sampler = {
-        'taskography_v1': TaskSamplerV1,
-        'taskography_v2': TaskSamplerV2,
-        'taskography_v3': TaskSamplerV3
+        'taskographyV1': TaskSamplerV1,
+        'taskographyV2': TaskSamplerV2,
+        'taskographyV3': TaskSamplerV3
     }
     return domain_to_sampler[domain_name]
 
@@ -274,13 +274,14 @@ class TaskSamplerV2(TaskSamplerBase):
         room_place = self.domain.predicates['roomplace']
         location_in_place = self.domain.predicates['locationinplace']
         place_location = self.domain.predicates['placelocation']
+        rooms_connected = self.domain.predicates['roomsconnected']
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
         item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
         in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
 
-        # placeInRoom, roomPlace, placeLocation, locationInPlace
+        # placeInRoom, roomPlace, placeLocation, locationInPlace, roomsConnected
         for room_id in self.room_to_place_map:
             room_name = self.room_names[room_id]
             place_id = self.room_to_place_map[room_id]['root']
@@ -293,6 +294,9 @@ class TaskSamplerV2(TaskSamplerBase):
             for place_id in self.room_to_place_map[room_id]['places']:
                 place_name = self.place_names[place_id]
                 self.pddl_predicate_set.add(place_in_room(emap[place_name], emap[room_name]))
+            for connected_room_id in self.sg.room[room_id].connected_rooms:
+                connected_room_name = self.room_names[connected_room_id]
+                self.pddl_predicate_set.add(rooms_connected(emap[room_name], emap[connected_room_name]))
 
         # locationInPlace, placeLocation
         for place_id in self.place_to_entity_map:
@@ -511,13 +515,14 @@ class TaskSamplerV3(TaskSamplerBase):
         room_place = self.domain.predicates['roomplace']
         location_in_place = self.domain.predicates['locationinplace']
         place_location = self.domain.predicates['placelocation']
+        rooms_connected = self.domain.predicates['roomsconnected']
         receptacle_at_location = self.domain.predicates['receptacleatlocation']
         item_at_location = self.domain.predicates['itematlocation']
         in_receptacle = self.domain.predicates['inreceptacle']
         in_any_receptacle = self.domain.predicates['inanyreceptacle']
         receptacle_opening_type = self.domain.predicates['receptacleopeningtype']
         
-        # placeInRoom, roomPlace, placeLocation, locationInPlace
+        # placeInRoom, roomPlace, placeLocation, locationInPlace, roomsConnected
         for room_id in self.room_to_place_map:
             room_name = self.room_names[room_id]
             place_id = self.room_to_place_map[room_id]['root']
@@ -530,6 +535,9 @@ class TaskSamplerV3(TaskSamplerBase):
             for place_id in self.room_to_place_map[room_id]['places']:
                 place_name = self.place_names[place_id]
                 self.pddl_predicate_set.add(place_in_room(emap[place_name], emap[room_name]))
+            for connected_room_id in self.sg.room[room_id].connected_rooms:
+                connected_room_name = self.room_names[connected_room_id]
+                self.pddl_predicate_set.add(rooms_connected(emap[room_name], emap[connected_room_name]))
 
         # locationInPlace, placeLocation
         for place_id in self.place_to_entity_map:
