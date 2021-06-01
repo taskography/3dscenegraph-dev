@@ -9,9 +9,9 @@ from pddlgym.structs import LiteralConjunction
 
 def get_domain_sampler(domain_name):
     domain_to_sampler = {
-        'taskographyV1': TaskSamplerV1,
-        'taskographyV2': TaskSamplerV2,
-        'taskographyV3': TaskSamplerV3
+        'taskographyv1': TaskSamplerV1,
+        'taskographyv2': TaskSamplerV2,
+        'taskographyv3': TaskSamplerV3
     }
     return domain_to_sampler[domain_name]
 
@@ -50,9 +50,9 @@ class TaskSamplerV1(TaskSamplerBase):
         location_type = self.domain.types['location']
 
         # Agent
-        agent = agent_type("agent")
+        agent = agent_type("robot")
         self.pddl_entity_set.add(agent)
-        self.pddl_entity_map["agent"] = agent
+        self.pddl_entity_map["robot"] = agent
 
         # Receptacles
         for r_id, receptacle_name in self.receptacle_names.items():
@@ -154,7 +154,7 @@ class TaskSamplerV1(TaskSamplerBase):
         self.sampled_tasks.add(task_str)
         return valid if avoid_repeats else True
 
-    def generate_pddl_problem(self, problem_filepath, problem_num=None, task_length=1):
+    def generate_pddl_problem(self, problem_filepath, problem_name, task_length=1):
         """Append predicates for a sampled problem, and generate a goal.
         """
         task = self.sample_pick_and_place(task_length=task_length)
@@ -168,7 +168,7 @@ class TaskSamplerV1(TaskSamplerBase):
             in_receptacle = self.domain.predicates['inreceptacle']
 
             # init | agent: atLocation
-            pddl_predicates.add(at_location(emap['agent'], emap[task['agent_location']]))
+            pddl_predicates.add(at_location(emap['robot'], emap[task['agent_location']]))
 
             # goal | pick object, place receptacle: inReceptacle
             goals = []
@@ -176,9 +176,6 @@ class TaskSamplerV1(TaskSamplerBase):
                 goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))                
             pddl_goal = LiteralConjunction(goals)
 
-            problem_name = "taskograph_rearrangement"
-            if problem_num is not None:
-                problem_name += '_{}'.format(problem_num)
             PDDLProblemParser.create_pddl_file(
                 problem_filepath,
                 objects=self.pddl_entity_set,
@@ -229,9 +226,9 @@ class TaskSamplerV2(TaskSamplerBase):
         location_type = self.domain.types['location']
 
         # Agent
-        agent = agent_type("agent")
+        agent = agent_type("robot")
         self.pddl_entity_set.add(agent)
-        self.pddl_entity_map["agent"] = agent
+        self.pddl_entity_map["robot"] = agent
 
         # Rooms
         for room_id, room_name in self.room_names.items():
@@ -382,7 +379,7 @@ class TaskSamplerV2(TaskSamplerBase):
         self.sampled_tasks.add(task_str)
         return valid if avoid_repeats else True
 
-    def generate_pddl_problem(self, problem_filepath, problem_num=None, task_length=1):
+    def generate_pddl_problem(self, problem_filepath, problem_name, task_length=1):
         """Append predicates for a sampled problem, and generate a goal.
         """
         task = self.sample_pick_and_place(task_length=task_length)
@@ -398,9 +395,9 @@ class TaskSamplerV2(TaskSamplerBase):
             in_receptacle = self.domain.predicates['inreceptacle']
 
             # init | agent: inRoom, inPlace, atLocation
-            pddl_predicates.add(in_room(emap['agent'], emap[task['agent_room']]))
-            pddl_predicates.add(in_place(emap['agent'], emap[task['agent_place']]))
-            pddl_predicates.add(at_location(emap['agent'], emap[task['agent_location']]))
+            pddl_predicates.add(in_room(emap['robot'], emap[task['agent_room']]))
+            pddl_predicates.add(in_place(emap['robot'], emap[task['agent_place']]))
+            pddl_predicates.add(at_location(emap['robot'], emap[task['agent_location']]))
 
             # goal | pick object, place receptacle: inReceptacle
             goals = []
@@ -408,9 +405,6 @@ class TaskSamplerV2(TaskSamplerBase):
                 goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))                
             pddl_goal = LiteralConjunction(goals)
 
-            problem_name = "taskograph_rearrangement"
-            if problem_num is not None:
-                problem_name += '_{}'.format(problem_num)
             PDDLProblemParser.create_pddl_file(
                 problem_filepath,
                 objects=self.pddl_entity_set,
@@ -463,9 +457,9 @@ class TaskSamplerV3(TaskSamplerBase):
         location_type = self.domain.types['location']
 
         # Agent
-        agent = agent_type("agent")
+        agent = agent_type("robot")
         self.pddl_entity_set.add(agent)
-        self.pddl_entity_map["agent"] = agent
+        self.pddl_entity_map["robot"] = agent
 
         # Bagslots
         for bagslot_id in range(self.bagslots):
@@ -624,7 +618,7 @@ class TaskSamplerV3(TaskSamplerBase):
         self.sampled_tasks.add(task_str)
         return valid if avoid_repeats else True
 
-    def generate_pddl_problem(self, problem_filepath, problem_num=None, task_length=1):
+    def generate_pddl_problem(self, problem_filepath, problem_name, task_length=1):
         """Append predicates for a sampled problem, and generate a goal.
         """
         task = self.sample_pick_and_place(task_length=task_length)
@@ -640,9 +634,9 @@ class TaskSamplerV3(TaskSamplerBase):
             in_receptacle = self.domain.predicates['inreceptacle']
 
             # init | agent: inRoom, inPlace, atLocation
-            pddl_predicates.add(in_room(emap['agent'], emap[task['agent_room']]))
-            pddl_predicates.add(in_place(emap['agent'], emap[task['agent_place']]))
-            pddl_predicates.add(at_location(emap['agent'], emap[task['agent_location']]))
+            pddl_predicates.add(in_room(emap['robot'], emap[task['agent_room']]))
+            pddl_predicates.add(in_place(emap['robot'], emap[task['agent_place']]))
+            pddl_predicates.add(at_location(emap['robot'], emap[task['agent_location']]))
 
             # goal | pick object, place receptacle: inReceptacle
             goals = []
@@ -650,9 +644,6 @@ class TaskSamplerV3(TaskSamplerBase):
                 goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))                
             pddl_goal = LiteralConjunction(goals)
 
-            problem_name = "taskograph_rearrangement"
-            if problem_num is not None:
-                problem_name += '_{}'.format(problem_num)
             PDDLProblemParser.create_pddl_file(
                 problem_filepath,
                 objects=self.pddl_entity_set,

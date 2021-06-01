@@ -18,8 +18,8 @@ def generate_pddl_problems(args):
 
     # create output directories
     domain_path, ext = os.path.splitext(args.domain)
-    if not os.path.exists(domain_path + '_gym.pddl'):
-        convert_pddl_domain(args.domain, domain_path + '_gym.pddl')
+    if not os.path.exists(domain_path + 'gym.pddl'):
+        convert_pddl_domain(args.domain, domain_path + 'gym.pddl')
     output_dir = os.path.join(args.output_dir, domain_name, args.data_split + str(args.task_length))
     if os.path.exists(output_dir):
         print(f'Error: {output_dir} already exists and requires manual deletion')
@@ -39,7 +39,7 @@ def generate_pddl_problems(args):
     for model_name, model_path in models:
         # sample and write tasks
         scenegraph = load_scenegraph(model_path)
-        if domain_name == 'taskography_v3':
+        if domain_name == 'taskographyv3':
             sampler = get_domain_sampler(domain_name)(domain, scenegraph, args.bagslots)
         else:
             sampler = get_domain_sampler(domain_name)(domain, scenegraph)
@@ -53,7 +53,8 @@ def generate_pddl_problems(args):
         print(f'Generating task {count} on: {model_name}')
         generated_scenes.append(model_name)
         for i in range(args.samples_per_scene):
-            problem_file = os.path.join(output_dir, f'problem{count}_{args.data_split}_{model_name}_{domain_name}.pddl')
+            problem_name = f'{model_name.title()}{domain_name.title()}Rearrangement{count}.pddl'
+            problem_file = os.path.join(output_dir, problem_name)
             is_task = sampler.generate_pddl_problem(problem_file, task_length=args.task_length)
             if not is_task:
                 break
