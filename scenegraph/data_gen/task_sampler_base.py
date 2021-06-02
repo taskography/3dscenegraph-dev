@@ -122,6 +122,17 @@ class TaskSamplerBase:
             self.can_cool = True
         if len(self.objects['cleanable_type']) > 0 and len(self.receptacles['cleaning_type']) > 0:
             self.can_clean = True
+        
+        # categorize empty rooms
+        for room_id in self.sg.room:
+            if room_id not in self.room_names:
+                room = self.sg.room[room_id]
+                self.room_names[room_id] = room_to_str_name(room)
+                self.room_to_place_map[room_id] = dict()
+                self.room_to_place_map[room_id]['root'] = self.num_places
+                self.room_to_place_map[room_id]['places'] = set()
+                self.place_names[self.num_places] = place_to_str_name(self.num_places, room, is_room=True)
+                self.num_places += 1
 
     def get_support_relations(self, dist_threshold=2):
         """Determine object-receptacle support relations based on the dist_threshold proximity

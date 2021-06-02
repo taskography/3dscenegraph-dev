@@ -9,7 +9,7 @@ from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
-from utils import save_json
+from utils import (load_json, save_json, get_datasplit)
 
 
 PLANNERS = {
@@ -23,11 +23,11 @@ PLANNERS = {
 STATS = ['num_node_expansions', 'plan_length', 'search_time', 'total_time']
 
 
-def generate_dataset_statistics(args, planner):
+def generate_dataset_statistics(args, planner, split):
     """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
-    problems_dir = args.data_root
-    problem_files = [os.path.join(problems_dir, pddl_file) for pddl_file in os.listdir(problems_dir)]
+    # extract PDDL problems and metadata from split
+    meta_data, problem_files, _ = get_datasplit(args.data_root, split)
     if args.limit is not None:
         problem_files = problem_files[:args.limit]
     m = len(problem_files)
@@ -37,7 +37,7 @@ def generate_dataset_statistics(args, planner):
     failures = 0
     for i, pddl_problem in enumerate(problem_files):
         try:
-            print(f'Problem {i} / {m}: {pddl_problem}')
+            print(f'{split.title()} Problem {i} / {m}: {pddl_problem}')
             plan = planner.plan_from_pddl(args.domain, pddl_problem, timeout=args.timeout)
             run_stats.append(planner.get_statistics().copy())
         except PlanningTimeout:
@@ -61,7 +61,7 @@ def generate_dataset_statistics(args, planner):
     # save statistics
     pprinter = pprint.PrettyPrinter()
     pprinter.pprint(planner_stats)
-    save_json(os.path.join(args.exp_dir, args.exp_name + '.json'), planner_stats)
+    save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), planner_stats)
 
 
 def planning_demo(args, planner, problem_file=None):
@@ -80,8 +80,9 @@ def planning_demo(args, planner, problem_file=None):
         pprinter.pprint(planner.get_statistics())
     except PlanningTimeout:
         print('Timeout')
-    except PlanningFailure:
+    except PlanningFailure as failure:
         print('Failure')
+
 
 
 if __name__ == '__main__':
@@ -102,4 +103,5 @@ if __name__ == '__main__':
     if args.demo:
         planning_demo(args, PLANNERS[args.planner])
     else:
-        generate_dataset_statistics(args, PLANNERS[args.planner])
+        generate_dataset_statistics(args, PLANNERS[args.planner], 'train')
+        generate_dataset_statistics(args, PLANNERS[args.planner], 'test')
