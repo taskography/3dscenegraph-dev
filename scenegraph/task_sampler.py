@@ -33,7 +33,8 @@ def generate_pddl_problems(args):
     if args.data_split == 'tiny':
         data_type = 'verified_graph'
     data_path = os.path.join(args.data_root, args.data_split, data_type)
-    models = sorted([(model.split('.')[0].split('_')[-1], os.path.join(data_path, model)) for model in os.listdir(data_path)])
+    models = [(model.split('.')[0].split('_')[-1], os.path.join(data_path, model)) for model in os.listdir(data_path)]
+    models = sorted(models)
     random.shuffle(models)
 
     # generate tasks

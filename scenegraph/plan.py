@@ -9,7 +9,7 @@ from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
-from utils import (load_json, save_json)
+from utils import (load_json, save_json, get_datasplit)
 
 
 PLANNERS = {
@@ -23,24 +23,11 @@ PLANNERS = {
 STATS = ['num_node_expansions', 'plan_length', 'search_time', 'total_time']
 
 
-def get_datasplit(data_root, split):
-    # metadata
-    meta_data = load_json(os.path.join(data_root, 'meta_data.json'))
-    data_dir = os.path.join(data_root, 'data')
-    # problem files
-    problem_files = []
-    for pddl_filename in os.listdir(data_dir):
-        if pddl_filename.split('Taskography')[0] in meta_data[split]:
-            problem_files.append(os.path.join(data_dir, pddl_filename))
-    assert (meta_data['num_' + split] == len(problem_files))
-    return meta_data, problem_files
-
-
 def generate_dataset_statistics(args, planner, split):
     """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
     # extract PDDL problems and metadata from split
-    meta_data, problem_files = get_datasplit(args.data_root, split)
+    meta_data, problem_files, _ = get_datasplit(args.data_root, split)
     if args.limit is not None:
         problem_files = problem_files[:args.limit]
     m = len(problem_files)
