@@ -1,5 +1,5 @@
 
-(define (problem McdadeTaskographyv2Rearrangement38) (:domain taskographyv2)
+(define (problem McDadeTaskographyv2Rearrangement39) (:domain taskographyv2)
   (:objects
         item10_book_smallitem - item
 	item11_book_smallitem - item
@@ -256,7 +256,7 @@
 	room9_corridor - room
   )
   (:init 
-	(atlocation robot location_Xneg49_Yneg90_place23_room22_floorA)
+	(atlocation robot location_Xpos4_Yneg47_place11_room11_floorB)
 	(inanyreceptacle item11_book_smallitem)
 	(inanyreceptacle item20_vase_mediumitem)
 	(inanyreceptacle item21_vase_mediumitem)
@@ -272,7 +272,7 @@
 	(inanyreceptacle item58_potted_plant_largeitem)
 	(inanyreceptacle item59_potted_plant_largeitem)
 	(inanyreceptacle item60_potted_plant_largeitem)
-	(inplace robot place23_door_room22_staircase)
+	(inplace robot place11_door_room11_dining_room)
 	(inreceptacle item11_book_smallitem receptacle42_chair)
 	(inreceptacle item20_vase_mediumitem receptacle38_chair)
 	(inreceptacle item21_vase_mediumitem receptacle44_chair)
@@ -288,7 +288,7 @@
 	(inreceptacle item58_potted_plant_largeitem receptacle51_couch)
 	(inreceptacle item59_potted_plant_largeitem receptacle63_dining_table)
 	(inreceptacle item60_potted_plant_largeitem receptacle63_dining_table)
-	(inroom robot room22_staircase)
+	(inroom robot room11_dining_room)
 	(itematlocation item10_book_smallitem location_Xneg20_Yneg47_place28_room20_floorB)
 	(itematlocation item11_book_smallitem location_Xneg25_Ypos28_place62_room19_floorB)
 	(itematlocation item12_book_smallitem location_Xneg20_Yneg54_place29_room20_floorB)
@@ -672,14 +672,14 @@
 	(roomsconnected room9_corridor room2_bathroom)
   )
   (:goal (and
-	(inreceptacle item54_potted_plant_largeitem receptacle39_chair)
-	(inreceptacle item22_vase_mediumitem receptacle33_bench)
-	(inreceptacle item24_vase_mediumitem receptacle6_sink)
 	(inreceptacle item58_potted_plant_largeitem receptacle48_chair)
-	(inreceptacle item31_bottle_smallitem receptacle40_chair)
-	(inreceptacle item25_vase_mediumitem receptacle3_sink)
-	(inreceptacle item19_vase_mediumitem receptacle62_bed)
-	(inreceptacle item57_potted_plant_largeitem receptacle44_chair)
-	(inreceptacle item29_vase_mediumitem receptacle8_sink)
-	(inreceptacle item10_book_smallitem receptacle2_oven)))
+	(inreceptacle item53_potted_plant_largeitem receptacle63_dining_table)
+	(inreceptacle item56_potted_plant_largeitem receptacle46_chair)
+	(inreceptacle item1_sports_ball_largeitem receptacle37_toilet)
+	(inreceptacle item55_potted_plant_largeitem receptacle2_oven)
+	(inreceptacle item25_vase_mediumitem receptacle36_toilet)
+	(inreceptacle item11_book_smallitem receptacle3_sink)
+	(inreceptacle item30_vase_mediumitem receptacle5_sink)
+	(inreceptacle item54_potted_plant_largeitem receptacle44_chair)
+	(inreceptacle item59_potted_plant_largeitem receptacle2_oven)))
 )

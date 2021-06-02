@@ -1,12 +1,7 @@
 
-(define (problem McdadeTaskographyv3Rearrangement38) (:domain taskographyv3)
+(define (problem McDadeTaskographyv2Rearrangement38) (:domain taskographyv2)
   (:objects
-        bagslot1 - bagslot
-	bagslot2 - bagslot
-	bagslot3 - bagslot
-	bagslot4 - bagslot
-	bagslot5 - bagslot
-	item10_book_smallitem - item
+        item10_book_smallitem - item
 	item11_book_smallitem - item
 	item12_book_smallitem - item
 	item13_vase_mediumitem - item
@@ -327,16 +322,6 @@
 	(itematlocation item58_potted_plant_largeitem location_Xneg56_Yneg51_place71_room20_floorB)
 	(itematlocation item59_potted_plant_largeitem location_Xpos7_Yneg45_place74_room11_floorB)
 	(itematlocation item60_potted_plant_largeitem location_Xpos7_Yneg46_place74_room11_floorB)
-	(largeitem item1_sports_ball_largeitem)
-	(largeitem item52_potted_plant_largeitem)
-	(largeitem item53_potted_plant_largeitem)
-	(largeitem item54_potted_plant_largeitem)
-	(largeitem item55_potted_plant_largeitem)
-	(largeitem item56_potted_plant_largeitem)
-	(largeitem item57_potted_plant_largeitem)
-	(largeitem item58_potted_plant_largeitem)
-	(largeitem item59_potted_plant_largeitem)
-	(largeitem item60_potted_plant_largeitem)
 	(locationinplace location_Xneg11_Yneg6_place1_room17_floorB place1_door_room17_kitchen)
 	(locationinplace location_Xneg11_Yneg81_place32_room21_floorB place32_item15_vase)
 	(locationinplace location_Xneg11_Ypos0_place64_room17_floorB place64_receptacle44_chair)
@@ -424,24 +409,6 @@
 	(locationinplace location_Xpos9_Yneg78_place57_room4_floorC place57_receptacle37_toilet)
 	(locationinplace location_Xpos9_Yneg79_place56_room2_floorB place56_receptacle36_toilet)
 	(locationinplace location_Xpos9_Ypos15_place47_room17_floorB place47_receptacle4_sink)
-	(mediumitem item13_vase_mediumitem)
-	(mediumitem item14_vase_mediumitem)
-	(mediumitem item15_vase_mediumitem)
-	(mediumitem item16_vase_mediumitem)
-	(mediumitem item17_vase_mediumitem)
-	(mediumitem item18_vase_mediumitem)
-	(mediumitem item19_vase_mediumitem)
-	(mediumitem item20_vase_mediumitem)
-	(mediumitem item21_vase_mediumitem)
-	(mediumitem item22_vase_mediumitem)
-	(mediumitem item23_vase_mediumitem)
-	(mediumitem item24_vase_mediumitem)
-	(mediumitem item25_vase_mediumitem)
-	(mediumitem item26_vase_mediumitem)
-	(mediumitem item27_vase_mediumitem)
-	(mediumitem item28_vase_mediumitem)
-	(mediumitem item29_vase_mediumitem)
-	(mediumitem item30_vase_mediumitem)
 	(placeinroom place0_door_room13_exercise_room room13_exercise_room)
 	(placeinroom place10_door_room6_bedroom room6_bedroom)
 	(placeinroom place11_door_room11_dining_room room11_dining_room)
@@ -703,11 +670,6 @@
 	(roomsconnected room9_corridor room21_lobby)
 	(roomsconnected room9_corridor room24_storage_room)
 	(roomsconnected room9_corridor room2_bathroom)
-	(smallitem item10_book_smallitem)
-	(smallitem item11_book_smallitem)
-	(smallitem item12_book_smallitem)
-	(smallitem item31_bottle_smallitem)
-	(smallitem item34_bowl_smallitem)
   )
   (:goal (and
 	(inreceptacle item54_potted_plant_largeitem receptacle39_chair)

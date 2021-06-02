@@ -1,5 +1,5 @@
 
-(define (problem McdadeTaskographyv3Rearrangement39) (:domain taskographyv3)
+(define (problem McDadeTaskographyv3Rearrangement39) (:domain taskographyv3)
   (:objects
         bagslot1 - bagslot
 	bagslot2 - bagslot

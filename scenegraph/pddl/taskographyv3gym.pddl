@@ -24,7 +24,7 @@
 	(smallitem ?v0 - item)
 	(mediumitem ?v0 - item)
 	(largeitem ?v0 - item)
-	(= ?v0 ?v1)
+	;(= ?v0 ?v1)
   )
   ; (:actions )
 
