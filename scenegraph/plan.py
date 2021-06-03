@@ -23,7 +23,7 @@ PLANNERS = {
 STATS = ['num_node_expansions', 'plan_length', 'search_time', 'total_time']
 
 
-def generate_dataset_statistics_env(args, planner, split):
+def generate_dataset_statistics(args, planner, split):
     """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
     # create PDDLGym Env
@@ -34,7 +34,7 @@ def generate_dataset_statistics_env(args, planner, split):
     timeouts = 0
     failures = 0
     for i in range(m):
-        print(f'{split.title()} Problem {i} / {m}')
+        print(f'{args.domain_name} Problem {i} / {m}')
         env.fix_problem_index(i)
         state, _ = env.reset()
         try:
@@ -64,56 +64,17 @@ def generate_dataset_statistics_env(args, planner, split):
     save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), planner_stats)
 
 
-def generate_dataset_statistics(args, planner, split):
-    """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
+def planning_demo(args, planner):
+    """Run pddlgym_planner.PDDLPlanner on a randomly selected problem.
     """
-    # extract PDDL problems and metadata from split
-    meta_data, problem_files, _ = get_datasplit(args.data_root, split)
-    if args.limit is not None:
-        problem_files = problem_files[:args.limit]
-    m = len(problem_files)
-
-    run_stats = []
-    timeouts = 0
-    failures = 0
-    for i, pddl_problem in enumerate(problem_files):
-        try:
-            print(f'{split.title()} Problem {i} / {m}: {pddl_problem}')
-            plan = planner.plan_from_pddl(args.domain, pddl_problem, timeout=args.timeout)
-            run_stats.append(planner.get_statistics().copy())
-        except PlanningTimeout:
-            timeouts += 1
-        except PlanningFailure:
-            failures += 1
-
-    # compute statistics
-    planner_stats = {}
-    for stat in STATS:
-        if stat not in planner_stats:
-            planner_stats[stat] = np.zeros(len(run_stats)) 
-        for i, run in enumerate(run_stats):
-            planner_stats[stat][i] = run[stat]
-    for stat in STATS:
-        planner_stats[stat] = float(planner_stats[stat].mean().item())
-    planner_stats['success_rate'] = float(len(run_stats) / m)
-    planner_stats['timeout_rate'] = float(timeouts / m)
-    planner_stats['failure_rate'] = float(failures / m)
-
-    # save statistics
-    pprinter = pprint.PrettyPrinter()
-    pprinter.pprint(planner_stats)
-    save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), planner_stats)
-
-
-def planning_demo(args, planner, problem_file=None):
-    """Run pddlgym_planner.PDDLPlanner on domain file and problem file.
-    """
-    if problem_file is None:
-        problem_files = [os.path.join(args.data_root, model) for model in os.listdir(args.data_root)]
-        problem_file = random.choice(problem_files)
-    print('Attempting: {}'.format(problem_file))
+    # create PDDLGym Env
+    env = gym.make("PDDLEnv{}-v0".format(args.domain_name))
+    i = random.choice(list(range(len(env.problems()))))
+    env.fix_problem_index(i)
+    state, _ = env.reset()
+    print(f"Attempting {args.domain_name} problem {i}")
     try:
-        plan = planner.plan_from_pddl(args.domain, problem_file, timeout=args.timeout)
+        plan = planner(env.domain, state, timeout=args.timeout)
         for i, action in enumerate(plan):
             print(f"Action {i}: {action}")
         print("Statistics")
@@ -143,5 +104,5 @@ if __name__ == '__main__':
     if args.demo:
         planning_demo(args, PLANNERS[args.planner])
     else:
-        generate_dataset_statistics_env(args, PLANNERS[args.planner], 'train')
-        generate_dataset_statistics_env(args, PLANNERS[args.planner], 'test')
+        generate_dataset_statistics(args, PLANNERS[args.planner], 'train')
+        generate_dataset_statistics(args, PLANNERS[args.planner], 'test')

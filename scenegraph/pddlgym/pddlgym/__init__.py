@@ -146,28 +146,28 @@ for env_name, kwargs in [
             "taskographyv2tiny10",
             {
                 "operators_as_actions": True,
-                "dynamic_action_space": True,
+                "dynamic_action_space": True
             }
         ),
         (
             "taskographyv2medium10",
             {
                 "operators_as_actions": True,
-                "dynamic_action_space": True,
+                "dynamic_action_space": True
             }
         ),
         (
             "taskographyv3tiny10",
             {
                 "operators_as_actions": True,
-                "dynamic_action_space": True,
+                "dynamic_action_space": True
             }
         ),
         (
             "taskographyv3medium10",
             {
                 "operators_as_actions": True,
-                "dynamic_action_space": True,
+                "dynamic_action_space": True
             }
         )
 ]:
