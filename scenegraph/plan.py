@@ -13,9 +13,10 @@ from utils import (load_json, save_json)
 
 
 PLANNERS = {
-    'FD': FD(alias_flag="--alias lama-first"),
     'FF': FF(),
-    'FF-X': FFX()
+    'FF-X': FFX(),
+    'FD-seq-opt-lmcut': FD(alias_flag="--alias seq-opt-lmcut"),
+    'FD-lama-first': FD(alias_flag="--alias lama-first")
 }
 
 
@@ -86,8 +87,8 @@ def planning_demo(args, planner):
     print(f"Attempting {args.domain_name} problem {i}")
     try:
         plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=args.timeout)
-        for i, action in enumerate(plan):
-            print(f"Action {i}: {action}")
+        for j, action in enumerate(plan):
+            print(f"Action {j}: {action}")
         print("Statistics")
         pprinter = pprint.PrettyPrinter()
         pprinter.pprint(planner.get_statistics())
@@ -98,11 +99,13 @@ def planning_demo(args, planner):
 
 
 if __name__ == '__main__':
+    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first']
+    domain_choices = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
-    parser.add_argument('--planner', type=str, required=True, choices=['FD', 'FF', 'FF-X'], help='Planner to benchmark')
-    parser.add_argument('--domain_name', type=str, required=True, help='Name of domain registered in PDDLGym')
+    parser.add_argument('--planner', type=str, required=True, choices=planner_choices, help='Planner to benchmark')
+    parser.add_argument('--domain_name', type=str, required=True, choices=domain_choices, help='Name of domain registered in PDDLGym')
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
     parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
     parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
