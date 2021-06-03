@@ -142,6 +142,34 @@ for env_name, kwargs in [
                         'dynamic_action_space' : True}),
         ("trapnewspapers", {'operators_as_actions' : True,
                         'dynamic_action_space' : True}),
+        (
+            "taskographyv2tiny10",
+            {
+                "operators_as_actions": True,
+                "dynamic_action_space": True,
+            }
+        ),
+        (
+            "taskographyv2medium10",
+            {
+                "operators_as_actions": True,
+                "dynamic_action_space": True,
+            }
+        ),
+        (
+            "taskographyv3tiny10",
+            {
+                "operators_as_actions": True,
+                "dynamic_action_space": True,
+            }
+        ),
+        (
+            "taskographyv3medium10",
+            {
+                "operators_as_actions": True,
+                "dynamic_action_space": True,
+            }
+        )
 ]:
     other_args = {
         "raise_error_on_invalid_action": False,
