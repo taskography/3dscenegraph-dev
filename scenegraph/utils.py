@@ -1,7 +1,7 @@
 import os
 import json
 import pprint
-from pddlgym.pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
+from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
 
 def room_to_str_name(room_inst):

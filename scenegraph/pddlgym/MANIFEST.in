@@ -1,3 +1,0 @@
-graft pddlgym/pddl
-graft pddlgym/rendering/assets
-graft pddlgym/tests/pddl

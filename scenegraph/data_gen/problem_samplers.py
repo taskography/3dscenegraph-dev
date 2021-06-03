@@ -3,8 +3,8 @@ import random
 
 
 from data_gen.task_sampler_base import TaskSamplerBase
-from pddlgym.pddlgym.parser import PDDLProblemParser
-from pddlgym.pddlgym.structs import LiteralConjunction
+from pddlgym.parser import PDDLProblemParser
+from pddlgym.structs import LiteralConjunction
 
 
 def get_domain_sampler(domain_version):

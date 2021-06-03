@@ -1,7 +1,0 @@
-
-name : pddlgym
-dependencies:
-  - python=3
-  - pip
-  - pip:
-    - -r file:requirements.txt

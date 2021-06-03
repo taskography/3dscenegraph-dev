@@ -4,7 +4,7 @@ import random
 import numpy as np
 import pprint
 
-from pddlgym import pddlgym as gym
+import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
@@ -27,7 +27,10 @@ def generate_dataset_statistics(args, planner, split):
     """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
     # create PDDLGym Env
-    env = gym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
+    registered_name = args.domain_name.capitalize()
+    if split == 'test':
+        registered_name += 'Test'
+    env = pddlgym.make("PDDLEnv{}-v0".format(registered_name))
     m = min(args.limit, len(env.problems))
 
     run_stats = []
@@ -68,7 +71,7 @@ def planning_demo(args, planner):
     """Run pddlgym_planner.PDDLPlanner on a randomly selected problem.
     """
     # create PDDLGym Env
-    env = gym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
+    env = pddlgym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
     i = random.choice(list(range(len(env.problems))))
     env.fix_problem_index(i)
     state, _ = env.reset()
@@ -80,10 +83,10 @@ def planning_demo(args, planner):
         print("Statistics")
         pprinter = pprint.PrettyPrinter()
         pprinter.pprint(planner.get_statistics())
-    except PlanningTimeout:
-        print('Timeout')
+    except PlanningTimeout as timeout:
+        print(timeout)
     except PlanningFailure as failure:
-        print('Failure')
+        print(failure)
 
 
 if __name__ == '__main__':

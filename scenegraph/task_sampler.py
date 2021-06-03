@@ -4,7 +4,7 @@ import random
 import pprint
 
 
-from pddlgym.pddlgym.parser import PDDLDomainParser
+from pddlgym.parser import PDDLDomainParser
 from loader import load_scenegraph
 from data_gen.problem_samplers import get_domain_sampler
 from utils import (convert_pddl_domain, save_json)
@@ -15,7 +15,10 @@ def generate_pddl_problems(args):
     """
     # PDDLGym domain parser
     domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
+    domain_version = domain.domain_name.replace('taskography', '')
     domain_name = domain.domain_name + args.data_split + str(args.task_length)
+    if domain_version == 'v3':
+        domain_name += f'bagslots{args.bagslots}'
     domain.domain_name = domain_name
 
     # convert PDDL domain and create output directories
@@ -49,12 +52,10 @@ def generate_pddl_problems(args):
     for model_name, model_path in models:
         # sample and write tasks
         scenegraph = load_scenegraph(model_path)
-        if "v1" in domain_name:
-            sampler = get_domain_sampler("v1")(domain, scenegraph)
-        elif "v2" in domain_name:
-            sampler = get_domain_sampler("v2")(domain, scenegraph)
-        elif "v3" in domain_name:
+        if domain_version == "v3":
             sampler = get_domain_sampler("v3")(domain, scenegraph, args.bagslots)
+        else:
+            sampler = get_domain_sampler(domain_version)(domain, scenegraph)
 
         # all objects / receptacles must have a designated parent room
         if not sampler.valid_scene or sampler.num_objects < args.task_length:
@@ -82,7 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('--data-root', type=str, default='/home/agiachris/data/3dscenegraph', help='Path to root of data')
     parser.add_argument('--data-split', type=str, default='tiny', choices=['tiny', 'medium'], help='Data split for scenegraph models')
     parser.add_argument('--domain', type=str, required=True, help='Path to <domain>.pddl file')
-    parser.add_argument('--output-dir', type=str, default='./pddlgym/pddlgym/pddl', help='Output directory <domain>/<data-split>/ to write problem files')
+    parser.add_argument('--output-dir', type=str, required=True, help='Path to pddlgym/pddl/ directory of pddlgym')
     parser.add_argument('--train-scenes', type=int, required=True, help='Number of scene graph models in training split')
     parser.add_argument('--train-samples', type=int, required=True, help='Task samples per train scene')
     parser.add_argument('--test-samples', type=int, required=True, help='Task samples per test scene')

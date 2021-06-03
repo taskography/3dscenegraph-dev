@@ -1,7 +1,6 @@
 #!/bin/bash
 planner=$1
-domain_name="taskographyv$2$3"
-split=$3
+domain_name=$2
 eval "source taskography"
 exp_dir="exp/${domain_name}/"
 exp_name="${planner}"
