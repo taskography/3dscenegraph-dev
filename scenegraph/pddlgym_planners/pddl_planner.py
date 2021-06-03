@@ -7,9 +7,9 @@ import abc
 import subprocess
 import tempfile
 import numpy as np
-from pddlgym.spaces import LiteralSpace
-from pddlgym.utils import nostdout
-from pddlgym.parser import parse_plan_step, PDDLProblemParser
+from pddlgym.pddlgym.spaces import LiteralSpace
+from pddlgym.pddlgym.utils import nostdout
+from pddlgym.pddlgym.parser import parse_plan_step, PDDLProblemParser
 from pddlgym_planners.planner import Planner, PlanningTimeout, PlanningFailure
 
 

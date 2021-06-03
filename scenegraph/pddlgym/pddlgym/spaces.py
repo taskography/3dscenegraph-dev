@@ -4,11 +4,11 @@ Unlike typical spaces, Literal spaces may change with
 each episode, since objects, and therefore possible
 groundings, may change with each new PDDL problem.
 """
-from pddlgym.structs import LiteralConjunction, Literal, ground_literal
-from pddlgym.parser import PDDLProblemParser
-from pddlgym.downward_translate.instantiate import explore as downward_explore
-from pddlgym.downward_translate.pddl_parser import open as downward_open
-from pddlgym.utils import nostdout
+from pddlgym.pddlgym.structs import LiteralConjunction, Literal, ground_literal
+from pddlgym.pddlgym.parser import PDDLProblemParser
+from pddlgym.pddlgym.downward_translate.instantiate import explore as downward_explore
+from pddlgym.pddlgym.downward_translate.pddl_parser import open as downward_open
+from pddlgym.pddlgym.utils import nostdout
 from gym.spaces import Space
 from collections import defaultdict
 
