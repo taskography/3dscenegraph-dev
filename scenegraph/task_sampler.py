@@ -4,7 +4,7 @@ import random
 import pprint
 
 
-from pddlgym.parser import PDDLDomainParser
+from pddlgym.pddlgym.parser import PDDLDomainParser
 from loader import load_scenegraph
 from data_gen.problem_samplers import get_domain_sampler
 from utils import (convert_pddl_domain, save_json)
@@ -15,7 +15,7 @@ def generate_pddl_problems(args):
     """
     # PDDLGym domain parser
     domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
-    domain_name = domain.domain_name + args.split + str(args.task_length)
+    domain_name = domain.domain_name + args.data_split + str(args.task_length)
     domain.domain_name = domain_name
 
     # convert PDDL domain and create output directories

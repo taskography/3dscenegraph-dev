@@ -1,7 +1,7 @@
 import os
 import json
 import pprint
-from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
+from pddlgym.pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
 
 def room_to_str_name(room_inst):
@@ -53,21 +53,5 @@ def print_json(filepath):
 
 def convert_pddl_domain(domain_filepath, updated_filename):
     domain = PDDLDomainParser(domain_filepath, expect_action_preds=False, operators_as_actions=False)
+    domain.domain_name = os.path.split(updated_filename)[-1].split('.')[0]
     domain.write(updated_filename)
-
-
-def get_datasplit(data_root, split):
-    # metadata
-    meta_data = load_json(os.path.join(data_root, 'meta_data.json'))
-    data_dir = os.path.join(data_root, 'data')
-    # problem files
-    problem_files = []
-    model_names = []
-    for pddl_filename in os.listdir(data_dir):
-        model_name = pddl_filename.split('Taskography')[0]
-        if model_name in meta_data[split]:
-            problem_files.append(os.path.join(data_dir, pddl_filename))
-            model_names.append(model_name)
-
-    assert (meta_data['num_' + split] == len(problem_files))
-    return meta_data, problem_files, model_names

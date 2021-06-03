@@ -4,7 +4,6 @@ import random
 import numpy as np
 import pprint
 
-import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
