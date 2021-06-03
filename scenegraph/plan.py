@@ -31,6 +31,7 @@ def generate_dataset_statistics(args, planner, split):
     if split == 'test':
         registered_name += 'Test'
     env = pddlgym.make("PDDLEnv{}-v0".format(registered_name))
+    domain_fname = env.domain.domain_fname
     m = min(args.limit, len(env.problems))
 
     run_stats = []
@@ -40,8 +41,9 @@ def generate_dataset_statistics(args, planner, split):
         print(f'{args.domain_name} Problem {i} / {m}')
         env.fix_problem_index(i)
         state, _ = env.reset()
+        problem_fname = env.problems[i].problem_fname
         try:
-            plan = planner(env.domain, state, timeout=args.timeout)
+            plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=args.timeout)
             run_stats.append(planner.get_statistics().copy())
         except PlanningTimeout:
             timeouts += 1
@@ -75,9 +77,12 @@ def planning_demo(args, planner):
     i = random.choice(list(range(len(env.problems))))
     env.fix_problem_index(i)
     state, _ = env.reset()
+    domain_fname = env.domain.domain_fname
+    problem_fname = env.problems[i].problem_fname
+    # planning demo
     print(f"Attempting {args.domain_name} problem {i}")
     try:
-        plan = planner(env.domain, state, timeout=args.timeout)
+        plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=args.timeout)
         for i, action in enumerate(plan):
             print(f"Action {i}: {action}")
         print("Statistics")
