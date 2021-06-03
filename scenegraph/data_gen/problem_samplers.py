@@ -7,11 +7,11 @@ from pddlgym.parser import PDDLProblemParser
 from pddlgym.structs import LiteralConjunction
 
 
-def get_domain_sampler(domain_name):
+def get_domain_sampler(domain_version):
     domain_to_sampler = {
-        'taskographyv1': TaskSamplerV1,
-        'taskographyv2': TaskSamplerV2,
-        'taskographyv3': TaskSamplerV3
+        'v1': TaskSamplerV1,
+        'v2': TaskSamplerV2,
+        'v3': TaskSamplerV3
     }
     return domain_to_sampler[domain_name]
 

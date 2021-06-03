@@ -2,7 +2,7 @@
 planner=$1
 domain_name="taskographyv$2"
 split=$3
-eval "source alfworld"
+eval "source taskography"
 domain="pddl/${domain_name}gym.pddl"
 data_root="pddl/${domain_name}/${split}/"
 exp_dir="exp/${domain_name}_${split}/"
