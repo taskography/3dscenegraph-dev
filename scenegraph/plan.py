@@ -58,7 +58,10 @@ def generate_dataset_statistics(args, planner, split):
         for i, run in enumerate(run_stats):
             planner_stats[stat][i] = run[stat]
     for stat in STATS:
-        planner_stats[stat] = float(planner_stats[stat].mean().item())
+        stat_mean = float(planner_stats[stat].mean().item())
+        stat_std = float(planner_stats[stat].std().item())
+        planner_stats[stat] = stat_mean
+        planner_stats[stat + '_std'] = stat_std
     planner_stats['success_rate'] = float(len(run_stats) / m)
     planner_stats['timeout_rate'] = float(timeouts / m)
     planner_stats['failure_rate'] = float(failures / m)
