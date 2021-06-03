@@ -27,7 +27,7 @@ def generate_dataset_statistics(args, planner, split):
     """Run pddlgy_planner.PDDLPlanner on the entire args.domain, args.data_root dataset.
     """
     # create PDDLGym Env
-    env = gym.make("PDDLEnv{}-v0".format(args.domain_name))
+    env = gym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
     m = min(args.limit, len(env.problems))
 
     run_stats = []
@@ -68,8 +68,8 @@ def planning_demo(args, planner):
     """Run pddlgym_planner.PDDLPlanner on a randomly selected problem.
     """
     # create PDDLGym Env
-    env = gym.make("PDDLEnv{}-v0".format(args.domain_name))
-    i = random.choice(list(range(len(env.problems()))))
+    env = gym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
+    i = random.choice(list(range(len(env.problems))))
     env.fix_problem_index(i)
     state, _ = env.reset()
     print(f"Attempting {args.domain_name} problem {i}")
@@ -84,7 +84,6 @@ def planning_demo(args, planner):
         print('Timeout')
     except PlanningFailure as failure:
         print('Failure')
-
 
 
 if __name__ == '__main__':

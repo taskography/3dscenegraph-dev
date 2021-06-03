@@ -3,9 +3,9 @@
 
 from collections import defaultdict
 from copy import deepcopy
-from pddlgym.prolog_interface import PrologInterface
-from pddlgym.structs import Literal, LiteralConjunction, ground_literal
-from pddlgym.utils import get_object_combinations
+from pddlgym.pddlgym.prolog_interface import PrologInterface
+from pddlgym.pddlgym.structs import Literal, LiteralConjunction, ground_literal
+from pddlgym.pddlgym.utils import get_object_combinations
 import functools
 
 

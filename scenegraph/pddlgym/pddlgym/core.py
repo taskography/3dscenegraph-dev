@@ -15,10 +15,10 @@ Usage example:
 >>> action = env.action_space.sample()
 >>> obs, reward, done, debug_info = env.step(action)
 """
-from pddlgym.parser import PDDLDomainParser, PDDLProblemParser, PDDLParser
-from pddlgym.inference import find_satisfying_assignments, check_goal
-from pddlgym.structs import ground_literal, Literal, State, ProbabilisticEffect, LiteralConjunction, NoChange
-from pddlgym.spaces import LiteralSpace, LiteralSetSpace, LiteralActionSpace
+from pddlgym.pddlgym.parser import PDDLDomainParser, PDDLProblemParser, PDDLParser
+from pddlgym.pddlgym.inference import find_satisfying_assignments, check_goal
+from pddlgym.pddlgym.structs import ground_literal, Literal, State, ProbabilisticEffect, LiteralConjunction, NoChange
+from pddlgym.pddlgym.spaces import LiteralSpace, LiteralSetSpace, LiteralActionSpace
 
 import copy
 import functools
