@@ -33,7 +33,9 @@ def generate_dataset_statistics(args, planner, split):
         registered_name += 'Test'
     env = pddlgym.make("PDDLEnv{}-v0".format(registered_name))
     domain_fname = env.domain.domain_fname
-    m = min(args.limit, len(env.problems))
+    m = len(env.problems)
+    if args.limit is not None:
+        m = min(args.limit, len(env.problems))
 
     run_stats = []
     timeouts = 0
