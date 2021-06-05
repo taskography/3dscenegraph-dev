@@ -39,7 +39,7 @@ def location_to_str_name(room_data, place_id):
 
 def save_json(filepath, data):
     with open(filepath, 'w') as fp:
-        json.dump(data, fp)
+        json.dump(data, fp, indent=4, sort_keys=True)
 
 
 def load_json(filepath):

@@ -1,1 +1,13 @@
-{"num_node_expansions": 661.85, "plan_length": 152.575, "search_time": 3.27325, "total_time": 3.27325, "success_rate": 1.0, "timeout_rate": 0.0, "failure_rate": 0.0}
+{
+    "failure_rate": 0.0,
+    "num_node_expansions": 608.25,
+    "num_node_expansions_std": 174.34104109793284,
+    "plan_length": 147.88888888888889,
+    "plan_length_std": 23.692213650360344,
+    "search_time": 2.372222222222222,
+    "search_time_std": 2.2175125091857004,
+    "success_rate": 0.9,
+    "timeout_rate": 0.1,
+    "total_time": 2.372222222222222,
+    "total_time_std": 2.2175125091857004
+}
