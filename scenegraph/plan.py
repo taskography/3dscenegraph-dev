@@ -103,6 +103,7 @@ def planning_demo(args, planner):
 if __name__ == '__main__':
     planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first']
     domain_choices = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
+    domain_choices += ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
