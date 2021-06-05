@@ -108,7 +108,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
     parser.add_argument('--planner', type=str, required=True, choices=planner_choices, help='Planner to benchmark')
-    parser.add_argument('--domain_name', type=str, required=True, choices=domain_choices, help='Name of domain registered in PDDLGym')
+    parser.add_argument('--domain-name', type=str, required=True, choices=domain_choices, help='Name of domain registered in PDDLGym')
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
     parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
     parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
