@@ -58,7 +58,7 @@ def generate_pddl_problems(args):
             sampler = get_domain_sampler(domain_version)(domain, scenegraph)
 
         # all objects / receptacles must have a designated parent room
-        if not sampler.valid_scene or sampler.num_objects < args.task_length:
+        if not sampler.valid_scene or sampler.num_objects < 10:
             print(f'Skipping invalid model: {model_name}')
             continue
         

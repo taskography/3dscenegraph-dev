@@ -382,7 +382,7 @@ class TaskSamplerV2(TaskSamplerBase):
     def generate_pddl_problem(self, problem_filepath, problem_name, task_length=1):
         """Append predicates for a sampled problem, and generate a goal.
         """
-        task = self.sample_pick_and_place(task_length=task_length)
+        task = self.sample_pick_and_place(task_length=10)
 
         if task is not None:
             emap = self.pddl_entity_map
@@ -402,7 +402,8 @@ class TaskSamplerV2(TaskSamplerBase):
             # goal | pick object, place receptacle: inReceptacle
             goals = []
             for str_obj_name, str_rec_name in zip(task['object_names'], task['receptacle_names']):
-                goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))                
+                goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))      
+            goals = goals[:task_length]          
             pddl_goal = LiteralConjunction(goals)
 
             PDDLProblemParser.create_pddl_file(
@@ -621,7 +622,7 @@ class TaskSamplerV3(TaskSamplerBase):
     def generate_pddl_problem(self, problem_filepath, problem_name, task_length=1):
         """Append predicates for a sampled problem, and generate a goal.
         """
-        task = self.sample_pick_and_place(task_length=task_length)
+        task = self.sample_pick_and_place(task_length=10)
 
         if task is not None:
             emap = self.pddl_entity_map
@@ -642,6 +643,7 @@ class TaskSamplerV3(TaskSamplerBase):
             goals = []
             for str_obj_name, str_rec_name in zip(task['object_names'], task['receptacle_names']):
                 goals.append(in_receptacle(emap[str_obj_name], emap[str_rec_name]))                
+            goals = goals[:task_length]          
             pddl_goal = LiteralConjunction(goals)
 
             PDDLProblemParser.create_pddl_file(
