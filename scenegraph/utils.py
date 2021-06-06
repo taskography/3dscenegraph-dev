@@ -8,6 +8,11 @@ import shutil
 
 from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
+from pddlgym_planners.mcts.problem import PddlProblem
+from pddlgym_planners.mcts.algorithm import Root, plan_mcts
+from pddlgym_planners.mcts.helpers import branching_factor
+import numpy as np
+
 
 def room_to_str_name(room_inst):
     return f"room{int(room_inst.id)}_{room_inst.scene_category.replace(' ', '_')}"
@@ -99,7 +104,7 @@ class ADL2Strips:
         assert os.path.exists(self.exec_path)
 
 def compute_ground_problem_size(domfile, probfile):
-    with ADL2Strips(dfile, pfile) as (domfile, _):
+    with ADL2Strips(domfile, probfile) as (domfile, _):
         with open(domfile, 'r') as f:
             grounded_dom = f.read()
         sections = grounded_dom.split('(:')
@@ -111,3 +116,11 @@ def compute_ground_problem_size(domfile, probfile):
             elif section.startswith('action'):
                 actions += 1
     return dict(num_actions=actions, num_facts=predicates)
+
+
+def estimate_branching_factor(domain_file, problem_file):
+    problem = PddlProblem(domain_file, problem_file, reward_subgoals=False, action_costs=False, oversample_relevant_actions=False)
+    root = Root(problem, problem.init)
+    plan_mcts(root, n_iters=1000, horizon=0)
+    return branching_factor(root, agg=np.mean)
+
