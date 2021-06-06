@@ -8,6 +8,7 @@ import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
+from pddlgym_planners.satplan import SATPlan
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import (load_json, save_json)
 
@@ -16,7 +17,8 @@ PLANNERS = {
     'FF': FF(),
     'FF-X': FFX(),
     'FD-seq-opt-lmcut': FD(alias_flag="--alias seq-opt-lmcut"),
-    'FD-lama-first': FD(alias_flag="--alias lama-first")
+    'FD-lama-first': FD(alias_flag="--alias lama-first"),
+    'SatPlan': SATPlan()
 }
 
 
@@ -101,7 +103,7 @@ def planning_demo(args, planner):
 
 
 if __name__ == '__main__':
-    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first']
+    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first', 'SatPlan']
     optimal_planner_domains = ['taskographyv2tiny1', 'taskographyv2medium1', 'taskographyv2tiny2', 'taskographyv2medium2']
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots10', 'taskographyv3medium10bagslots10']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
