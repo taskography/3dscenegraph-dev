@@ -8,6 +8,7 @@ import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
+from pddlgym_planners.delfi import Delfi
 from pddlgym_planners.satplan import SATPlan
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import (load_json, save_json)
@@ -18,7 +19,8 @@ PLANNERS = {
     'FF-X': FFX(),
     'FD-seq-opt-lmcut': FD(alias_flag="--alias seq-opt-lmcut"),
     'FD-lama-first': FD(alias_flag="--alias lama-first"),
-    'SatPlan': SATPlan()
+    'SatPlan': SATPlan(),
+    "Delfi": Delfi()
 }
 
 
@@ -81,7 +83,7 @@ def planning_demo(args, planner):
     """Run pddlgym_planner.PDDLPlanner on a randomly selected problem.
     """
     # create PDDLGym Env
-    env = pddlgym.make("PDDLEnv{}-v0".format(args.domain_name.capitalize()))
+    env = pddlgym.make("PDDLEnv{}Test-v0".format(args.domain_name.capitalize()))
     i = random.choice(list(range(len(env.problems))))
     env.fix_problem_index(i)
     state, _ = env.reset()
@@ -103,7 +105,7 @@ def planning_demo(args, planner):
 
 
 if __name__ == '__main__':
-    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first', 'SatPlan']
+    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first', 'SatPlan', 'Delfi']
     optimal_planner_domains = ['taskographyv2tiny1', 'taskographyv2medium1', 'taskographyv2tiny2', 'taskographyv2medium2']
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
