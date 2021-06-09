@@ -23,8 +23,9 @@ class Delfi(PDDLPlanner):
         subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True)
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
-        with FilesInCommonTempDirectory(dom_file, prob_file) as (dom_file, prob_file):
-            return super().plan_from_pddl(dom_file, prob_file, horizon=horizon, timeout=timeout, remove_files=remove_files)
+        self.tmpdir = FilesInCommonTempDirectory(dom_file, prob_file)
+        (dom_file, prob_file) = self.tmpdir.new_fpaths
+        return super().plan_from_pddl(dom_file, prob_file, horizon=horizon, timeout=timeout, remove_files=remove_files)
 
 
     def _get_cmd_str(self, dom_file, prob_file, timeout):
@@ -33,7 +34,7 @@ class Delfi(PDDLPlanner):
         dom_fname = os.path.basename(dom_file)
         prob_fname = os.path.basename(prob_file)
         assert probdom_dir == os.path.dirname(prob_file), "Files must be in the same directory"
-        cmd_str = f"docker run --privileged -it -v {probdom_dir}:/problem -w /problem {DOCKER_IMAGE} {timeout_cmd} {timeout} /root/.planutils/bin/delfi /problem/{dom_fname} /problem/{prob_fname} delfi.plan"
+        cmd_str = f"docker run --privileged -it -v {probdom_dir}:/problem -w /problem {DOCKER_IMAGE} {timeout_cmd} {timeout} /root/.planutils/bin/delfi /problem/{dom_fname} /problem/{prob_fname} /problem/delfi.plan --image-from-lifted-task"
         return cmd_str
 
     def _output_to_plan(self, output):
@@ -81,12 +82,17 @@ class Delfi(PDDLPlanner):
                 output))
         if "Plan length: 0 step" in output:
             return []
-        
-        plan = re.findall(r"(.+) \(\d+?\)", output.lower())
-        if not plan:
+        try:
+            plan_fpath = os.path.join(self.tmpdir.dirname, 'delfi.plan')
+            with open(plan_fpath, 'r') as f:
+                plan_output = f.read()
+            self.tmpdir.cleanup()
+            plan = re.findall(r"^\(([^)]+)\)", plan_output, re.M)
+            assert plan
+            return plan
+        except:
             raise PlanningFailure("Plan not found with Delfi! Error: {}".format(
                 output))
-        return plan
     
     def _cleanup(self):
         pass
