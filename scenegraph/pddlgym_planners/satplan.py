@@ -12,15 +12,15 @@ from pddlgym_planners.planner import PlanningFailure
 from utils import ADL2Strips
 import numpy as np
 
-SATPLAN_URL = "https://www.cs.rochester.edu/u/kautz/satplan/SatPlan2006.tgz"
-
+SATPLAN_REPO = "git@github.com:Khodeir/SatPlan.git"
+MEMORY = 10_000_000_000 # 10G
 class SATPlan(PDDLPlanner):
     """Fast-downward planner.
     """
     def __init__(self):
         super().__init__()
         self._top_dir = os.path.dirname(os.path.realpath(__file__))
-        self._satplan_path = os.path.join(self._top_dir, "SatPlan2006")
+        self._satplan_path = os.path.join(self._top_dir, "SatPlan")
         self._exec = os.path.join(self._satplan_path, "bin/satplan")
         print("Instantiating SATPlan")
         if not os.path.exists(self._exec):
@@ -28,7 +28,7 @@ class SATPlan(PDDLPlanner):
 
     def _get_cmd_str(self, dom_file, prob_file, timeout):
         timeout_cmd = "gtimeout" if sys.platform == "darwin" else "timeout"
-        cmd_str = f"{timeout_cmd} {timeout} {self._exec} -domain {dom_file} -problem {prob_file} -solution sol.sat.pddl"
+        cmd_str = f"{timeout_cmd} {timeout} {self._exec} -globalmemory {MEMORY} -domain {dom_file} -problem {prob_file} -solution sol.sat.pddl"
         return cmd_str
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
@@ -52,10 +52,7 @@ class SATPlan(PDDLPlanner):
             raise PlanningFailure(f"Plan not found with SatPlan! Error: {output}")
 
     def _install_satplan(self):
-        subprocess.check_output(f'''cd {self._top_dir} && \
-             curl -O {SATPLAN_URL} && \
-                  tar xvf SatPlan2006.tgz && rm SatPlan2006.tgz && \
-                      cd SatPlan2006 && \
-                           mkdir bin && make''', shell=True)
-        subprocess.check_output(f'cd {self._top_dir}/SatPlan2006 && make install && cd -', shell=True, env=dict(HOME=self._satplan_path))
+        subprocess.check_output(f'''git clone {SATPLAN_REPO} {self._satplan_path} && \
+             cd {self._satplan_path} && mkdir bin && make && cd -''', shell=True)
+        subprocess.check_output(f'cd {self._satplan_path} && make install && cd -', shell=True, env=dict(HOME=self._satplan_path))
         assert os.path.exists(self._exec)
