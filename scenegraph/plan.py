@@ -11,6 +11,7 @@ from pddlgym_planners.ffx import FFX
 from pddlgym_planners.delfi import Delfi
 from pddlgym_planners.satplan import SATPlan
 from pddlgym_planners.cerberus import Cerberus
+from pddlgym_planners.decstar import DecStar
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import (load_json, save_json)
 
@@ -24,6 +25,8 @@ PLANNERS = {
     "Delfi": Delfi(),
     "Cerberus-sat": Cerberus(alias="seq-sat-cerberus2018"),
     "Cerberus-agl": Cerberus(alias="seq-agl-cerberus2018"),
+    "DecStar-agl-fb": DecStar(alias="agl-decoupled-fallback"),
+    "DecStar-opt-fb": DecStar(alias="opt-decoupled-fallback"),
 }
 
 
@@ -108,7 +111,7 @@ def planning_demo(args, planner):
 
 
 if __name__ == '__main__':
-    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first', 'SatPlan', 'Delfi', 'Cerberus-sat', 'Cerberus-agl']
+    planner_choices = ['FF', 'FF-X', 'FD-seq-opt-lmcut', 'FD-lama-first', 'SatPlan', 'Delfi', 'Cerberus-sat', 'Cerberus-agl', 'DecStar-agl-fb', 'DecStar-opt-fb']
     optimal_planner_domains = ['taskographyv2tiny1', 'taskographyv2medium1', 'taskographyv2tiny2', 'taskographyv2medium2']
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
