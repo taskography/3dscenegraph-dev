@@ -108,7 +108,8 @@ if __name__ == '__main__':
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots10', 'taskographyv3medium10bagslots10']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     ablation_domains += ['taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
-    domain_choices = optimal_planner_domains + official_domains + ablation_domains
+    random_domains = ['taskographyv2tiny1updated', 'taskographyv2tiny2updated']
+    domain_choices = optimal_planner_domains + official_domains + ablation_domains + random_domains
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
