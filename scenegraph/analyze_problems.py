@@ -5,7 +5,7 @@ import numpy as np
 import pprint
 
 import pddlgym
-from utils import (load_json, save_json, compute_ground_problem_size)
+from utils import (load_json, save_json, get_sastask_from_pddl, count_branches_v2, count_operators)
 
 
 def generate_dataset_statistics(args, split):
@@ -20,20 +20,16 @@ def generate_dataset_statistics(args, split):
         m = min(args.limit, len(env.problems))
 
     run_stats = {}
-    timeouts = 0
-    failures = 0
     for i in range(m):
         print(f'{args.domain_name} Problem {i} / {m}')
         problem_fname = env.problems[i].problem_fname
-        try:
-            stats = {}
-            stats.update(compute_ground_problem_size(domain_fname, problem_fname))
-            # TODO: add more stats here
-            run_stats[problem_fname] = stats
-        except PlanningTimeout:
-            timeouts += 1
-        except PlanningFailure:
-            failures += 1
+        stats = {}
+        sas_task, pddl_task = get_sastask_from_pddl(domain_fname, problem_fname)
+        stats.update(count_operators(sas_task))
+        stats.update(count_branches_v2(sas_task, pddl_task))
+        # TODO: add more stats here
+        run_stats[problem_fname] = stats
+
 
     save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), run_stats)
 
