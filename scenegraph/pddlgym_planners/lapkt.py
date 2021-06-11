@@ -20,7 +20,7 @@ class LAPKTBFWS(PDDLPlanner):
         self.install_delfi()
 
     def install_delfi(self):
-        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True)
+        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True, stdout=subprocess.DEVNULL)
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
         self.tmpdir = FilesInCommonTempDirectory(dom_file, prob_file)
@@ -34,7 +34,7 @@ class LAPKTBFWS(PDDLPlanner):
         dom_fname = os.path.basename(dom_file)
         prob_fname = os.path.basename(prob_file)
         assert probdom_dir == os.path.dirname(prob_file), "Files must be in the same directory"
-        cmd_str = f"docker run --privileged -it -v {probdom_dir}:/problem -w /problem {DOCKER_IMAGE} {timeout_cmd} {timeout} bfws --domain /problem/{dom_fname} --problem /problem/{prob_fname} --output /problem/bfws.plan --BFWS-f5 0"
+        cmd_str = f"docker run --privileged -it -v {probdom_dir}:/problem -w /problem {DOCKER_IMAGE} {timeout_cmd} {timeout} bfws --domain /problem/{dom_fname} --problem /problem/{prob_fname} --output /problem/bfws.plan --BFWS-f5 1"
         return cmd_str
 
     def _output_to_plan(self, output):

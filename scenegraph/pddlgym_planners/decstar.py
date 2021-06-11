@@ -23,14 +23,14 @@ ALIASES = {
 class DecStar(PDDLPlanner):
     def __init__(self, alias):
         super().__init__()
-        print("Instantiating DecStar")
+        print(f"Instantiating DecStar with --alias {alias}")
         assert alias in ALIASES, f"Expected alias in {ALIASES}"
         self.alias = alias
         self.search_options = ALIASES[alias]
         self.install_decstar()
 
     def install_decstar(self):
-        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True)
+        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True, stdout=subprocess.DEVNULL)
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
         with FilesInCommonTempDirectory(dom_file, prob_file) as (dom_file, prob_file):
