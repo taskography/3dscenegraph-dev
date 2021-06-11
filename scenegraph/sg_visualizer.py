@@ -16,41 +16,44 @@ class SceneGraphVisualizer:
         # data = np.load(datapath, allow_pickle=True)
         # self.data = data["output"].item()
         # self.scenegraph = load_scenegraph(datapath)
-        
-        
-        scene = pyrender.Scene()
+        self.mesh = trimesh.load(meshpath)
+        self.scene = pyrender.Scene()
+    
+    def reset(self):
+        self.scene = pyrender.Scene()
 
-        mesh = trimesh.load(meshpath)
-        mesh_obj = pyrender.Mesh.from_trimesh(mesh)
-        scene.add(mesh_obj)
+    def add_mesh(self, mesh=None, color=None):
+        if mesh is None:
+            mesh = self.mesh
+        pymesh = pyrender.Mesh.from_trimesh(mesh)
+        self.scene.add(pymesh)
 
-        theta = -np.pi / 2
-        camera_pose = np.array([
-            [1.0, 0.0, 0.0, 3.5],
-            [0.0, np.cos(theta), -np.sin(theta),  12.5],
-            [0.0, np.sin(theta), np.cos(theta),  -3.0],
+    def render_topdown(self):
+        # position camera at scene centroid
+        pymesh = pyrender.Mesh.from_trimesh(self.mesh)
+        ang = -np.pi / 2
+        cam_to_world = np.array([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, np.cos(ang), -np.sin(ang), 0.0],
+            [0.0, np.sin(ang), np.cos(ang), 0.0],
             [0.0, 0.0, 0.0, 1.0]
-        ])
-        camera = pyrender.camera.PerspectiveCamera(yfov=np.pi / 3.0, aspectRatio=1.0)
-        scene.add(camera, pose=camera_pose)
+        ], dtype=float)
+        cam_to_world[:3, 3] = pymesh.centroid + np.array([0.0, 10.0, 0.0])
 
-        # spotlight = pyrender.SpotLight(color=np.ones(3), intensity=20.0, 
-        #     innerConeAngle=np.pi/4.0, outerConeAngle=np.pi/3)
+        # add camera and directional light
+        camera = pyrender.camera.PerspectiveCamera(yfov=np.pi / 3.0, aspectRatio=1.0)
         directlight = pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=3.0)
-        scene.add(directlight, pose=camera_pose)
-        
-        pyrender.Viewer(scene)
-        r = pyrender.OffscreenRenderer(600, 600)
-        color, depth = r.render(scene)
+        self.scene.add(camera, pose=cam_to_world)
+        self.scene.add(directlight, pose=cam_to_world)
+        pyrender.Viewer(self.scene)
+    
+    def render_offscreen(self):
+        r = pyrender.OffscreenRenderer(400, 400)
+        color, depth = r.render(self.scene)
         plt.figure()
         plt.axis('off')
         plt.imshow(color)
         plt.show()
-        
-
-    def render_mesh(self):
-        pass
-
 
 
 if __name__ == '__main__':
@@ -66,3 +69,6 @@ if __name__ == '__main__':
     meshpath = os.path.join(args.data_root, 'gibson_tiny', args.model, 'mesh.obj')
 
     vis = SceneGraphVisualizer(datapath, meshpath)
+    vis.add_mesh()
+    vis.render_topdown()
+    vis.render_offscreen()
