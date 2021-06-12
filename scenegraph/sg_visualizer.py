@@ -4,11 +4,39 @@ import numpy as np
 import trimesh
 import pyrender
 import matplotlib.pyplot as plt
+import pddlgym
 
 
 from loader import load_scenegraph
+from pddlgym_planners.fd import FD
+from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 
 
+def plot_plan(domain_name, model):
+    """Plot the plan returned by Fast-Downward in the specified domain / problem pair.
+    """
+    # create PDDLGym Env
+    env = pddlgym.make("PDDLEnv{}-v0".format(domain_name.capitalize()))
+    domain_fname = env.domain.domain_fname
+    problem_idx = None
+    for i, problem in enumerate(env.problems):
+        if model.lower() in problem.problem_name:
+            problem_idx = i
+            break
+    assert (problem_idx is not None)
+    problem_fname = env.problems[problem_idx].problem_fname
+    env.fix_problem_index(problem_idx)
+    state, _ = env.reset()
+    planner = FD(alias_flag='--alias lama-first')
+
+    # attempt to plan
+    try:
+        plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=10)
+    except PlanningTimeout as timeout:
+        print(timeout)
+    except PlanningFailure as failure:
+        print(failure)
+    
 
 class SceneGraphVisualizer:
 
@@ -67,6 +95,9 @@ if __name__ == '__main__':
     model_type = "verified_graph" if os.path.basename(data_path) == 'tiny' else "automated_graph"
     datapath = os.path.join(data_path, model_type, "3DSceneGraph_" + args.model + ".npz")
     meshpath = os.path.join(args.data_root, 'gibson_tiny', args.model, 'mesh.obj')
+
+    # plot_plan('taskographyv2tiny2', args.model)
+    # exit()
 
     vis = SceneGraphVisualizer(datapath, meshpath)
     vis.add_mesh()
