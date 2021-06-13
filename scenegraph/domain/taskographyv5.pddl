@@ -1,6 +1,6 @@
-;; Specification of Hierarchical Knapsack Taskography
+;; Specification of Lifted Hierarchical Knapsack Taskography
 
-(define (domain taskographyv3)
+(define (domain taskographyv5)
  (:requirements
   :adl
  )
@@ -10,28 +10,32 @@
   place
   location
   receptacle
+  rclass
   item
+  iclass
   bagslot
   )
+
  (:predicates
     ;; locations states
     (inRoom ?a - agent ?r - room)                             ; true if the agent is in the room
-    (roomPlace ?p - place ?r - room)                    ; true if the place is the door (center) of the room
-    (placeInRoom ?p - place ?r - room)                 ; true if the place is in the room
     (inPlace ?a - agent ?p - place)                             ; true if the agent is in the place
-    (placeLocation ?l - location ?p - place)                    ; true if the location is the center point of the place
-    (locationInPlace ?l - location ?p - place)                 ; true if the location is in the place
     (atLocation ?a - agent ?l - location)                     ; true if the agent is at the location
     (receptacleAtLocation ?r - receptacle ?l - location)      ; true if the receptacle is at the location (constant)
     (itemAtLocation ?i - item ?l - location)              ; true if the item is at the location
-    
+    (placeInRoom ?p - place ?r - room)                 ; true if the place is in the room
+    (locationInPlace ?l - location ?p - place)                 ; true if the location is in the place
+    (roomPlace ?p - place ?r - room)                    ; true if the place is the door (center) of the room
+    (placeLocation ?l - location ?p - place)                    ; true if the location is the center point of the place
+
     ;; room-room motion constraints
     (roomsConnected ?r1 - room ?r2 - room)                                 ; true if rooms ?r1 and ?r2 are connected
-
+    
     ;; item-receptacle interaction
     (inReceptacle ?i - item ?r - receptacle)                ; true if item ?i is in receptacle ?r
     (inAnyReceptacle ?i - item)                                      ; true if item ?i is in any receptacle
-
+    (gluedToReceptacle ?i - item ?r - receptacle)                       ; true if the object has been glued to the receptacle
+    
     ;; agent-item interaction
     (holds ?a - agent ?i - item)                            ; true if item ?i is held by agent ?a
     (holdsAny ?a - agent)                                     ; true if agent ?a holds an item
@@ -41,6 +45,11 @@
     
     ;; receptacle states
     (receptacleOpened ?r - receptacle)                        ; true if the receptacle has been opened
+
+    ;; lifted support relations: itemclass + receptacleclass pairs
+    (receptacleClass ?r - receptacle ?rc - rclass)                      ; true if the receptacle ?r is of class ?rc
+    (itemClass ?i - item ?ic - iclass)                                  ; true if the item ?i is of class ?ic
+    (classRelation ?ic - iclass ?rc - rclass)
 
     ;; bagslots
     (slotHoldsAny ?s - bagslot)
@@ -168,6 +177,7 @@
     :precondition (and (atLocation ?a ?l)
                        (itemAtLocation ?i ?l)
                        (inReceptacle ?i ?r)
+                       (not (gluedToReceptacle ?i ?r))
                        (not (receptacleOpeningType ?r))
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
@@ -184,6 +194,7 @@
     :precondition (and (atLocation ?a ?l)
                        (itemAtLocation ?i ?l)
                        (inReceptacle ?i ?r)
+                       (not (gluedToReceptacle ?i ?r))
                        (receptacleOpeningType ?r)
                        (receptacleOpened ?r)
                        (not (holdsAny ?a)))
@@ -199,14 +210,18 @@
 
 ;; agent places item in non-opening receptacle
  (:action PutItemInReceptacle
-    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
+    :parameters (?a - agent ?i - item ?ic - iclass ?r - receptacle ?rc - rclass ?l - location)
     :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?r ?l)
                         (not (receptacleOpeningType ?r))
+                        (itemClass ?i ?ic)
+                        (receptacleClass ?r ?rc)
                         (holds ?a ?i))
     :effect (and (inReceptacle ?i ?r)
                  (inAnyReceptacle ?i)
+                 (classRelation ?ic ?rc)
                  (itemAtLocation ?i ?l)
+                 (gluedToReceptacle ?i ?r)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))
  )
@@ -214,21 +229,25 @@
 
  ;; agent places item in opening receptacle
  (:action PutItemInOpeningReceptacle
-    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
+    :parameters (?a - agent ?i - item ?ic - iclass ?r - receptacle ?rc - rclass ?l - location)
     :precondition (and (atLocation ?a ?l)
                         (receptacleAtLocation ?r ?l)
                         (receptacleOpeningType ?r)
                         (receptacleOpened ?r)
+                        (itemClass ?i ?ic)
+                        (receptacleClass ?r ?rc)
                         (holds ?a ?i))
     :effect (and (inReceptacle ?i ?r)
                  (inAnyReceptacle ?i)
+                 (classRelation ?ic ?rc)
                  (itemAtLocation ?i ?l)
+                 (gluedToReceptacle ?i ?r)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))
  )
 
- 
-;; ------------------------------------ AGENT BAGSLOT  ------------------------------------
+
+ ;; ------------------------------------ AGENT BAGSLOT  ------------------------------------
 
  (:action StowInBagOneSlot
     :parameters (?a - agent ?i - item ?s - bagslot)
@@ -350,5 +369,5 @@
         (not (slotHoldsAny ?s3))
     )
  )
- 
+
 )

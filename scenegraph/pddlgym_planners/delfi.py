@@ -20,7 +20,7 @@ class Delfi(PDDLPlanner):
         self.install_delfi()
 
     def install_delfi(self):
-        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True)
+        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True, stdout=subprocess.DEVNULL)
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
         self.tmpdir = FilesInCommonTempDirectory(dom_file, prob_file)

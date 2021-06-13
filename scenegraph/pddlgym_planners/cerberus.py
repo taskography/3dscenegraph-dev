@@ -23,13 +23,13 @@ ALIASES = [
 class Cerberus(PDDLPlanner):
     def __init__(self, alias=ALIASES[0]):
         super().__init__()
-        print("Instantiating Cerberus")
+        print(f"Instantiating Cerberus with --alias {alias}")
         assert alias in ALIASES, f"Expected alias in {ALIASES}"
         self.alias = alias
         self.install_cerberus()
 
     def install_cerberus(self):
-        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True)
+        subprocess.check_call(f'docker pull {DOCKER_IMAGE}', shell=True, stdout=subprocess.DEVNULL)
 
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
         with FilesInCommonTempDirectory(dom_file, prob_file) as (dom_file, prob_file):

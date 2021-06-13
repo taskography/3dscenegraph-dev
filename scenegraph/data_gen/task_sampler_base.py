@@ -20,6 +20,10 @@ class TaskSamplerBase:
         self.can_heat = False
         self.can_cool = False
         self.can_clean = False
+        self.valid_lifted = True
+        self.num_lifted_pairs = 0
+        self.lifted_class_relations = set()
+        self.lifted_class_matrix = None
 
         # rooms
         self.num_rooms = 0
@@ -52,6 +56,8 @@ class TaskSamplerBase:
         self.get_support_relations()
         # 2d grid coordinates, room ids, and floor numbers for objects, receptacles and places
         self.get_locations()
+        # build 2d matrix of lifted (class-specific) object-receptacle problem difficulty scores
+        self.build_lifted_class_matrix()
 
     def get_scene_entities(self):
         """Categorize object and receptacle IDs by their class.
@@ -61,10 +67,16 @@ class TaskSamplerBase:
         self.receptacles['heating_type'] = set()
         self.receptacles['cooling_type'] = set()
         self.receptacles['cleaning_type'] = set()
+        self.receptacles['class_count'] = dict()
+        self.receptacles['class_index'] = dict()
+        self.receptacles['class_index_inv'] = dict()
         self.objects['all'] = set()
         self.objects['heatable_type'] = set()
         self.objects['coolable_type'] = set()
         self.objects['cleanable_type'] = set()
+        self.objects['class_count'] = dict()
+        self.objects['class_index'] = dict()
+        self.objects['class_index_inv'] = dict()
 
         for e_id in self.sg.object:
             scene_entity = self.sg.object[e_id]
@@ -84,6 +96,8 @@ class TaskSamplerBase:
 
                 if scene_entity.class_ in RECEPTACLES:
                     self.receptacles['all'].add(e_id)
+                    receptacle_class = scene_entity.class_.replace(' ', '')
+                    self.receptacles['class_count'][receptacle_class] = self.receptacles['class_count'].get(receptacle_class, 0) + 1
                     self.receptacle_names[e_id] = receptacle_to_str_name(scene_entity)
                     self.receptacle_to_object_map[e_id] = set()
                     if scene_entity.class_ in OPENING_RECEPTACLES:
@@ -97,6 +111,8 @@ class TaskSamplerBase:
                 
                 elif scene_entity.class_ in OBJECTS:
                     self.objects['all'].add(e_id)
+                    object_class = scene_entity.class_.replace(' ', '')
+                    self.objects['class_count'][object_class] = self.objects['class_count'].get(object_class, 0) + 1
                     if scene_entity.class_ in HEATABLE_OBJECTS:
                         self.objects['heatable_type'].add(e_id)
                     if scene_entity.class_ in COOLABLE_OBJECTS:
@@ -123,6 +139,16 @@ class TaskSamplerBase:
         if len(self.objects['cleanable_type']) > 0 and len(self.receptacles['cleaning_type']) > 0:
             self.can_clean = True
         
+        # sort object / receptacle semantic class by their frequency
+        sorted_object_class = sorted(list(self.objects['class_count'].items()), key=lambda x: x[1])
+        for idx, (class_, _) in enumerate(sorted_object_class):
+            self.objects['class_index'][class_] = idx
+            self.objects['class_index_inv'][idx] = class_
+        sorted_receptacle_class = sorted(list(self.receptacles['class_count'].items()), key=lambda x: x[1])
+        for idx, (class_, _) in enumerate(sorted_receptacle_class):
+            self.receptacles['class_index'][class_] = idx
+            self.receptacles['class_index_inv'][idx] = class_
+
         # categorize empty rooms
         for room_id in self.sg.room:
             if room_id not in self.room_names:
@@ -162,6 +188,7 @@ class TaskSamplerBase:
         for o_id in object_distances:
             _, r_id = object_distances[o_id][0]
             self.receptacle_to_object_map[r_id].add(o_id)
+            self.lifted_class_relations.add((self.sg.object[o_id].class_.replace(' ', ''), self.sg.object[r_id].class_.replace(' ', '')))
         self.unsupported_objects = self.objects['all'] - self.supported_objects
 
         # define place-entity and room-place mappings
@@ -235,3 +262,23 @@ class TaskSamplerBase:
             self.location_names['places'][place_id] = self.location_names[e_id]
             e_type = 'receptacles' if e_id not in self.unsupported_objects else 'objects'
             self.locations['places'][place_id] = self.locations[e_type][e_id]
+
+    def build_lifted_class_matrix(self):
+        """Build a matrix scoring the combined object-receptacle lifted problem difficulty.
+        """
+        self.lifted_class_matrix = np.zeros((len(self.objects['class_count']), len(self.receptacles['class_count'])))
+        if len(self.lifted_class_matrix) == 0:
+            self.valid_lifted = False
+            return 
+
+        for o_class, o_count in self.objects['class_count'].items():
+            for r_class, r_count in self.receptacles['class_count'].items():
+                if (o_class, r_class) in self.lifted_class_relations:
+                    continue
+                o_idx = self.objects['class_index'][o_class]
+                r_idx = self.receptacles['class_index'][r_class]
+                self.lifted_class_matrix[o_idx, r_idx] = o_count + r_count - 2
+
+        if np.max(self.lifted_class_matrix) == 0:
+            self.valid_lifted = False
+        self.num_lifted_pairs = np.sum((self.lifted_class_matrix > 0).astype(int))
