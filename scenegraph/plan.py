@@ -8,11 +8,11 @@ import pddlgym
 from pddlgym_planners.fd import FD
 from pddlgym_planners.ff import FF
 from pddlgym_planners.ffx import FFX
-# from pddlgym_planners.delfi import Delfi
+from pddlgym_planners.delfi import Delfi
 # from pddlgym_planners.satplan import SATPlan
-# from pddlgym_planners.cerberus import Cerberus
-# from pddlgym_planners.decstar import DecStar
-# from pddlgym_planners.lapkt import LAPKTBFWS
+from pddlgym_planners.cerberus import Cerberus
+from pddlgym_planners.decstar import DecStar
+from pddlgym_planners.lapkt import LAPKTBFWS
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import (load_json, save_json)
 
@@ -22,13 +22,13 @@ PLANNERS = {
     'FF-X': FFX(),
     'FD-seq-opt-lmcut': FD(alias_flag="--alias seq-opt-lmcut"),
     'FD-lama-first': FD(alias_flag="--alias lama-first"),
-    # 'SatPlan': SATPlan(),
-    # "Delfi": Delfi(),
-    # "Cerberus-sat": Cerberus(alias="seq-sat-cerberus2018"),
-    # "Cerberus-agl": Cerberus(alias="seq-agl-cerberus2018"),
-    # "DecStar-agl-fb": DecStar(alias="agl-decoupled-fallback"),
-    # "DecStar-opt-fb": DecStar(alias="opt-decoupled-fallback"),
-    # "bfws": LAPKTBFWS(),
+    'SatPlan': SATPlan(),
+    "Delfi": Delfi(),
+    "Cerberus-sat": Cerberus(alias="seq-sat-cerberus2018"),
+    "Cerberus-agl": Cerberus(alias="seq-agl-cerberus2018"),
+    "DecStar-agl-fb": DecStar(alias="agl-decoupled-fallback"),
+    "DecStar-opt-fb": DecStar(alias="opt-decoupled-fallback"),
+    "bfws": LAPKTBFWS(),
 }
 
 
