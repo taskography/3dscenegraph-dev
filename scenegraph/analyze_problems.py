@@ -24,6 +24,8 @@ def generate_dataset_statistics(args, split):
         print(f'{args.domain_name} Problem {i} / {m}')
         problem_fname = env.problems[i].problem_fname
         stats = {}
+        stats.update(compute_ground_problem_size(domain_fname, problem_fname))
+
         sas_task, pddl_task = get_sastask_from_pddl(domain_fname, problem_fname)
         stats.update(count_operators(sas_task))
         stats.update(count_branches_v2(sas_task, pddl_task))

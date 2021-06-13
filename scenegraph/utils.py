@@ -222,4 +222,4 @@ def count_branches_v2(sas_task, pddl_task):
     )
 
 def count_operators(sas_task):
-    return dict(num_actions=len(sas_task.operators), num_facts=len(sas_task.variables.value_names))
+    return dict(num_sas_operators=len(sas_task.operators), num_sas_variables=len(sas_task.variables.value_names))
