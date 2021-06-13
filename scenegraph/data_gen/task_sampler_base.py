@@ -29,6 +29,7 @@ class TaskSamplerBase:
         self.num_rooms = 0
         self.room_names = dict()
         self.room_to_place_map = dict()
+        self.place_to_room_map = dict()
         # places
         self.num_places = 0
         self.place_names = dict()
@@ -91,6 +92,7 @@ class TaskSamplerBase:
                     self.room_to_place_map[parent_room_id] = dict()
                     self.room_to_place_map[parent_room_id]['root'] = self.num_places
                     self.room_to_place_map[parent_room_id]['places'] = set()
+                    self.place_to_room_map[self.num_places] = parent_room_id
                     self.place_names[self.num_places] = place_to_str_name(self.num_places, parent_room, is_room=True)
                     self.num_places += 1
 
@@ -157,6 +159,7 @@ class TaskSamplerBase:
                 self.room_to_place_map[room_id] = dict()
                 self.room_to_place_map[room_id]['root'] = self.num_places
                 self.room_to_place_map[room_id]['places'] = set()
+                self.place_to_room_map[self.num_places] = room_id
                 self.place_names[self.num_places] = place_to_str_name(self.num_places, room, is_room=True)
                 self.num_places += 1
 
@@ -200,6 +203,7 @@ class TaskSamplerBase:
             self.place_to_entity_map[self.num_places] = {'root': o_id, 'objects': set()}
             self.entity_to_place_map['objects'][o_id] = self.num_places
             self.room_to_place_map[obj_inst.parent_room]['places'].add(self.num_places)
+            self.place_to_room_map[self.num_places] = obj_inst.parent_room
             self.num_places += 1
 
         for r_id in self.receptacles['all']:
@@ -211,6 +215,7 @@ class TaskSamplerBase:
                 self.place_to_entity_map[self.num_places]['objects'].add(o_id)
                 self.entity_to_place_map['objects'][o_id] = self.num_places
             self.room_to_place_map[rec_inst.parent_room]['places'].add(self.num_places)
+            self.place_to_room_map[self.num_places] = rec_inst.parent_room
             self.num_places += 1
 
     def get_locations(self):

@@ -5,15 +5,14 @@ from loader import load_scenegraph
 
 class PDDLSceneGraphMapper(TaskSamplerBase):
 
-    def __init__(self, data_path=None, problem_filepath=None, scenegraph=None):
+    def __init__(self, data_path=None, model_name=None, scenegraph=None):
         """Class that maps object names parsed from a PDDL problem file to the 
         corresponding SceneGraphNode object as defined in loader.py. 
         """
-        assert (scenegraph is not None or (problem_filepath is not None and data_path is not None))
+        assert (scenegraph is not None or (model_name is not None and data_path is not None))
         if scenegraph is not None:
             super(PDDLSceneGraphMapper, self).__init__(scenegraph)
         else:
-            model_name = problem_filepath.split('Taskography')[0]
             model_type = "verified_graph" if os.path.basename(data_path) == 'tiny' else "automated_graph"
             model_path = os.path.join(data_path, model_type, "3DSceneGraph_" + model_name + ".npz")
             scenegraph = load_scenegraph(model_path)
@@ -33,6 +32,18 @@ class PDDLSceneGraphMapper(TaskSamplerBase):
         self.object_map = {}
         for object_id, item_name in self.object_names.items():
             self.object_map[item_name] = object_id
+
+        # location name to 3d coordinate mapping
+        self.location_map = {}
+        for e_id, location_name in self.location_names.items():
+            if e_id not in ['places', 'unique']:    
+                if location_name not in self.location_map:
+                    self.location_map[location_name] = self.sg.object[e_id].location
+        # locations of center of rooms
+        for p_id, location_name in self.location_names['places'].items():
+            if location_name not in self.location_map:
+                room_id = self.place_to_room_map[p_id]
+                self.location_map[location_name] = self.sg.room[room_id].location
 
     def get_scene_object(self, object_type, name):
         """Return SceneGraphObject of type object_type with the given name.
@@ -65,3 +76,9 @@ class PDDLSceneGraphMapper(TaskSamplerBase):
         assert (name in self.object_map)
         object_id = self.object_map[name]
         return self.sg.object[object_id]
+
+    def get_3d_location(self, name):
+        """Return the x-y-z coordinates of a given PDDL location name.
+        """
+        assert (name in self.location_map)
+        return self.location_map[name]
