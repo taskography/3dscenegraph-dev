@@ -118,7 +118,7 @@ if __name__ == '__main__':
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots10', 'taskographyv3medium10bagslots10']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     ablation_domains += ['taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
-    lifted_domains = ['taskographyv4tiny5', 'taskographyv4medium5', 'taskographyv5tiny5bagslots7', 'taskographyv5medium5bagslots7']
+    lifted_domains = ['taskographyv4tiny5', 'taskographyv4medium5', 'taskographyv5tiny5bagslots5', 'taskographyv5medium5bagslots5']
     random_domains = ['taskographyv2tiny1updated', 'taskographyv2tiny2updated']
     domain_choices = optimal_planner_domains + official_domains + ablation_domains + lifted_domains + random_domains
     

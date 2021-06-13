@@ -34,7 +34,6 @@
     ;; item-receptacle interaction
     (inReceptacle ?i - item ?r - receptacle)                ; true if item ?i is in receptacle ?r
     (inAnyReceptacle ?i - item)                                      ; true if item ?i is in any receptacle
-    (gluedToReceptacle ?i - item ?r - receptacle)                       ; true if the object has been glued to the receptacle
     
     ;; agent-item interaction
     (holds ?a - agent ?i - item)                            ; true if item ?i is held by agent ?a
@@ -173,15 +172,17 @@
 
 ;; agent picks up item from a non-opening receptacle
  (:action PickupItemInReceptacle
-    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
+    :parameters (?a - agent ?i - item ?ic - iclass ?r - receptacle ?rc - rclass ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (itemAtLocation ?i ?l)
                        (inReceptacle ?i ?r)
-                       (not (gluedToReceptacle ?i ?r))
+                       (itemClass ?i ?ic)
+                       (receptacleClass ?r ?rc)
                        (not (receptacleOpeningType ?r))
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
                  (holds ?a ?i)
+                 (not (classRelation ?ic ?rc))
                  (not (inReceptacle ?i ?r))
                  (not (inAnyReceptacle ?i))
                  (not (itemAtLocation ?i ?l)))
@@ -190,16 +191,18 @@
 
 ;; agent picks up item from an opening receptacle
  (:action PickupItemInOpeningReceptacle
-    :parameters (?a - agent ?i - item ?r - receptacle ?l - location)
+    :parameters (?a - agent ?i - item ?ic - iclass ?r - receptacle ?rc - rclass ?l - location)
     :precondition (and (atLocation ?a ?l)
                        (itemAtLocation ?i ?l)
                        (inReceptacle ?i ?r)
-                       (not (gluedToReceptacle ?i ?r))
                        (receptacleOpeningType ?r)
                        (receptacleOpened ?r)
+                       (itemClass ?i ?ic)
+                       (receptacleClass ?r ?rc)
                        (not (holdsAny ?a)))
     :effect (and (holdsAny ?a)
                  (holds ?a ?i)
+                 (not (classRelation ?ic ?rc))
                  (not (inReceptacle ?i ?r))
                  (not (inAnyReceptacle ?i))
                  (not (itemAtLocation ?i ?l)))
@@ -221,7 +224,6 @@
                  (inAnyReceptacle ?i)
                  (classRelation ?ic ?rc)
                  (itemAtLocation ?i ?l)
-                 (gluedToReceptacle ?i ?r)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))
  )
@@ -241,7 +243,6 @@
                  (inAnyReceptacle ?i)
                  (classRelation ?ic ?rc)
                  (itemAtLocation ?i ?l)
-                 (gluedToReceptacle ?i ?r)
                  (not (holdsAny ?a))
                  (not (holds ?a ?i)))
  )
