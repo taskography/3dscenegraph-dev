@@ -17,19 +17,30 @@ from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from utils import (load_json, save_json)
 
 
-PLANNERS = {
-    'FF': FF(),                                                     # satisficing
-    'FF-X': FFX(),                                                  # satisficing
-    'FD-seq-opt-lmcut': FD(alias_flag="--alias seq-opt-lmcut"),     # optimal
-    'FD-lama-first': FD(alias_flag="--alias lama-first"),           # satisficing
-    'SatPlan': SATPlan(),                                           # optimal
-    "Delfi": Delfi(),                                               # optimal
-    "Cerberus-sat": Cerberus(alias="seq-sat-cerberus2018"),         # satisficing
-    "Cerberus-agl": Cerberus(alias="seq-agl-cerberus2018"),         # satisficing
-    "DecStar-agl-fb": DecStar(alias="agl-decoupled-fallback"),      # satisficing
-    "DecStar-opt-fb": DecStar(alias="opt-decoupled-fallback"),      # optimal
-    "bfws": LAPKTBFWS(),                                            # satisficing
-}
+def get_planner(planner_name):
+    if planner_name == 'FF':                                # satisficing
+        return FF()
+    elif planner_name == 'FF-X':                            # satisficing
+        return FFX()
+    elif planner_name == 'FD-seq-opt-lmcut':                # optimal
+        return FD(alias_flag="--alias seq-opt-lmcut")
+    elif planner_name == 'FD-lama-first':                   # satisficing
+        return FD(alias_flag="--alias lama-first")
+    elif planner_name == 'SatPlan':                         # optimal
+        return SATPlan(),
+    elif planner_name == 'Delfi':                           # optimal
+        return Delfi(),
+    elif planner_name == 'Cerberus-sat':                    # satisficing
+        return Cerberus(alias="seq-sat-cerberus2018")
+    elif planner_name == "Cerberus-agl":                    # satisficing
+        return Cerberus(alias="seq-agl-cerberus2018")
+    elif planner_name == "DecStar-agl-fb":                  # satisficing
+        return DecStar(alias="agl-decoupled-fallback")
+    elif planner_name == "DecStar-opt-fb":                  # optimal
+        return DecStar(alias="opt-decoupled-fallback")
+    elif planner_name == "bfws":                            # satisficing
+        return LAPKTBFWS()
+    return None
 
 
 # TODO: Add 'plan_cost', with transition costs for each action (FD only)
@@ -135,8 +146,9 @@ if __name__ == '__main__':
     if not os.path.exists(args.exp_dir):
         os.makedirs(args.exp_dir)
 
+    planner = get_planner(args.planner)
     if args.demo:
-        planning_demo(args, PLANNERS[args.planner])
+        planning_demo(args, planner)
     else:
-        generate_dataset_statistics(args, PLANNERS[args.planner], 'train')
-        generate_dataset_statistics(args, PLANNERS[args.planner], 'test')
+        generate_dataset_statistics(args, planner, 'train')
+        generate_dataset_statistics(args, planner, 'test')

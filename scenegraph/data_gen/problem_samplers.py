@@ -835,28 +835,35 @@ class TaskSamplerV4(TaskSamplerBase):
         valid = False
         start_time = time.time()
 
+        # agent start room
         room_names_list = list(self.room_names.keys())
-        while not valid:
-            # agent start room
-            agent_room_id = random.choice(room_names_list)
-            agent_room = self.room_names[agent_room_id]
-            place_id = self.room_to_place_map[agent_room_id]['root']
-            agent_place = self.place_names[place_id]
-            agent_location = self.location_names['places'][place_id]
+        agent_room_id = random.choice(room_names_list)
+        agent_room = self.room_names[agent_room_id]
+        place_id = self.room_to_place_map[agent_room_id]['root']
+        agent_place = self.place_names[place_id]
+        agent_location = self.location_names['places'][place_id]
+        task['agent_room'] = agent_room
+        task['agent_place'] = agent_place
+        task['agent_location'] = agent_location
 
-            # sample item / receptacle classes
-            lifted_class_matrix = self.lifted_class_matrix.copy()
+        # sample valid item / receptacle class relations
+        lifted_class_array = self.lifted_class_matrix.copy().reshape(-1)
+        indices = np.arange(len(lifted_class_array))
+        mask = lifted_class_array > 0
+        lifted_class_array = lifted_class_array[mask]
+        weights = lifted_class_array / lifted_class_array.sum()
+        indices = indices[mask]
+        while not valid:
+            # sample indices
+            samples = np.random.choice(indices, task_length, replace=False, p=weights)
+            o_indices, r_indices = np.unravel_index(samples, shape=self.lifted_class_matrix.shape)
+            # translate indices to class categories
             object_classes = list()
             receptacle_classes = list()
-            for i in range(task_length):
-                o_idx, r_idx = np.unravel_index(np.argmax(lifted_class_matrix), self.lifted_class_matrix.shape)
-                lifted_class_matrix[o_idx, r_idx] = 0
+            for o_idx, r_idx in zip(o_indices, r_indices):
                 object_classes.append(self.objects['class_index_inv'][o_idx])
                 receptacle_classes.append(self.receptacles['class_index_inv'][r_idx])
             
-            task['agent_room'] = agent_room
-            task['agent_place'] = agent_place
-            task['agent_location'] = agent_location
             task['object_classes'] = object_classes
             task['receptacle_classes'] = receptacle_classes
             valid = self.verify_task(task, avoid_repeats=avoid_repeats)
@@ -870,7 +877,7 @@ class TaskSamplerV4(TaskSamplerBase):
         """
         # sorted task parameters
         task_params = sorted(zip(task['object_classes'], task['receptacle_classes']), key=lambda x: x[0])
-        task_str = "{} {}".format(task['agent_room'], task_params)
+        task_str = "{}".format(task_params)
         valid = task_str not in self.sampled_tasks
         self.sampled_tasks.add(task_str)
         return valid if avoid_repeats else True
@@ -1098,28 +1105,35 @@ class TaskSamplerV5(TaskSamplerBase):
         valid = False
         start_time = time.time()
 
+        # agent start room
         room_names_list = list(self.room_names.keys())
-        while not valid:
-            # agent start room
-            agent_room_id = random.choice(room_names_list)
-            agent_room = self.room_names[agent_room_id]
-            place_id = self.room_to_place_map[agent_room_id]['root']
-            agent_place = self.place_names[place_id]
-            agent_location = self.location_names['places'][place_id]
+        agent_room_id = random.choice(room_names_list)
+        agent_room = self.room_names[agent_room_id]
+        place_id = self.room_to_place_map[agent_room_id]['root']
+        agent_place = self.place_names[place_id]
+        agent_location = self.location_names['places'][place_id]
+        task['agent_room'] = agent_room
+        task['agent_place'] = agent_place
+        task['agent_location'] = agent_location
 
-            # sample item / receptacle classes
-            lifted_class_matrix = self.lifted_class_matrix.copy()
+        # sample valid item / receptacle class relations
+        lifted_class_array = self.lifted_class_matrix.copy().reshape(-1)
+        indices = np.arange(len(lifted_class_array))
+        mask = lifted_class_array > 0
+        lifted_class_array = lifted_class_array[mask]
+        weights = lifted_class_array / lifted_class_array.sum()
+        indices = indices[mask]
+        while not valid:
+            # sample indices
+            samples = np.random.choice(indices, task_length, replace=False, p=weights)
+            o_indices, r_indices = np.unravel_index(samples, shape=self.lifted_class_matrix.shape)
+            # translate indices to class categories
             object_classes = list()
             receptacle_classes = list()
-            for i in range(task_length):
-                o_idx, r_idx = np.unravel_index(np.argmax(lifted_class_matrix), self.lifted_class_matrix.shape)
-                lifted_class_matrix[o_idx, r_idx] = 0
+            for o_idx, r_idx in zip(o_indices, r_indices):
                 object_classes.append(self.objects['class_index_inv'][o_idx])
                 receptacle_classes.append(self.receptacles['class_index_inv'][r_idx])
             
-            task['agent_room'] = agent_room
-            task['agent_place'] = agent_place
-            task['agent_location'] = agent_location
             task['object_classes'] = object_classes
             task['receptacle_classes'] = receptacle_classes
             valid = self.verify_task(task, avoid_repeats=avoid_repeats)
@@ -1133,7 +1147,7 @@ class TaskSamplerV5(TaskSamplerBase):
         """
         # sorted task parameters
         task_params = sorted(zip(task['object_classes'], task['receptacle_classes']), key=lambda x: x[0])
-        task_str = "{} {}".format(task['agent_room'], task_params)
+        task_str = "{}".format(task_params)
         valid = task_str not in self.sampled_tasks
         self.sampled_tasks.add(task_str)
         return valid if avoid_repeats else True

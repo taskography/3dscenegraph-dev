@@ -2,6 +2,7 @@ import os
 import argparse
 import random
 import pprint
+import numpy as np
 
 
 from pddlgym.parser import PDDLDomainParser
@@ -97,4 +98,5 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
     random.seed(args.seed)
+    np.random.seed(args.seed)
     generate_pddl_problems(args)
