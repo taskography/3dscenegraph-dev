@@ -8,9 +8,6 @@ import shutil
 
 from pddlgym.parser import (PDDLDomainParser, PDDLProblemParser)
 
-# from pddlgym_planners.mcts.problem import PddlProblem
-# from pddlgym_planners.mcts.algorithm import Root, plan_mcts
-# from pddlgym_planners.mcts.helpers import branching_factor
 import numpy as np
 
 
@@ -137,8 +134,92 @@ def compute_ground_problem_size(domfile, probfile):
 
 
 def estimate_branching_factor(domain_file, problem_file):
+    from pddlgym_planners.mcts.problem import PddlProblem
+    from pddlgym_planners.mcts.algorithm import Root, plan_mcts
+    from pddlgym_planners.mcts.helpers import branching_factor
     problem = PddlProblem(domain_file, problem_file, reward_subgoals=False, action_costs=False, oversample_relevant_actions=False)
     root = Root(problem, problem.init)
     plan_mcts(root, n_iters=1000, horizon=0)
     return branching_factor(root, agg=np.mean)
 
+
+def get_sastask_from_pddl(domain, task):
+    import sys
+    sys.path.append("pddlgym_planners/FD/src/translate/") # hate to do this, but i cant exactly change the source
+    import normalize
+    import pddl_parser
+    import translate
+    pddl_task = pddl_parser.open(
+        domain_filename=domain, task_filename=task)
+    sas_task = translate.pddl_to_sas(pddl_task, max_num_actions=float("inf"), pg_generator=None)
+    sys.path.pop(-1) # to bring path back to normal
+    return sas_task, pddl_task
+
+def count_branches_v2(sas_task, pddl_task):
+    '''This is very domain specific. It basically counts the actions the agent can take at all locations.
+    It ignores how the action space changes if the agent does anything other than move.'''
+    indexes = dict(atlocation=None, inroom=None, inplace=None)
+    for var_index, value_names in enumerate(sas_task.variables.value_names):
+        for name in indexes:
+            if any(f" {name}" in v for v in value_names):
+                assert indexes[name] is None, f"Unexpected: More than one sas variable for pddl {name}"
+                indexes[name] = var_index
+
+
+    location_name_to_place_name = {
+        v.args[0]: v.args[1] for v in pddl_task.init if v.predicate == 'locationinplace'
+    }
+    place_name_to_room_name = {
+        v.args[0]: v.args[1] for v in pddl_task.init if v.predicate == 'placeinroom'
+    }
+
+    location_name_to_index = {}
+    for location_index, atlocation_value in enumerate(sas_task.variables.value_names[indexes['atlocation']]):
+        location_name = atlocation_value.split(', ')[-1].strip(')')
+        location_name_to_index[location_name] = location_index
+    place_name_to_index = {}
+    for place_index, inplace_value in enumerate(sas_task.variables.value_names[indexes['inplace']]):
+        place_name = inplace_value.split(', ')[-1].strip(')')
+        place_name_to_index[place_name] = place_index
+    room_name_to_index = {}
+    for room_index, inroom_value in enumerate(sas_task.variables.value_names[indexes['inroom']]):
+        room_name = inroom_value.split(', ')[-1].strip(')')
+        room_name_to_index[room_name] = room_index
+
+    location_index_to_place_index = {location_name_to_index[location_name]: place_name_to_index[place_name] for location_name, place_name in location_name_to_place_name.items()}
+    place_index_to_room_index = {place_name_to_index[place_name]: room_name_to_index[room_name] for place_name, room_name in place_name_to_room_name.items()}
+
+
+    def sample_state():
+        for location_idx in location_index_to_place_index:
+            place_idx = location_index_to_place_index[location_idx]
+            room_idx = place_index_to_room_index[place_idx]
+            
+            state = sas_task.init.values.copy()
+            state[indexes['atlocation']] = location_idx
+            state[indexes['inplace']] = place_idx
+            state[indexes['inroom']] = room_idx
+            yield state
+
+
+    num_branches = [] # will have the same length as the number of locations in the problem
+    for state in sample_state():
+        num_applicable = 0
+        for operator in sas_task.operators:
+            applicable = True
+            for (var, assignment) in operator.get_applicability_conditions():
+                if state[var] != assignment:
+                    applicable = False
+                    break
+            if applicable:
+                num_applicable += 1
+        num_branches.append(num_applicable)
+
+    return dict(
+        mean_branching_factor=float(np.mean(num_branches)),
+        max_branching_factor=int(np.max(num_branches)),
+        min_branching_factor=int(np.min(num_branches))
+    )
+
+def count_operators(sas_task):
+    return dict(num_sas_operators=len(sas_task.operators), num_sas_variables=len(sas_task.variables.value_names))
