@@ -37,6 +37,7 @@ def plot_plan(domain_name, model):
     except PlanningFailure as failure:
         print(failure)
     
+    
 
 class SceneGraphVisualizer:
 

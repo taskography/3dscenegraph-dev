@@ -17,7 +17,7 @@ def generate_pddl_problems(args):
     domain = PDDLDomainParser(args.domain, expect_action_preds=False, operators_as_actions=True)
     domain_version = domain.domain_name.replace('taskography', '')
     domain_name = domain.domain_name + args.data_split + str(args.task_length)
-    if domain_version == 'v3':
+    if domain_version in ['v3', 'v5']:
         domain_name += f'bagslots{args.bagslots}'
     domain.domain_name = domain_name
 
@@ -29,7 +29,7 @@ def generate_pddl_problems(args):
     train_data_dir = os.path.join(args.output_dir, domain_name)
     test_data_dir = train_data_dir + '_test'
     if os.path.exists(train_data_dir) or os.path.exists(test_data_dir):
-        print(f'Error: {train_data_dir}, {test_data_dir} already exists and requires manual deletion')
+        print(f'Error: {domain_filepath} {train_data_dir}, {test_data_dir} already exists and requires manual deletion')
         exit(1)
     os.mkdir(train_data_dir)
     os.mkdir(test_data_dir)
@@ -52,15 +52,20 @@ def generate_pddl_problems(args):
     for model_name, model_path in models:
         # sample and write tasks
         scenegraph = load_scenegraph(model_path)
-        if domain_version == "v3":
-            sampler = get_domain_sampler("v3")(domain, scenegraph, args.bagslots)
+        if domain_version in ["v3", "v5"]:
+            sampler = get_domain_sampler(domain_version)(domain, scenegraph, args.bagslots)
         else:
             sampler = get_domain_sampler(domain_version)(domain, scenegraph)
 
         # all objects / receptacles must have a designated parent room
-        if not sampler.valid_scene or sampler.num_objects < 10:
-            print(f'Skipping invalid model: {model_name}')
-            continue
+        if domain_version in ["v1", "v2", "v3"]:
+            if not sampler.valid_scene or sampler.num_objects < 10:
+                print(f'Skipping invalid model: {model_name}')
+                continue
+        elif domain_version in ["v4", "v5"]:
+            if not sampler.valid_scene or not sampler.valid_lifted or sampler.num_lifted_pairs < args.task_length:
+                print(f'Skipping invalid model: {model_name}')
+                continue
         
         print(f'Generating {split} task {problem_count} on: {model_name}')
         for i in range(samples_per_scene):
