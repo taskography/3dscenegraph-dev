@@ -12,7 +12,7 @@ from pddlgym_planners.planner import PlanningFailure
 from utils import ADL2Strips
 import numpy as np
 
-SATPLAN_REPO = "git@github.com:Khodeir/SatPlan.git"
+SATPLAN_REPO = "https://github.com/Khodeir/SatPlan.git"
 MEMORY = 10_000_000_000 # 10G
 class SATPlan(PDDLPlanner):
     """Fast-downward planner.
