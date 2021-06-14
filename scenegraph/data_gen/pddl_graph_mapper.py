@@ -25,7 +25,7 @@ class PDDLSceneGraphMapper(TaskSamplerBase):
 
         # receptacle name to receptacle ID mapping
         self.receptacle_map = {}
-        for receptacle_id, receptacle_name in self.receptacle_mames.items():
+        for receptacle_id, receptacle_name in self.receptacle_names.items():
             self.receptacle_map[receptacle_name] = receptacle_id
 
         # item name to object ID mapping
