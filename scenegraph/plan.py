@@ -27,9 +27,9 @@ def get_planner(planner_name):
     elif planner_name == 'FD-lama-first':                   # satisficing
         return FD(alias_flag="--alias lama-first")
     elif planner_name == 'SatPlan':                         # optimal
-        return SATPlan(),
+        return SATPlan()
     elif planner_name == 'Delfi':                           # optimal
-        return Delfi(),
+        return Delfi()
     elif planner_name == 'Cerberus-sat':                    # satisficing
         return Cerberus(alias="seq-sat-cerberus2018")
     elif planner_name == "Cerberus-agl":                    # satisficing

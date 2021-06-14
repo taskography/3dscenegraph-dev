@@ -16,6 +16,7 @@ do
         echo "$i $j"
         cmd="./run.sh $j taskography$i $optimal_timeout"
         eval $cmd
+        echo ""
     done
 done
 
@@ -26,6 +27,7 @@ do
         echo "$i $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
+        echo ""
     done
 done
 
@@ -36,6 +38,7 @@ do
         echo "$i $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
+        echo ""
     done
 done
 
@@ -46,6 +49,7 @@ do
         echo "$i $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
+        echo ""
     done
 done
 
@@ -56,5 +60,6 @@ do
         echo "$i $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
+        echo ""
     done
 done
