@@ -3,6 +3,7 @@ import argparse
 import random
 import numpy as np
 import pprint
+from tqdm import tqdm
 
 import pddlgym
 from pddlgym_planners.fd import FD
@@ -63,8 +64,8 @@ def generate_dataset_statistics(args, planner, split):
     run_stats = []
     timeouts = 0
     failures = 0
-    for i in range(m):
-        print(f'{args.domain_name} Problem {i} / {m}')
+    for i in tqdm(range(m)):
+        # print(f'{args.domain_name} Problem {i} / {m}')
         env.fix_problem_index(i)
         state, _ = env.reset()
         problem_fname = env.problems[i].problem_fname

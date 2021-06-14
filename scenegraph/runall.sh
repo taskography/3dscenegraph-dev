@@ -13,7 +13,7 @@ for i in "${official_grounded_optimal_domains[@]}"
 do
     for j in "${optimal_planners[@]}"
     do
-        echo "$i $j"
+        echo "Planning in $i with $j"
         cmd="./run.sh $j taskography$i $optimal_timeout"
         eval $cmd
         echo ""
@@ -24,7 +24,7 @@ for i in "${official_grounded_optimal_domains[@]}"
 do
     for j in "${satisficing_planners[@]}"
     do
-        echo "$i $j"
+        echo "Planning in $i with $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
         echo ""
@@ -35,7 +35,7 @@ for i in "${official_gounded_domains[@]}"
 do
     for j in "${satisficing_planners[@]}"
     do
-        echo "$i $j"
+        echo "Planning in $i with $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
         echo ""
@@ -46,7 +46,7 @@ for i in "${official_lifted_domains[@]}"
 do
     for j in "${satisficing_planners[@]}"
     do
-        echo "$i $j"
+        echo "Planning in $i with $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
         echo ""
@@ -57,7 +57,7 @@ for i in "${ablation_domains[@]}"
 do
     for j in "${satisficing_planners[@]}"
     do
-        echo "$i $j"
+        echo "Planning in $i with $j"
         cmd="./run.sh $j taskography$i $satisficing_timeout"
         eval $cmd
         echo ""
