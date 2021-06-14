@@ -1,3 +1,4 @@
+import json
 import os
 import argparse
 import random
@@ -77,6 +78,20 @@ def generate_dataset_statistics(args, planner, split):
         except PlanningFailure:
             failures += 1
 
+    # Log stats
+    statsfile = os.path.join(args.save_dir, f"{args.expid}_{split}.py")
+    json_string = json.dumps(run_stats, indent=4, sort_keys=True)
+    json_string = "STATS = " + json_string + "\n"
+    timeout_string = f"num_timeouts = {timeouts}\n"
+    failure_string = f"num_timeouts = {failures}\n"
+    num_problems_string = f"num_problems = {m}\n"
+    with open(statsfile, "w") as f:
+        f.write(json_string)
+        f.write(timeout_string)
+        f.write(failure_string)
+        f.write(num_problems_string)
+
+
     # compute statistics
     planner_stats = {}
     for stat in STATS:
@@ -96,7 +111,7 @@ def generate_dataset_statistics(args, planner, split):
     # save statistics
     pprinter = pprint.PrettyPrinter()
     pprinter.pprint(planner_stats)
-    save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), planner_stats)
+    save_json(os.path.join(args.save_dir, args.expid + f'_{split}' + '.json'), planner_stats)
 
 
 def planning_demo(args, planner):
@@ -135,8 +150,9 @@ if __name__ == '__main__':
     domain_choices = optimal_planner_domains + official_domains + ablation_domains + lifted_domains + random_domains
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
-    parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
+    parser.add_argument('--log-dir', type=str, default='exp', help='Directory to log all experiment results')
+    parser.add_argument('--expid', type=str, default='debug', help='Unique ID for experiment (dir within log-dir in which to write logfiles to)')
+    # parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
     parser.add_argument('--planner', type=str, required=True, choices=planner_choices, help='Planner to benchmark')
     parser.add_argument('--domain-name', type=str, required=True, choices=domain_choices, help='Name of domain registered in PDDLGym')
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
@@ -144,8 +160,10 @@ if __name__ == '__main__':
     parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
     args = parser.parse_args()
 
-    if not os.path.exists(args.exp_dir):
-        os.makedirs(args.exp_dir)
+    args.save_dir = os.path.join(args.log_dir, args.expid)
+
+    if not os.path.exists(args.save_dir):
+        os.makedirs(args.save_dir)
 
     planner = get_planner(args.planner)
     if args.demo:
