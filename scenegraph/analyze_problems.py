@@ -5,7 +5,7 @@ import numpy as np
 import pprint
 
 import pddlgym
-from utils import (load_json, save_json, get_sastask_from_pddl, count_branches_v2, count_operators)
+from utils import (load_json, save_json, get_sastask_from_pddl, count_branches_v2, estimate_branches_v3, count_operators, compute_ground_problem_size)
 
 
 def generate_dataset_statistics(args, split):
@@ -28,12 +28,12 @@ def generate_dataset_statistics(args, split):
 
         sas_task, pddl_task = get_sastask_from_pddl(domain_fname, problem_fname)
         stats.update(count_operators(sas_task))
-        stats.update(count_branches_v2(sas_task, pddl_task))
-        # TODO: add more stats here
+        stats.update(estimate_branches_v3(sas_task, pddl_task))
         run_stats[problem_fname] = stats
+        print(stats)
 
 
-    save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), run_stats)
+    # save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), run_stats)
 
 
 
@@ -42,7 +42,8 @@ if __name__ == '__main__':
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
     ablation_domains += ['taskographyv3tiny10bagslots10', 'taskographyv3medium10bagslots10']
-    domain_choices = optimal_planner_domains + official_domains + ablation_domains
+    lifted_domains = ['taskographyv4tiny5', 'taskographyv4medium5', 'taskographyv5tiny5bagslots5', 'taskographyv5medium5bagslots5']
+    domain_choices = optimal_planner_domains + official_domains + ablation_domains + lifted_domains
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
     parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')

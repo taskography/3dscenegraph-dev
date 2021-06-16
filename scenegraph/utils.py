@@ -221,5 +221,48 @@ def count_branches_v2(sas_task, pddl_task):
         min_branching_factor=int(np.min(num_branches))
     )
 
+def estimate_branches_v3(sas_task, pddl_task, num_rollouts=10, horizon=100):
+    ### Data structure to keep operators grouped by atlocation
+    index = None
+    for var_index, value_names in enumerate(sas_task.variables.value_names):
+        name = 'atlocation'
+        if any(f" {name}" in v for v in value_names):
+            assert index is None, f"Unexpected: More than one sas variable for pddl {name}"
+            index = var_index
+    operators_by_location = {}
+    for operator in sas_task.operators:
+        for var, assignment in operator.get_applicability_conditions():
+            if var == index:
+                operators_by_location.setdefault(assignment, []).append(operator)
+                break
+        else:
+            operators_by_location.setdefault('None', []).append(operator)
+    ### Monte carlo sim
+    rollout_stats = []
+    for i in range(num_rollouts):
+        num_actions_possible = []
+        state = sas_task.init.values.copy()
+        for s in range(horizon):
+            all_applicable = []
+            for operator in operators_by_location.get(state[index], []) + operators_by_location.get('None', []):
+                applicable = True
+                for (var, assignment) in operator.get_applicability_conditions():
+                    if state[var] != assignment:
+                        applicable = False
+                        break
+                if applicable:
+                    all_applicable.append(operator)
+
+            rollout_stats.append(len(all_applicable))
+            operator = np.random.choice(all_applicable)
+            for (var, _, eff, _) in operator.pre_post:
+                state[var] = eff
+
+    return dict(
+        mean_branching_factor=float(np.mean(rollout_stats)),
+        max_branching_factor=int(np.max(rollout_stats)),
+        min_branching_factor=int(np.min(rollout_stats))
+    )
+
 def count_operators(sas_task):
     return dict(num_sas_operators=len(sas_task.operators), num_sas_variables=len(sas_task.variables.value_names))
