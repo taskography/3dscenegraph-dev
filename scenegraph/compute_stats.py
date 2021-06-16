@@ -84,11 +84,11 @@ if __name__ == "__main__":
 
     # domains = ["taskographyv2tiny1", "taskographyv2tiny1", "taskographyv2tiny10"]
     grounded_optimal_domains = ["v2tiny1", "v2tiny2"]
-    grounded_satisficing_domains = ["v2tiny10", "v2medium10", "v3tiny10bagslots5", "v3medium10bagslots5"]
+    grounded_satisficing_domains = ["v2tiny10", "v2medium10", "v3tiny10bagslots7", "v3medium10bagslots7"]
     lifted_domains = ["v4tiny5", "v4medium5", "v5tiny5bagslots5", "v5medium5bagslots5"]
     ablation_domains = [
-        "v3tiny10bagslots3", "v3tiny10bagslots5", "v3tiny10bagslots7",
-        "v3medium10bagslots3", "v3medium10bagslots5", "v3medium10bagslots7",
+        "v3tiny10bagslots3", "v3tiny10bagslots5", "v3tiny10bagslots10",
+        "v3medium10bagslots3", "v3medium10bagslots5", "v3medium10bagslots10",
     ]
     domains = grounded_optimal_domains  + grounded_satisficing_domains
     domains = ["taskography" + d for d in domains]
@@ -142,7 +142,7 @@ if __name__ == "__main__":
                         _stats = json.load(f)
                     stats[d][phase][p] = copy.deepcopy(_stats)
 
-    stats_to_measure = ["plan_length", "search_time", "success_rate"]  #, "timeout_rate", "fraction_objects_used", "total_replanning_steps"]
+    stats_to_measure = ["plan_length", "total_time", "success_rate"]  #, "timeout_rate", "fraction_objects_used", "total_replanning_steps"]
     table_cols = ["Len.", "Time", "Fail"]
 
     table = [["Planner"] + (table_cols * len(d))]
