@@ -83,7 +83,7 @@ def generate_dataset_statistics(args, planner, split):
     json_string = json.dumps(run_stats, indent=4, sort_keys=True)
     json_string = "STATS = " + json_string + "\n"
     timeout_string = f"num_timeouts = {timeouts}\n"
-    failure_string = f"num_timeouts = {failures}\n"
+    failure_string = f"num_failures = {failures}\n"
     num_problems_string = f"num_problems = {m}\n"
     with open(statsfile, "w") as f:
         f.write(json_string)
@@ -148,6 +148,8 @@ if __name__ == '__main__':
     lifted_domains = ['taskographyv4tiny5', 'taskographyv4medium5', 'taskographyv5tiny5bagslots5', 'taskographyv5medium5bagslots5']
     random_domains = ['taskographyv2tiny1updated', 'taskographyv2tiny2updated']
     domain_choices = optimal_planner_domains + official_domains + ablation_domains + lifted_domains + random_domains
+    scrub_domains = [c + 'scrub' for c in domain_choices]
+    domain_choices = domain_choices + scrub_domains
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--log-dir', type=str, default='exp', help='Directory to log all experiment results')
@@ -158,6 +160,7 @@ if __name__ == '__main__':
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
     parser.add_argument('--limit', type=int, default=None, help='Limit the number of problems for debugging')
     parser.add_argument('--demo', action='store_true', help='Demo a planner on a single problem, no statistics are tracked')
+    parser.add_argument('--skip-train', action='store_true', help='Run only on test splits, skipping train splits')
     args = parser.parse_args()
 
     args.save_dir = os.path.join(args.log_dir, args.expid)
@@ -169,5 +172,6 @@ if __name__ == '__main__':
     if args.demo:
         planning_demo(args, planner)
     else:
-        generate_dataset_statistics(args, planner, 'train')
+        if not args.skip_train:
+            generate_dataset_statistics(args, planner, 'train')
         generate_dataset_statistics(args, planner, 'test')
