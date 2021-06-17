@@ -39,7 +39,8 @@ def jitter(loc, scale=.2, center=0):
   return  loc + (random.random() - .5)*scale + center
 
 def visualize(path):
-  for [x, y, z, kind] in path:
+  for step in path:
+    [x, y, z, kind] = step[:4]
     spec = CONFIG['waypoints'][kind]
     location = [x, y, max(z, 1.)]
     jitter_spec = spec.get('jitter', [])
@@ -75,7 +76,7 @@ def setMaterial(name, mat):
             me.materials.append(mat)
             ob.name = "PathPoint"
 
-def duplicateObject(scene, name, copyobj, location=(0,0,0), scale=None):
+def duplicateObject(scene, name, copyobj, location=(0,0,0), rotation_euler=(0,0,0), scale=None):
     # Create new mesh
     mesh = bpy.data.meshes.new(name)
     # Create new object associated with the mesh
@@ -91,6 +92,7 @@ def duplicateObject(scene, name, copyobj, location=(0,0,0), scale=None):
     scene.objects.link(ob_new)
     ob_new.select = True
     ob_new.location = Vector(location)
+    ob_new.rotation_euler = rotation_euler
     return ob_new
 
 
@@ -171,7 +173,7 @@ def deleteObject(obj):
   bpy.ops.object.delete() 
 
 
-def capture_top(dst_dir, model_id, obj_model, focus_center, path, idx, distance):
+def capture_top(dst_path, model_id, obj_model, focus_center, path, distance):
     def set_render_resolution(x=2560, y=2560):
         bpy.context.scene.render.resolution_x = x
         bpy.context.scene.render.resolution_y = y
@@ -184,7 +186,7 @@ def capture_top(dst_dir, model_id, obj_model, focus_center, path, idx, distance)
     obj_lamp.location = camera_pos
     look_at(obj_camera, camera_pos, focus_center)
     install_lamp(obj_lamp, lamp_pos, focus_center)
-    slicename="slice"+str(idx)
+    slicename="slice"
     cut_height = np.mean([loc[2] for loc in path])
     visualize(path)
     cobj=duplicateObject(bpy.context.scene, slicename, obj_model)
@@ -195,7 +197,7 @@ def capture_top(dst_dir, model_id, obj_model, focus_center, path, idx, distance)
     bpy.ops.mesh.bisect(plane_co=(0, 0, cut_height + 0.7),plane_no=(0,0,1), clear_outer=True,clear_inner=False)
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.ops.object.select_all(action='DESELECT')
-    bpy.data.scenes['Scene'].render.filepath = os.path.join(dst_dir, '{}_c{}.jpg'.format(model_id, idx))
+    bpy.data.scenes['Scene'].render.filepath = dst_path
     # bpy.data.scenes['Scene'].render.engine = 'BLENDER_EEVEE'
     bpy.ops.render.render( write_still=True ) 
     # deleteObject(slicename)
@@ -264,11 +266,8 @@ def main():
       }
     }
 
-    trajectories = {}
     with open(opt.filepath, "r") as f:
-        trajectories = json.load(f)
-
-    waypoints = trajectories[opt.idx]['waypoints']
+        waypoints = json.load(f)
 
     prepare()
   
@@ -282,7 +281,7 @@ def main():
     dist = max(((max_x - min_x), (max_y - min_y), (max_z - min_z))) / (2*np.tan(np.pi/10))
     cent = Vector(((max_x + min_x)/2, (max_y + min_y)/2, (max_z + min_z)/2))
 
-    capture_top(opt.renderpath, opt.model, obj_model, cent, waypoints, opt.idx, dist)
+    capture_top(opt.renderpath, opt.model, obj_model, cent, waypoints, dist)
         
 if __name__ == '__main__':
     main()
