@@ -8,19 +8,19 @@ import pddlgym
 
 
 from loader import load_scenegraph
-from pddlgym_planners.fd import FD
+from plan import get_planner
 from pddlgym_planners.planner import (PlanningFailure, PlanningTimeout)
 from data_gen.pddl_graph_mapper import PDDLSceneGraphMapper
 import json
 
-def plot_plan(domain_name, model, planner=None):
+def get_plan(domain_name, model, planner=None):
     """Plot the plan returned by Fast-Downward in the specified domain / problem pair.
     """
     # create PDDLGym Env
     env = pddlgym.make("PDDLEnv{}-v0".format(domain_name.capitalize()))
     domain_fname = env.domain.domain_fname
     problem_idx = None
-    for i, problem in enumerate(env.problems):
+    for i, problem in list(enumerate(env.problems)):
         if model.lower() in problem.problem_name:
             problem_idx = i
             break
@@ -30,16 +30,13 @@ def plot_plan(domain_name, model, planner=None):
     state, _ = env.reset()
     if planner is None:
         planner = FD(alias_flag='--alias lama-first')
+    else:
+        planner = get_planner(planner)
 
     # attempt to plan
-    try:
-        plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=10)
-    except PlanningTimeout as timeout:
-        print(timeout)
-    except PlanningFailure as failure:
-        print(failure)
-    
+    plan = planner.plan_to_action_from_pddl(env.domain, state, domain_fname, problem_fname, timeout=120)
     return plan, state
+    
 
 def plan_to_3d_waypoints(plan, state, model, sg_path):
     mapper = PDDLSceneGraphMapper(sg_path, model)
@@ -86,7 +83,7 @@ def plan_to_3d_waypoints(plan, state, model, sg_path):
     return waypoints
 
 def write_plan_waypoints(domain_name, model, planner, gibson_path, output_path):
-    plan, state = plot_plan(domain_name, model, planner)
+    plan, state = get_plan(domain_name, model, planner)
     waypoints = plan_to_3d_waypoints(plan, state, model, gibson_path)
     with open(output_path, 'w') as f:
         json.dump(waypoints, f)

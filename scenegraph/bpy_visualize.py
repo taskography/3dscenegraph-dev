@@ -37,17 +37,39 @@ def import_obj(file_loc):
 
 def jitter(loc, scale=.2, center=0):
   return  loc + (random.random() - .5)*scale + center
-
+def apply_jitter(location, jitter_spec):
+    for i, jitter_config in enumerate(jitter_spec):
+      location[i] = jitter(location[i], **jitter_config)
+    
 def visualize(path):
-  for step in path:
+  mats = [makeMaterial("green"+str(i), (0,(100-i)/100.,i/100.), (1, 1, 1), 0.) for i in range(100)] 
+  for i, step in enumerate(path):
+    c_index = int(100 * i / len(path))
     [x, y, z, kind] = step[:4]
     spec = CONFIG['waypoints'][kind]
     location = [x, y, max(z, 1.)]
     jitter_spec = spec.get('jitter', [])
-    for i, jitter_config in enumerate(jitter_spec):
-      location[i] = jitter(location[i], **jitter_config)
+    apply_jitter(location, jitter_spec)
+
     
-    if spec["icon"] == "Sphere":
+    if kind == 'nav':
+      [ox, oy, oz] = step[4:] # this is the start location
+      midpoint = [(x + ox) / 2, (y + oy) / 2, max(1, (z + oz) / 2)]
+      # mag = np.sqrt(np.square(y - oy) + np.square(x - ox))
+      angle = np.arctan((y - oy)/(x - ox))
+      apply_jitter(midpoint, jitter_spec)
+      # bpy.ops.mesh.primitive_uv_sphere_add(location=midpoint, size=0.1)
+      # setMaterial("Sphere", CONFIG['materials']['red'])
+      # bpy.ops.mesh.primitive_uv_sphere_add(location=[ox, oy, oz], size=0.1)
+      # setMaterial("Sphere", CONFIG['materials']['green'])
+      # bpy.ops.mesh.primitive_uv_sphere_add(location=[x, y, z], size=0.1)
+      # setMaterial("Sphere", CONFIG['materials']['blue'])
+      assert spec['icon'] in bpy.data.objects.keys(), bpy.data.objects.keys()
+      duplicateObject(bpy.context.scene, kind, bpy.data.objects[spec['icon']], midpoint, rotation_euler=(0, 0, angle), scale=spec['scale'])
+      setMaterial(kind, mats[c_index])
+      
+
+    elif spec["icon"] == "Sphere":
       bpy.ops.mesh.primitive_uv_sphere_add(location=location, size=spec['size'])
       setMaterial("Sphere", CONFIG['materials'][spec['material']])
     else:
@@ -221,6 +243,7 @@ def main():
     CONFIG = {
       'stl_assets': {
         'hand': './assets/hand.stl',
+        'arrow': './assets/arrow.stl'
       },
       "materials": {
         "red": makeMaterial("red", (1, 0, 0), (1, 1, 1), 1),
@@ -234,34 +257,34 @@ def main():
           "size": 0.3
         },
         'nav': {
-          "icon": "Sphere",
+          "icon": "arrow",
           "material": "green",
-          "size": 0.1,
-          "jitter": [dict(scale=0.2, center=0), dict(scale=0.2, center=0)]
+          "scale": (0.006, 0.006, 0.006),
+          "jitter": [dict(scale=0.4, center=0), dict(scale=0.4, center=0)]
         },
         "open": {
           "icon": "Sphere",
           "material": "red",
           "size": 0.1,
-          "jitter": [dict(scale=.2, center=-.1)]
+          "jitter": [dict(scale=.02, center=-.1)]
         },
         "close": {
           "icon": "Sphere",
           "material": "blue",
           "size": 0.1,
-          "jitter": [dict(scale=.2, center=.1)]
+          "jitter": [dict(scale=.02, center=.1)]
         },
         "pickup": {
           "icon": "hand",
           "material": "red",
           "scale": (0.006, 0.006, 0.006),
-          "jitter": [dict(scale=.2, center=-.1)]
+          "jitter": [dict(scale=.02, center=-.1)]
         },
         "put": {
           "icon": "hand",
           "material": "blue",
           "scale": (0.006, 0.006, 0.006),
-          "jitter": [dict(scale=.2, center=.1)]
+          "jitter": [dict(scale=.02, center=.1)]
         },
       }
     }
