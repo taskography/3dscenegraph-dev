@@ -6,6 +6,7 @@ import os
 import warnings
 # from prettytable import PrettyTable
 from tabulate import tabulate
+import numpy as np
 
 
 class DummyObject(object):
@@ -82,7 +83,17 @@ if __name__ == "__main__":
     args.expdir = "exp-official"
     # args.expdir_ploi = "/home/krishna/code/ploi-baseline/cache/"
 
-    # domains = ["taskographyv2tiny1", "taskographyv2tiny1", "taskographyv2tiny10"]
+    # domains by type and size
+    v2_domains_tiny = ["v2tiny1", "v2tiny2", "v2tiny10"]
+    v2_domains_medium = ["v2medium1", "v2medium2", "v2medium10"]
+    v3_domains_tiny = ["v3tiny5bagslots5", "v3tiny10bagslots3", "v3tiny10bagslots5", "v3tiny10bagslots7", "v3tiny10bagslots10"]
+    v3_domains_tiny = v3_domains_tiny[1:]
+    v3_domains_medium = ["v3medium5bagslots5", "v3medium10bagslots3", "v3medium10bagslots5", "v3medium10bagslots7", "v3medium10bagslots10"]
+    v3_domains_medium = v3_domains_medium[1:]
+    v4_domains = ["v4tiny5", "v4medium5"]
+    v5_domains = ["v5tiny5bagslots5", "v5medium5bagslots5"]
+
+    # domains by planner type
     grounded_optimal_domains = ["v2tiny1", "v2tiny2"]
     grounded_satisficing_domains = ["v2tiny10", "v2medium10", "v3tiny10bagslots7", "v3medium10bagslots7"]
     lifted_domains = ["v4tiny5", "v4medium5", "v5tiny5bagslots5", "v5medium5bagslots5"]
@@ -90,24 +101,19 @@ if __name__ == "__main__":
         "v3tiny10bagslots3", "v3tiny10bagslots5", "v3tiny10bagslots10",
         "v3medium10bagslots3", "v3medium10bagslots5", "v3medium10bagslots10",
     ]
-    domains = grounded_optimal_domains  + grounded_satisficing_domains
-    domains = ["taskography" + d for d in domains]
+
     optimal_planners = ["FD-seq-opt-lmcut", "SatPlan", "Delfi", "DecStar-opt-fb"]
-    satisficing_planners = [
-        "FF", "FF-X", "FD-lama-first", "Cerberus-sat", "Cerberus-agl", "DecStar-agl-fb", "bfws"
-    ]
+    satisficing_planners = ["FF", "FF-X", "FD-lama-first", "Cerberus-sat", "Cerberus-agl", "DecStar-agl-fb", "bfws"]
     learning_based_planners = ["ploi"]
-    planners = optimal_planners + satisficing_planners + learning_based_planners
-    # planners = [
-    #     "FF", "FF-X", "FD-lama-first", "Cerberus-sat", "Cerberus-agl", "DecStar-agl-fb", "bfws",
-    #     "FD-seq-opt-lmcut", "SatPlan", "Delfi", "DecStar-opt-fb",
-    #     "ploi", # "hierarchical", "scenegraph",
-    # ]
-    # phases = ["train", "test"]
+
+    # planners = optimal_planners + satisficing_planners + learning_based_planners
+    # domains = grounded_optimal_domains  + grounded_satisficing_domains
+    planners = satisficing_planners + learning_based_planners
+    domains = v5_domains
+    domains = ["taskography" + d for d in domains]
+    
     phases = ["test"]
-
     stats = {}
-
     for d in domains:
         stats[d] = {}
         
@@ -154,13 +160,19 @@ if __name__ == "__main__":
             for s in stats_to_measure:
                 # print(f"{stats[d][phase][p][s]:.3f}")
                 if s not in stats[d][phase][p].keys():
-                    stats[d][phase][p][s] = 0.
+                    stats[d][phase][p][s] = np.nan
                 if s == "success_rate":
+                    if stats[d][phase][p][s] is np.nan:
+                        stats[d][phase][p][s] = 0.
                     stats[d][phase][p][s] = (1. - stats[d][phase][p][s])  # Compute failure rate
-                row.append(f"{stats[d][phase][p][s]:.3f}")
+                row.append(f"{stats[d][phase][p][s]:.2f}")
+
+                if row[-1] == 'nan':
+                    row[-1] = '-'
+
         table.append(copy.deepcopy(row))
     # # Latex booktabs table
-    print(tabulate(table, headers="firstrow", tablefmt="latex_booktabs"))
+    print(tabulate(table, headers="firstrow", tablefmt="latex_booktabs", floatfmt='.2f'))
     # print(tabulate(table, headers="firstrow"))
 
     # # Works
