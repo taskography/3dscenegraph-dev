@@ -33,16 +33,20 @@ def generate_dataset_statistics(args, split):
         print(stats)
 
 
-    # save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), run_stats)
+    save_json(os.path.join(args.exp_dir, args.exp_name + f'_{split}' + '.json'), run_stats)
 
 
 
 if __name__ == '__main__':
     optimal_planner_domains = ['taskographyv2tiny1', 'taskographyv2medium1', 'taskographyv2tiny2', 'taskographyv2medium2']
     official_domains = ['taskographyv2tiny10', 'taskographyv2medium10', 'taskographyv3tiny10bagslots5', 'taskographyv3medium10bagslots5']
+    official_domains += ['taskographyv2tiny10scrub', 'taskographyv2medium10scrub', 'taskographyv3tiny10bagslots5scrub', 'taskographyv3medium10bagslots5scrub']
+    official_domains += ['taskographyv2tiny10scrub', 'taskographyv2medium10scrub', 'taskographyv3tiny10bagslots5scrub', 'taskographyv3medium10bagslots5scrub']
     ablation_domains = ['taskographyv3tiny10bagslots3', 'taskographyv3medium10bagslots3', 'taskographyv3tiny10bagslots7', 'taskographyv3medium10bagslots7']
     ablation_domains += ['taskographyv3tiny10bagslots10', 'taskographyv3medium10bagslots10']
+    ablation_domains += ['taskographyv3tiny10bagslots10scrub', 'taskographyv3medium10bagslots10scrub']
     lifted_domains = ['taskographyv4tiny5', 'taskographyv4medium5', 'taskographyv5tiny5bagslots5', 'taskographyv5medium5bagslots5']
+    lifted_domains += ['taskographyv4tiny5scrub', 'taskographyv4medium5scrub', 'taskographyv5tiny5bagslots5scrub', 'taskographyv5medium5bagslots5scrub']
     domain_choices = optimal_planner_domains + official_domains + ablation_domains + lifted_domains
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp-dir', type=str, default='./exp', help='Directory to store experimental results')
