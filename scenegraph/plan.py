@@ -91,7 +91,6 @@ def generate_dataset_statistics(args, planner, split):
         f.write(failure_string)
         f.write(num_problems_string)
 
-
     # compute statistics
     planner_stats = {}
     for stat in STATS:
@@ -154,7 +153,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--log-dir', type=str, default='exp', help='Directory to log all experiment results')
     parser.add_argument('--expid', type=str, default='debug', help='Unique ID for experiment (dir within log-dir in which to write logfiles to)')
-    # parser.add_argument('--exp-name', type=str, required=True, help='Subdirectory to write aggregated planner statistics')
     parser.add_argument('--planner', type=str, required=True, choices=planner_choices, help='Planner to benchmark')
     parser.add_argument('--domain-name', type=str, required=True, choices=domain_choices, help='Name of domain registered in PDDLGym')
     parser.add_argument('--timeout', type=float, default=10., help='Timeout constraint for the planners')
@@ -164,7 +162,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     args.save_dir = os.path.join(args.log_dir, args.expid)
-
     if not os.path.exists(args.save_dir):
         os.makedirs(args.save_dir)
 
