@@ -2,3 +2,6 @@
 	path = scenegraph/pddlgym_planners/SatPlan
 	url = https://github.com/Khodeir/SatPlan
 	ignore = dirty
+[submodule "scenegraph/adl2strips"]
+	path = scenegraph/adl2strips
+	url = https://github.com/pucrs-automated-planning/adl2strips
