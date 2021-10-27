@@ -1,0 +1,4 @@
+[submodule "scenegraph/pddlgym_planners/SatPlan"]
+	path = scenegraph/pddlgym_planners/SatPlan
+	url = https://github.com/Khodeir/SatPlan
+	ignore = dirty

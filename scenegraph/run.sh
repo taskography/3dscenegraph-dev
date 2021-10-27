@@ -1,19 +1,8 @@
 #!/bin/bash
-eval "alfworld_env"
-
-root_dir="pddl/taskography_gym"
-exp_dir="exp/rearrange"
-task_length=(1 2 5 10)
-splits=("tiny" "medium")
-planners=("FF" "FF-X" "FD")
-
-for task in "${task_length[@]}"; do
-	for split in "${splits[@]}"; do
-		for planner in "${planners[@]}"; do
-			data_root="${root_dir}/${split}${task}"
-			exp_name="${planner}_${split}"
-			output_dir="${exp_dir}${task}"
-			eval "python plan.py --planner $planner --exp-name $exp_name --exp-dir $output_dir --data-root $data_root"
-		done
-	done
-done
+planner=$1
+domain_name=$2
+timeout=$3
+eval "source taskography"
+log_dir="run/"
+expid="${planner}"
+eval "python plan.py --domain-name $domain_name --planner $planner --log-dir $log_dir --expid $expid --timeout $timeout"

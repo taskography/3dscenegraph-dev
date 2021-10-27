@@ -58,60 +58,115 @@ OBJECTS = {
     'toothbrush',
     'umbrella',
     'vase',
-    'wine glass'
-}
-
-OBJECTS_OTHER = {
+    'wine glass',
     'bicycle',
     'motorcycle',
     'surfboard',
     'tv'
 }
 
-ALL_OBJECTS = OBJECTS | OBJECTS_OTHER
-
-# receptacle objects can store one non-receptacle object
-RECEPTACLE_OBJECTS = {
-    'backpack',
+SMALL_OBJECTS = {
+    'apple',
+    'banana',
     'baseball glove',
+    'book',
     'bottle',
     'bowl',
+    'cell phone',
+    'cup',
+    'knife',
+    'mouse',
+    'orange',
+    'remote',
+    'spoon',
+    'tie',
+    'toothbrush',
+    'wine glass'
+}
+
+MEDIUM_OBJECTS = {
+    'cake',
+    'clock',
+    'frisbee',
+    'laptop',
+    'teddy bear',
+    'vase'
+}
+
+LARGE_OBJECTS = {
+    'backpack',
+    'baseball bat',
     'handbag',
+    'keyboard',
+    'kite',
+    'potted plant',
+    'sports ball',
     'suitcase',
+    'umbrella',
+    'bicycle',
+    'motorcycle',
+    'surfboard',
+    'tv'
+}
+
+
+assert(len(SMALL_OBJECTS.union(MEDIUM_OBJECTS.union(LARGE_OBJECTS))) == len(OBJECTS))
+
+
+# objects that can be placed in HEATING receptacle type
+HEATABLE_OBJECTS = {
+    'apple',
+    'banana',
+    'bottle',
+    'bowl',
+    'cake',
+    'cup',
+    'orange'
+}
+
+# objects that can be placed in COOLING receptacle type
+COOLABLE_OBJECTS = {
+    'apple',
+    'banana',
+    'bottle',
+    'bowl',
+    'cake',
+    'cup',
+    'orange',
+    'wine glass'
+}
+
+# objects that can be placed in CLEANING receptacle type
+CLEANABLE_OBJECTS = {
+    'apple',
+    'banana',
+    'bottle',
+    'bowl',
+    'cup',
+    'frisbee',
+    'knife',
+    'orange',
+    'spoon',
+    'sports ball',
+    'toothbrush',
     'vase',
     'wine glass'
 }
 
-# non-receptacle objects cannot store other objects
-NON_RECEPTACLE_OBJECTS = OBJECTS - RECEPTACLE_OBJECTS
-
-# TODO: declare valid sampled object-receptacle_object pairings for tasks
-# VALID_RECEPTACLE_OBJECTS_TO_OBJECTS = {
-#     'backpack': {
-#
-#     },
-#     'baseball glove': {
-#
-#     },
-#     'bottle': {
-#
-#     },
-#     'bowl': {
-#
-#     },
-#     'handbag': {
-#
-#     },
-#     'suitcase': {
-#
-#     },
-#     'vase': {
-#
-#     },
-#     'wine glass': {
-#
-#     }
+# # receptacle objects can store one or more non-receptacle object
+# RECEPTACLE_OBJECTS = {
+#     'backpack',
+#     'baseball glove',
+#     'bottle',
+#     'bowl',
+#     'handbag',
+#     'suitcase',
+#     'vase',
+#     'wine glass'
 # }
+
+# # non-receptacle objects cannot store other objects
+# NON_RECEPTACLE_OBJECTS = OBJECTS - RECEPTACLE_OBJECTS
 
 
 # ------------------------- RECEPTACLES -------------------------
@@ -160,76 +215,6 @@ CLEANING_RECEPTACLES = {
 #     'sink',
 #     'toaster',
 #     'toilet'
-# }
-
-# TODO: declare valid sampled object-receptacle pairings for tasks
-# VALID_RECEPTACLES_TO_OBJECTS = {
-#     'bed': {
-#         'apple',
-#         'backpack',
-#         'banana',
-#         'baseball bat',
-#         'baseball glove',
-#         'book',
-#         'bottle',
-#         'bowl',
-#         'cake',
-#         'cell phone',
-#         'clock',
-#         'cup',
-#         'frisbee',
-#         'handbag',
-#         'keyboard',
-#         'kite',
-#         'knife',
-#         'laptop',
-#         'mouse',
-#         'orange',
-#         'potted plant',
-#         'remote',
-#         'spoon',
-#         'sports ball',
-#         'suitcase',
-#         'teddy bear',
-#         'tie',
-#         'toothbrush',
-#         'umbrella',
-#         'vase',
-#         'wine glass'
-#     },
-#     'bench': {
-#
-#     },
-#     'boat': {
-#
-#     },
-#     'chair': {
-#
-#     },
-#     'couch': {
-#
-#     },
-#     'dining table': {
-#
-#     },
-#     'microwave': {
-#
-#     },
-#     'oven': {
-#
-#     },
-#     'refrigerator': {
-#
-#     },
-#     'sink': {
-#
-#     },
-#     'toaster': {
-#
-#     },
-#     'toilet': {
-#
-#     }
 # }
 
 
