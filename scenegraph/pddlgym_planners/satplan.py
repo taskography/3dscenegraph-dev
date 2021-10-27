@@ -52,7 +52,8 @@ class SATPlan(PDDLPlanner):
             raise PlanningFailure(f"Plan not found with SatPlan! Error: {output}")
 
     def _install_satplan(self):
-        subprocess.check_output(f'''git clone {SATPLAN_REPO} {self._satplan_path} && \
-             cd {self._satplan_path} && mkdir bin && make && cd -''', shell=True)
+        # subprocess.check_output(f'''git clone {SATPLAN_REPO} {self._satplan_path} && \
+        #      cd {self._satplan_path} && mkdir bin && make && cd -''', shell=True)
+        subprocess.check_output(f'cd {self._satplan_path} && mkdir bin && make && cd -', shell=True)
         subprocess.check_output(f'cd {self._satplan_path} && make install && cd -', shell=True, env=dict(HOME=self._satplan_path))
         assert os.path.exists(self._exec)
