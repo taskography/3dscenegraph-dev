@@ -1,6 +1,7 @@
 # PDDL planner specific
 FF-v2.3/
 FD/
+SatPlan/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
