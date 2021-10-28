@@ -1,0 +1,62 @@
+MIT License
+
+Copyright (c) 2021 Taskography
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+===
+
+The Taskography benchmark includes code from the following open-source projects
+
+1. pddlgym - MIT License - https://github.com/tomsilver/pddlgym/blob/master/LICENSE.md
+2. FF and FF-X planners - GNU GPL - https://fai.cs.uni-saarland.de/hoffmann/ff.html
+3. FD planner and variants - GPLv3 - https://github.com/tomsilver/pddlgym/blob/master/LICENSE.md
+4. SatPlan - Read more about license below - https://www.cs.rochester.edu/u/kautz/satplan/index.htm
+5. Cerberus - GNU GPL - https://github.com/ctpelok77/fd-red-black-postipc2018
+6. IPC 2018 planners - https://ipc2018-classical.bitbucket.io/#registration
+
+
+== Satplan License
+
+[License snippet reproduced from Satplan's README.txt]
+
+Some solvers may have licenses which prohibit us from re-distributing binaries.
+ In these cases, notes will exist here on what you will need to do to get that
+ solver on your machine so that satplan can use it.
+ satplan itself can be used freely.  Its use is only restricted by the licenses
+ of the underlying solvers called by satplan that you specify.
+
+-One such solver is BerkMin561.  This is an excellent solver and it is 
+ recommended that you do the following, assuming you will not be using satplan
+ beyond the license agreement for BerMin561:
+ -visit http://www-cad.eecs.berkeley.edu/~kenmcmil/smv/dld2.html
+ -review the license agreement.  If you agree, then provide the necessary
+  information and download the binary.
+ -run the BerkMin561 program once *directly* (not through satplan) and, again,
+  assuming you do agree, agree to the license agreement.  Now a file 
+  license.txt will be constructed.
+ -move license.txt and the binary to the include/bin/ subdirectory.  Make sure
+  the binary is named: berkmin61-linux.  If not, then rename it.  That's it.
+
+ Note: BerkMin561 is "compiled-into" satplan.  satplan is ready to call the
+       binary if it exists.  If the binary does not exist on your system,
+       there is no problem.  In this case, if you choose berkmin561 as your
+       solver, satplan will tell you that the solver does not exist.  If you
+       do not specify berkmin561, satplan will run as expected, with the 
+       chosen solver or the default solver if unspecified.
