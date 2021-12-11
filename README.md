@@ -24,7 +24,7 @@ cd path/to/projects/folder
 python3 -m venv taskography; source taskography/bin/activate
 
 # install pddlgym as editable
-git clone -b taskography https://github.com/taskography/pddlgym.git
+git clone https://github.com/taskography/pddlgym.git
 pip install -e pddlgym
 
 # install code dependecies
