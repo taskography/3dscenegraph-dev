@@ -86,7 +86,7 @@ def generate_pddl_problems(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-root', type=str, default='/home/agiachris/data/3dscenegraph', help='Path to root of data')
+    parser.add_argument('--data-root', type=str, required=True, help='Path to root of data')
     parser.add_argument('--data-split', type=str, default='tiny', choices=['tiny', 'medium'], help='Data split for scenegraph models')
     parser.add_argument('--domain', type=str, required=True, help='Path to <domain>.pddl file')
     parser.add_argument('--output-dir', type=str, required=True, help='Path to pddlgym/pddl/ directory of pddlgym')
