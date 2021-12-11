@@ -28,7 +28,7 @@ git clone -b taskography https://github.com/taskography/pddlgym.git
 pip install -e pddlgym
 
 # install code dependecies
-git clone -b taskography_v1 https://github.com/taskography/3dscenegraph-dev
+git clone -b taskography_v1 --recurse-submodules https://github.com/taskography/3dscenegraph-dev
 pip install -r 3dscenegraph-dec/scenegraph/requirements.txt
 ```
 
