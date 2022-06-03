@@ -1,4 +1,8 @@
-# 3dscenegraph-dev
+# Taskography Benchmark - Planning using 3D Scene Graphs
+
+TODO
+
+# ORIGINAL README - 3dscenegraph-dev
 
 ### Overview
 This repository holds the developement code for generating symbolic planning domains over large 3D scene graphs from the [iGibson](https://github.com/StanfordVL/iGibson) database. Building upon the [PDDLGym Planners](https://github.com/tomsilver/pddlgym), we provide access to a diversity of satisficing and optimal classical planners to test on our task planning domains, or custom environments created with our task samplers. 
