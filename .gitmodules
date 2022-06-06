@@ -1,3 +1,6 @@
 [submodule "scenegraph/adl2strips"]
 	path = scenegraph/adl2strips
 	url = https://github.com/pucrs-automated-planning/adl2strips
+[submodule "pddlgym"]
+	path = pddlgym
+	url = git@github.com:emanuelazfernandes/pddlgym.git
