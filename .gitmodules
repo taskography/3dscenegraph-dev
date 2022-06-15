@@ -7,3 +7,6 @@
 [submodule "pddlgym_planners"]
 	path = pddlgym_planners
 	url = ./pddlgym_planners
+[submodule "pddl_planners"]
+	path = pddl_planners
+	url = https://github.com/emanuelazfernandes/pddlgym_planners.git
