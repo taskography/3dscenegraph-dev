@@ -4,3 +4,6 @@
 [submodule "pddlgym"]
 	path = pddlgym
 	url = git@github.com:emanuelazfernandes/pddlgym.git
+[submodule "pddlgym_planners"]
+	path = pddlgym_planners
+	url = ./pddlgym_planners
