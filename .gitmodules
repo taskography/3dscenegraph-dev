@@ -1,12 +1,3 @@
 [submodule "scenegraph/adl2strips"]
 	path = scenegraph/adl2strips
 	url = https://github.com/pucrs-automated-planning/adl2strips
-[submodule "pddlgym"]
-	path = pddlgym
-	url = git@github.com:emanuelazfernandes/pddlgym.git
-[submodule "pddlgym_planners"]
-	path = pddlgym_planners
-	url = https://github.com/emanuelazfernandes/pddlgym_planners.git
-[submodule "pddl_planners"]
-	path = pddl_planners
-	url = https://github.com/emanuelazfernandes/pddlgym_planners.git
