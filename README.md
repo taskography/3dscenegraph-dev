@@ -10,7 +10,7 @@ If you use Taskography in follow-up works, consider using the following publicat
 ```
 @inproceedings{agia2021taskography,
   title={Taskography: Evaluating robot task planning over large 3D scene graphs},
-  author={Agia, Christopher and Jatavallabhula, Krishna Murthy and Khodeir, Mohamed and Miksik, Ondrej and Vineet, Vibhav and Mukadam, Mustafa and Paull, Liam and Shkurti, Florian},
+  author={Agia, Christopher and Jatavallabhula, {Krishna Murthy} and Khodeir, Mohamed and Miksik, Ondrej and Vineet, Vibhav and Mukadam, Mustafa and Paull, Liam and Shkurti, Florian},
   booktitle={5th Annual Conference on Robot Learning},
   year={2021}
 }
