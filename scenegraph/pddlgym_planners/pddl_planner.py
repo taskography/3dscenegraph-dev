@@ -55,12 +55,6 @@ class PDDLPlanner(Planner):
             return plan, dom_file, prob_file
         return plan
 
-    def plan_to_action_from_pddl(self, domain, state, dom_file, prob_file, horizon=np.inf, timeout=10, remove_files=False):
-        pddl_plan = self.plan_from_pddl(dom_file, prob_file, horizon, timeout, remove_files)
-        act_predicates = [domain.predicates[a] for a in list(domain.actions)]
-        plan = [self._plan_step_to_action(domain, state, act_predicates, plan_step) for plan_step in pddl_plan]
-        return plan 
-
     def plan_from_pddl(self, dom_file, prob_file, horizon=np.inf, timeout=10,
                        remove_files=False):
         """PDDL-specific planning method.

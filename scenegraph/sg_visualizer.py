@@ -37,7 +37,6 @@ def plot_plan(domain_name, model):
     except PlanningFailure as failure:
         print(failure)
     
-    
 
 class SceneGraphVisualizer:
 
@@ -49,6 +48,7 @@ class SceneGraphVisualizer:
         self.scene = pyrender.Scene()
     
     def reset(self):
+
         self.scene = pyrender.Scene()
 
     def add_mesh(self, mesh=None, color=None):

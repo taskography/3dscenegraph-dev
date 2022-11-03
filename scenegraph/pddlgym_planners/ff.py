@@ -40,9 +40,8 @@ class FF(PDDLPlanner):
             self._statistics["num_node_expansions"] = 0
         if len(num_node_expansions) == 1:
             assert int(num_node_expansions[0]) == float(num_node_expansions[0])
-            # self._statistics["num_node_expansions"] += int(
-            #     num_node_expansions[0])
-            self._statistics["num_node_expansions"] = int(num_node_expansions[0])
+            self._statistics["num_node_expansions"] += int(
+                num_node_expansions[0])
         if "found legal plan" in output:
             plan_length = re.findall(r"(\d+):", output.lower())
             self._statistics["plan_length"] = len(plan_length)
@@ -80,7 +79,7 @@ class FF(PDDLPlanner):
         else:
             # Install FF directly from official website.
             os.system("curl {} --output {}.tgz".format(FF_URL, loc))
-            os.system("tar -xzvf {}.tgz -C {}".format(loc, os.path.dirname(loc)))
+            os.system("tar -xzvf {}.tgz".format(loc))
         # Compile FF.
         os.system("cd {} && make && cd -".format(loc))
         assert os.path.exists(self._exec)

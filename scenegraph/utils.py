@@ -12,6 +12,7 @@ import numpy as np
 
 
 def room_to_str_name(room_inst):
+
     return f"room{int(room_inst.id)}_{room_inst.scene_category.replace(' ', '_')}"
 
 
@@ -25,10 +26,12 @@ def place_to_str_name(place_id, inst, is_object=False, is_room=False):
 
 
 def receptacle_to_str_name(rec_inst):
+
     return f"receptacle{int(rec_inst.id)}_{rec_inst.class_.replace(' ', '_')}"
 
 
 def object_to_str_name(obj_inst, size):
+
     return f"item{int(obj_inst.id)}_{obj_inst.class_.replace(' ', '_')}_{size}"
 
 
@@ -63,6 +66,7 @@ def convert_pddl_domain(domain_filepath, updated_filename):
     domain.domain_name = os.path.split(updated_filename)[-1].split('.')[0]
     domain.write(updated_filename)
 
+
 class FilesInCommonTempDirectory:
     def __init__(self, *file_paths):
         self.file_paths = file_paths
@@ -83,6 +87,7 @@ class FilesInCommonTempDirectory:
         return self.new_fpaths
     def __exit__(self, type, value, traceback):
         self.cleanup()
+
 
 class ADL2Strips:
     ADL_URL = "https://github.com/pucrs-automated-planning/adl2strips.git"
@@ -117,6 +122,7 @@ class ADL2Strips:
             os.system("git clone {} {}".format(self.ADL_URL, loc))
             os.system("cd {} && make && cd -".format(loc))
         assert os.path.exists(self.exec_path)
+
 
 def compute_ground_problem_size(domfile, probfile):
     with ADL2Strips(domfile, probfile) as (domfile, _):
@@ -155,9 +161,10 @@ def get_sastask_from_pddl(domain, task):
     sys.path.pop(-1) # to bring path back to normal
     return sas_task, pddl_task
 
+
 def count_branches_v2(sas_task, pddl_task):
-    '''This is very domain specific. It basically counts the actions the agent can take at all locations.
-    It ignores how the action space changes if the agent does anything other than move.'''
+    """This is very domain specific. It basically counts the actions the agent can take at all locations.
+    It ignores how the action space changes if the agent does anything other than move."""
     indexes = dict(atlocation=None, inroom=None, inplace=None)
     for var_index, value_names in enumerate(sas_task.variables.value_names):
         for name in indexes:
@@ -221,6 +228,7 @@ def count_branches_v2(sas_task, pddl_task):
         min_branching_factor=int(np.min(num_branches))
     )
 
+
 def estimate_branches_v3(sas_task, pddl_task, num_rollouts=10, horizon=100):
     ### Data structure to keep operators grouped by atlocation
     index = None
@@ -264,5 +272,7 @@ def estimate_branches_v3(sas_task, pddl_task, num_rollouts=10, horizon=100):
         min_branching_factor=int(np.min(rollout_stats))
     )
 
+
 def count_operators(sas_task):
+
     return dict(num_sas_operators=len(sas_task.operators), num_sas_variables=len(sas_task.variables.value_names))
